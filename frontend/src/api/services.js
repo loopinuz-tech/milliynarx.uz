@@ -43,6 +43,14 @@ export const productService = {
   getProductAllSellers: async (productId) => {
     const res = await apiClient.get(`/products/${productId}/all-sellers`);
     return res.data;
+  },
+  getPriceTrends: async () => {
+    const res = await apiClient.get('/products/price-trends');
+    return res.data;
+  },
+  getSubscriptionPlans: async () => {
+    const res = await apiClient.get('/products/subscription-plans');
+    return res.data;
   }
 };
 
@@ -169,6 +177,10 @@ export const adminService = {
   getAuditLogs: async () => {
     const res = await apiClient.get('/admin/audit-logs');
     return res.data;
+  },
+  getTrends: async () => {
+    const res = await apiClient.get('/admin/trends');
+    return res.data;
   }
 };
 
@@ -180,6 +192,10 @@ export const compareService = {
 };
 
 export const favoriteService = {
+  getAll: async () => {
+    const res = await apiClient.get('/favorites');
+    return res.data;
+  },
   getFavorites: async () => {
     const res = await apiClient.get('/favorites');
     return res.data;
@@ -191,6 +207,10 @@ export const favoriteService = {
 };
 
 export const alertService = {
+  getAll: async () => {
+    const res = await apiClient.get('/alerts');
+    return res.data;
+  },
   getAlerts: async () => {
     const res = await apiClient.get('/alerts');
     return res.data;

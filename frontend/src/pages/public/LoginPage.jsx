@@ -26,7 +26,7 @@ export const LoginPage = () => {
     } else if (user.role === 'SELLER') {
       navigate('/seller');
     } else {
-      navigate('/');
+      navigate('/dashboard');
     }
   };
 

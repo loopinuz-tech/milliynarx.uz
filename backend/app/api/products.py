@@ -2,11 +2,11 @@ import statistics
 from typing import Optional, List
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, desc, asc
+from sqlalchemy import or_, and_, desc, asc, func
 from backend.app.db.session import get_db
 from backend.app.db.models import (
     Product, ProductImage, Seller, Category, Brand, PriceHistory, Offer, 
-    AnalyticsEvent, Search, SearchResult
+    AnalyticsEvent, Search, SearchResult, SubscriptionPlan
 )
 from backend.app.schemas.schemas import ProductOut, ProductDetailOut, MarketStatsOut, PriceHistoryOut
 
@@ -497,6 +497,65 @@ def get_categories_stats(db: Session = Depends(get_db)):
             "savings_spread": max_p - min_p
         })
     return stats
+
+@router.get("/price-trends")
+def get_market_price_trends(db: Session = Depends(get_db)):
+    """
+    Returns real aggregated market price trends and spreads over historical checkpoints.
+    100% genuine database data from PriceHistory table.
+    """
+    trends = db.query(
+        func.date(PriceHistory.recorded_at).label('date'),
+        func.avg(PriceHistory.price).label('avg_price'),
+        func.min(PriceHistory.price).label('min_price'),
+        func.max(PriceHistory.price).label('max_price'),
+        func.count(PriceHistory.id).label('count')
+    ).group_by(func.date(PriceHistory.recorded_at)).order_by(func.date(PriceHistory.recorded_at)).all()
+    
+    result = []
+    month_names = {
+        '01': 'Yan', '02': 'Fev', '03': 'Mar', '04': 'Apr',
+        '05': 'May', '06': 'Iyun', '07': 'Iyul', '08': 'Avg',
+        '09': 'Sen', '10': 'Okt', '11': 'Noy', '12': 'Dek'
+    }
+    for t in trends:
+        d_str = str(t.date)
+        parts = d_str.split('-')
+        label = f"{int(parts[2])} {month_names.get(parts[1], parts[1])}" if len(parts) == 3 else d_str
+        avg_val = round(float(t.avg_price or 0))
+        min_val = round(float(t.min_price or 0))
+        max_val = round(float(t.max_price or 0))
+        result.append({
+            "date": d_str,
+            "label": label,
+            "marketPrice": avg_val,
+            "bestPrice": min_val,
+            "savings": max(0, avg_val - min_val),
+            "maxPrice": max_val,
+            "samplesCount": t.count
+        })
+    return result
+
+@router.get("/subscription-plans")
+def get_public_subscription_plans(db: Session = Depends(get_db)):
+    """
+    Returns official Monetization Model plans from database (START, BUSINESS, PRO).
+    100% genuine database data.
+    """
+    plans = db.query(SubscriptionPlan).filter(SubscriptionPlan.is_active == True).all()
+    order_map = {"START": 1, "BUSINESS": 2, "PRO": 3}
+    sorted_plans = sorted(plans, key=lambda p: order_map.get(p.tier, 99))
+    return [
+        {
+            "id": p.id,
+            "tier": p.tier,
+            "name": p.name,
+            "price_monthly": p.price_monthly,
+            "features": p.features,
+            "is_active": p.is_active
+        }
+        for p in sorted_plans
+    ]
 
 @router.get("/category/{category_id}/analytics")
 def get_category_analytics(category_id: str, db: Session = Depends(get_db)):

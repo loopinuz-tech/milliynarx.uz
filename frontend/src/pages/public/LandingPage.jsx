@@ -7,6 +7,8 @@ import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
 import { CardSkeleton } from '../../components/common/Skeleton';
 import SearchAutocomplete from '../../components/common/SearchAutocomplete';
+import CategoryOrbit from '../../components/common/CategoryOrbit';
+import AiAdvisorDemo from '../../components/common/AiAdvisorDemo';
 
 // Official @solar-icons/react LINEAR icons (clean outline styling, non-bold)
 import { ShieldCheckIcon as ShieldIcon } from '@solar-icons/react/linear/shield-check';
@@ -27,6 +29,7 @@ import { AltArrowRightIcon } from '@solar-icons/react/linear/alt-arrow-right';
 export const LandingPage = () => {
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -38,6 +41,16 @@ export const LandingPage = () => {
         // Strictly fetch real active products from database
         const prods = await productService.getProducts({ limit: 8 });
         setProducts(Array.isArray(prods) ? prods : []);
+
+        // Fetch official monetization plans from database
+        try {
+          const planData = await productService.getSubscriptionPlans();
+          if (Array.isArray(planData) && planData.length > 0) {
+            setPlans(planData);
+          }
+        } catch (planErr) {
+          console.error("Failed to load subscription plans:", planErr);
+        }
       } catch (err) {
         console.error("Failed to load products:", err);
       } finally {
@@ -73,6 +86,16 @@ export const LandingPage = () => {
     }
   };
 
+  // Map database plans by tier with reliable defaults
+  const planMap = plans.reduce((acc, p) => {
+    acc[p.tier] = p;
+    return acc;
+  }, {});
+
+  const startFeatures = planMap.START?.features || {};
+  const bizFeatures = planMap.BUSINESS?.features || {};
+  const proFeatures = planMap.PRO?.features || {};
+
   return (
     <div className="w-full space-y-16 sm:space-y-20 pb-16">
       {/* ========================================================================= */}
@@ -105,6 +128,32 @@ export const LandingPage = () => {
             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-6 sm:mb-8 leading-relaxed font-normal max-w-2xl">
               Real sotuvchilar takliflarini bir joyda solishtiring va xarid qilishdan oldin bozorni tahlil qiling. Hech qanday soxta chegirma va sun'iy narxlarsiz.
             </p>
+
+            {isAuthenticated && (
+              <div className="mb-6 p-4 bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <StarsIcon size={18} />
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">
+                      Shaxsiy Bozor Terminalingiz Faol
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Bozor tahlili, so'rovlar kvotasi va kuzatuvdagi tovarlar statistikasi
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard')}
+                  className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                >
+                  <span>Dashboardga o'tish</span>
+                  <AltArrowRightIcon size={14} />
+                </button>
+              </div>
+            )}
 
             {/* Master Search Input with Google-Style Autocomplete */}
             <div className="w-full max-w-2xl">
@@ -173,26 +222,29 @@ export const LandingPage = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* REST OF SECTIONS: KEPT IN MAX-W-7XL MX-AUTO AS REQUESTED                 */}
+      {/* 2. BOZOR TOIFALARI VA YO'NALISHLAR (ORBITAL AI ECOSYSTEM)                */}
       {/* ========================================================================= */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 sm:space-y-20">
-        {/* 2. THREE CORE GUARANTEES (DATA INTEGRITY PILLARS)                         */}
+      <CategoryOrbit />
+
+      {/* ========================================================================= */}
+      {/* FULL-WIDTH RESPONSIVE CONTAINER ACROSS ALL REMAINING SECTIONS             */}
+      {/* ========================================================================= */}
+      <div className="w-full px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 space-y-16 sm:space-y-20">
+        {/* 3. THREE CORE GUARANTEES (DATA INTEGRITY PILLARS)                         */}
         {/* ========================================================================= */}
-        <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-[11px] font-bold uppercase tracking-wider mb-2">
-              <ShieldIcon size={13} />
-              Kafolatlar va Xolislik
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Nima uchun aynan Milliy Narx?
+        <section className="space-y-6 sm:space-y-8">
+          {/* Section Header Left-Aligned with Cards */}
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+              Platformamizning{' '}
+              <span className="text-orange-600 dark:text-orange-500">
+                3 asosiy tamoyili
+              </span>
             </h2>
+            <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 font-normal">
+              MilliyNarx AI ishonchli bozor ma’lumotlari va xolis tahlilga tayanadi.
+            </p>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 max-w-md">
-            O'zbekistonda birinchi marta sun'iy chegirmalarsiz, soxta sharhlarsiz va yolg'on narxlarsiz platforma.
-          </p>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 */}
@@ -254,293 +306,542 @@ export const LandingPage = () => {
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 3. REAL ACTIVE PRODUCTS CATALOG (ZERO FAKE DATA)                          */}
-      {/* ========================================================================= */}
-      <section className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-slate-200/80">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                Bozordagi Faol Takliflar
-              </h2>
-              <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full font-numeric">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Jonli Baza
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500">
-              Rasmiy va tekshirilgan sotuvchilar tomonidan kiritilgan haqiqiy narxlar
-            </p>
-          </div>
-
-          <button
-            onClick={() => navigate('/search')}
-            className="text-xs sm:text-sm font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1.5 transition-colors cursor-pointer px-3.5 py-2 rounded-xl hover:bg-orange-50/70"
-          >
-            <span>Barcha takliflarni ko'rish</span>
-            <AltArrowRightIcon size={16} />
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <CardSkeleton key={i} />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <EmptyState
-            icon="Box"
-            title="Mahsulotlar hali mavjud emas"
-            description="Bazada hozircha faol mahsulotlar yo'q. Sotuvchilar o'z takliflarini kiritib, administrator tasdiqlaganidan so'ng mahsulotlar bu yerda aks etadi."
-            actionLabel={isAuthenticated ? "Katalogga o'tish" : "Sotuvchi sifatida ro'yxatdan o'tish"}
-            onAction={() => navigate(isAuthenticated ? '/search' : '/register')}
-          />
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-            {products.map((p) => {
-              const primaryImg = p.images?.find(img => img.is_primary)?.image_url || p.images?.[0]?.image_url;
-              return (
-                <div
-                  key={p.id}
-                  onClick={() => navigate(`/product/${p.slug || p.id}`)}
-                  className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-lg hover:border-orange-400 dark:hover:border-orange-500/50 transition-all cursor-pointer flex flex-col justify-between group active:scale-[0.98]"
-                >
-                  <div className="h-36 xs:h-44 sm:h-52 w-full bg-slate-50 dark:bg-slate-800/40 relative flex items-center justify-center overflow-hidden border-b border-slate-100 dark:border-slate-800 p-2.5 sm:p-4">
-                    {primaryImg ? (
-                      <img
-                        src={primaryImg}
-                        alt={p.name}
-                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                      />
-                    ) : (
-                      <div className="text-slate-300 dark:text-slate-600 flex flex-col items-center gap-1">
-                        <BoxIcon size={36} />
-                        <span className="text-[9px] text-slate-400">Rasm yo'q</span>
-                      </div>
-                    )}
-
-                    <button
-                      onClick={(e) => handleToggleFavorite(e, p.id)}
-                      className="absolute top-2 right-2 p-1.5 sm:p-2 rounded-xl bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-750 text-slate-400 hover:text-rose-500 shadow-sm transition-colors cursor-pointer"
-                      title="Sevimlilarga qo'shish"
-                    >
-                      <HeartIcon size={15} />
-                    </button>
-
-                    {p.availability && (
-                      <div className="absolute bottom-2 left-2 hidden xs:block">
-                        <Badge status={p.availability} size="xs" />
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] text-orange-700 dark:text-orange-400 font-bold uppercase tracking-wider bg-orange-50 dark:bg-orange-950/50 px-1.5 py-0.5 rounded mb-1.5">
-                        <TagIcon size={10} className="text-orange-600 dark:text-orange-400" />
-                        <span className="truncate max-w-[100px]">{p.brand_name || p.category_name || 'Katalog'}</span>
-                      </div>
-                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-tight">
-                        {p.name}
-                      </h3>
-                    </div>
-
-                    <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800/80 mt-1 flex flex-col xs:flex-row xs:items-baseline justify-between gap-1">
-                      <div>
-                        <div className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-numeric leading-tight">
-                          {formatPrice(p.price)}
-                        </div>
-                        {p.old_price && p.old_price > p.price && (
-                          <div className="text-[10px] sm:text-xs text-slate-400 line-through font-numeric">
-                            {formatPrice(p.old_price)}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium truncate">
-                        <ShopIcon size={12} className="text-slate-400 shrink-0" />
-                        <span className="truncate max-w-[80px] sm:max-w-[100px]">{p.seller_name || "Sotuvchi"}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
 
       {/* ========================================================================= */}
-      {/* 3.5. AI MARKET INTELLIGENCE & ADVISOR SHOWCASE (LIGHT MODE)              */}
+      {/* 3.5. AI MARKET INTELLIGENCE & ADVISOR (LIVE QUERY & RESPONSE DEMO)        */}
       {/* ========================================================================= */}
-      <section className="w-full bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-10 lg:p-12 relative overflow-hidden shadow-xs hover:border-orange-300 transition-all">
+      <section className="w-full bg-white dark:bg-[#070B14] border border-slate-200/90 dark:border-slate-800/80 rounded-3xl p-6 sm:p-10 lg:p-12 relative overflow-hidden shadow-xs hover:border-orange-300 dark:hover:border-orange-500/40 transition-all text-slate-900 dark:text-white">
         {/* Soft Warm Glow Accents */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-500/10 dark:bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-semibold shadow-2xs">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+          
+          {/* Left Column: Flow Explanation, Value Prop, Action Button */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-500/15 border border-orange-200/80 dark:border-orange-500/30 text-orange-700 dark:text-orange-400 text-xs font-semibold shadow-2xs">
               <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain" />
               <span>Sun'iy Intellekt &bull; Bozor Tahlili</span>
             </div>
 
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
               Sun'iy Intellekt Maslahatchisi bilan{' '}
               <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
                 xaridni rejalashtiring
               </span>
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl font-normal">
-              Milliy Narx AI — bozor narxlarining real dinamikasini o'rganib, xaridorlarga eng tejamkor xarid vaqtini, sotuvchilarga esa raqobatbardosh narx strategiyasini tavsiya qiluvchi O'zbekistondagi ilk mustaqil sun'iy intellekt xizmati.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl font-normal">
+              Milliy Narx AI — bozor narxlarining real dinamikasini o‘rganib, xaridorlarga eng tejamkor xarid vaqtini, sotuvchilarga esa raqobatbardosh narx strategiyasini tavsiya qiluvchi O‘zbekistondagi ilk mustaqil sun'iy intellekt xizmati.
             </p>
 
-            {/* Quick Prompts with Official Solar Icons (Zero Emojis) */}
-            <div className="flex flex-wrap gap-2.5 pt-1">
-              {[
-                { label: "Eng arzon telefonlar qaysi?", icon: TagIcon },
-                { label: "Texnika narxlari o'zgarishi", icon: ChartIcon },
-                { label: "Sotuvchilar uchun narx strategiyasi", icon: ShopIcon }
-              ].map((item, idx) => {
-                const IconComponent = item.icon;
-                return (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => navigate('/ai-advisor')}
-                    className="px-3 py-2 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 text-xs font-semibold text-slate-700 hover:text-orange-700 transition-all shadow-2xs cursor-pointer flex items-center gap-2 active:scale-95"
-                  >
-                    <IconComponent size={14} className="text-orange-600 shrink-0" />
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
+            {/* 3 ta Oddiy Qadam (Qanday so'rov yuboriladi va javob olinadi) */}
+            <div className="space-y-2.5 pt-1">
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                  1
+                </span>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <strong className="text-slate-900 dark:text-white">Savol yuboring:</strong> O‘zingiz qiziqqan mahsulot yoki narx haqida istalgan tilda so‘rang.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                  2
+                </span>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <strong className="text-slate-900 dark:text-white">Jonli AI tahlili:</strong> Sun'iy intellekt bozor narxlari tarixi va do‘konlarni bir necha soniyada taqqoslaydi.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                  3
+                </span>
+                <p className="text-xs text-slate-600 dark:text-slate-300">
+                  <strong className="text-slate-900 dark:text-white">Aniq tavsiya oling:</strong> Eng arzon taklif, narx tushishi va qulay xarid vaqti bo‘yicha xolis xulosaga ega bo‘ling.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => navigate('/ai-advisor')}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-sm active:scale-98 cursor-pointer"
+              >
+                <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain" />
+                <span>AI Maslahatchi bilan suhbatlashish</span>
+                <AltArrowRightIcon size={16} />
+              </button>
             </div>
           </div>
 
-          {/* Right Column: Clean Light Interactive Card */}
-          <div className="lg:col-span-5 bg-slate-50/80 border border-slate-200/90 rounded-2xl p-5 space-y-4 shadow-2xs">
-            <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">AI Jonli Savol-Javob</span>
-              </div>
-              <span className="text-[10px] text-orange-700 font-mono font-bold bg-orange-100/70 px-2 py-0.5 rounded-md">
-                Milliy Narx AI
-              </span>
-            </div>
-
-            <div className="p-3.5 bg-white rounded-xl border border-slate-200/80 text-xs text-slate-700 space-y-1.5 shadow-2xs">
-              <div className="text-orange-600 font-bold flex items-center gap-1.5">
-                <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain inline-block" />
-                <span>AI Maslahatchiga savol bering:</span>
-              </div>
-              <div className="text-slate-500 text-[11px] leading-relaxed">
-                Masalan: "Qaysi telefonni olish foydali?", "Do'konim uchun narx qanday qo'yish kerak?"
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => navigate('/ai-advisor')}
-              className="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-            >
-              <img src="/aiimg.png" alt="AI" className="w-5 h-5 object-contain" />
-              <span>AI Maslahatchi bo'limiga o'tish</span>
-              <AltArrowRightIcon size={16} />
-            </button>
+          {/* Right Column: Interactive Live AI Query & Response Terminal */}
+          <div className="lg:col-span-7 flex items-center justify-center relative w-full">
+            <AiAdvisorDemo />
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. HOW IT WORKS (3-STEP PROCESS)                                          */}
+      {/* 3.8. PLATFORMS COMPARISON MATRIX (USER'S EXACT COMPARISON TABLE)          */}
       {/* ========================================================================= */}
-      <section className="w-full bg-slate-50/80 border border-slate-200/90 rounded-3xl p-6 sm:p-10 lg:p-14">
+      <section className="space-y-6">
+        <div className="text-center max-w-2xl mx-auto space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-950/50 border border-orange-200/80 dark:border-orange-800/60 text-orange-700 dark:text-orange-300 text-xs font-bold shadow-2xs">
+            <ScaleIcon size={14} />
+            <span>Bozor Vositalari Taqqoslovi</span>
+          </div>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            Nima uchun aynan <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">MilliyNarx</span>?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+            O'zbekistondagi asosiy savdo va tahlil kanallarining real imkoniyatlari solishtiruvi
+          </p>
+        </div>
+
+        {/* Comparison Table Card */}
+        <div className="w-full bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl overflow-hidden shadow-xs">
+          <div className="overflow-x-auto">
+            <table className="w-full text-center border-collapse min-w-[620px]">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/90 dark:bg-slate-900/80">
+                  <th className="py-4 sm:py-5 px-5 text-left text-xs sm:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider w-1/4">
+                    Xususiyat
+                  </th>
+                  <th className="py-4 sm:py-5 px-5 bg-orange-500/10 dark:bg-orange-950/40 border-x border-orange-200/70 dark:border-orange-800/50 w-1/5 relative">
+                    <div className="flex flex-col items-center justify-center gap-1">
+                      <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-orange-600 text-white tracking-wider shadow-2xs">
+                        Lider
+                      </span>
+                      <span className="text-sm sm:text-base font-black text-orange-600 dark:text-orange-400 tracking-tight">
+                        MilliyNarx
+                      </span>
+                    </div>
+                  </th>
+                  <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
+                    Uzum Market
+                  </th>
+                  <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
+                    Telegram
+                  </th>
+                  <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
+                    Turon Market
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs sm:text-sm">
+                {/* 1. Bir joyda ma'lumotlar */}
+                <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
+                  <td className="py-4 sm:py-5 px-5 text-left font-bold text-slate-900 dark:text-white">
+                    Bir joyda ma'lumotlar
+                  </td>
+                  <td className="py-4 sm:py-5 px-5 bg-orange-500/5 dark:bg-orange-950/20 border-x border-orange-200/60 dark:border-orange-800/40">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+
+                {/* 2. Narxlarni solishtirish */}
+                <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
+                  <td className="py-4 sm:py-5 px-5 text-left font-bold text-slate-900 dark:text-white">
+                    Narxlarni solishtirish
+                  </td>
+                  <td className="py-4 sm:py-5 px-5 bg-orange-500/5 dark:bg-orange-950/20 border-x border-orange-200/60 dark:border-orange-800/40">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+
+                {/* 3. AI integratsiya */}
+                <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
+                  <td className="py-4 sm:py-5 px-5 text-left font-bold text-slate-900 dark:text-white">
+                    AI integratsiya
+                  </td>
+                  <td className="py-4 sm:py-5 px-5 bg-orange-500/5 dark:bg-orange-950/20 border-x border-orange-200/60 dark:border-orange-800/40">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+
+                {/* 4. B2B */}
+                <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-850/40 transition-colors">
+                  <td className="py-4 sm:py-5 px-5 text-left font-bold text-slate-900 dark:text-white">
+                    B2B
+                  </td>
+                  <td className="py-4 sm:py-5 px-5 bg-orange-500/5 dark:bg-orange-950/20 border-x border-orange-200/60 dark:border-orange-800/40">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                  <td className="py-4 sm:py-5 px-5">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 4. MONETIZATSIYA MODELI (FULL-WIDTH 1-TO-1 DATABASE INTEGRATED)          */}
+      {/* ========================================================================= */}
+      <section className="w-full bg-white dark:bg-[#090D16] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 lg:p-14 shadow-2xs">
+        {/* Title and Red Accent Underline */}
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-950/50 border border-orange-200/80 dark:border-orange-800/60 text-orange-700 dark:text-orange-300 text-xs font-bold mb-3 shadow-2xs">
+            <TagIcon size={14} />
+            <span>B2B SaaS Obuna Modellari</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Monetizatsiya modeli
+          </h2>
+          <div className="w-20 h-1.5 bg-[#FF6F61] rounded-full mt-3 mb-2"></div>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
+            Korxona, fabrika, do'kon va distribyutorlar uchun shaffof va ochiq tahliliy xizmat rejalari
+          </p>
+        </div>
+
+        {/* 14-Row Subscription Matrix Table with Complete Grid Borders (Full Width) */}
+        <div className="w-full overflow-hidden">
+          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#090D16]">
+            <table className="w-full min-w-[620px] text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/40">
+                  <th className="py-3.5 px-5 text-left border-r border-slate-200 dark:border-slate-800 w-[37%] font-bold text-slate-700 dark:text-slate-300">
+                    Xizmat va imkoniyatlar
+                  </th>
+                  <th className="py-3.5 px-4 text-left border-r border-slate-200 dark:border-slate-800 w-[21%]">
+                    <div className="inline-flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shrink-0"></span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">START</span>
+                    </div>
+                  </th>
+                  <th className="py-3.5 px-4 text-left border-r border-slate-200 dark:border-slate-800 w-[21%]">
+                    <div className="inline-flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] shrink-0"></span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">BUSINESS</span>
+                    </div>
+                  </th>
+                  <th className="py-3.5 px-4 text-left w-[21%]">
+                    <div className="inline-flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#9333EA] shrink-0"></span>
+                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">PRO</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+                {/* Row 1: Narx */}
+                <tr className="font-bold text-slate-900 dark:text-white bg-slate-100/60 dark:bg-slate-800/50">
+                  <td className="py-3 px-5 border-r border-slate-200 dark:border-slate-800 font-bold">Narx</td>
+                  <td className="py-3 px-4 border-r border-slate-200 dark:border-slate-800 font-bold text-emerald-600 dark:text-emerald-400 text-sm">
+                    {startFeatures.price_usd || "$10/oy"}
+                  </td>
+                  <td className="py-3 px-4 border-r border-slate-200 dark:border-slate-800 font-bold text-blue-600 dark:text-blue-400 text-sm">
+                    {bizFeatures.price_usd || "$30/oy"}
+                  </td>
+                  <td className="py-3 px-4 font-bold text-purple-600 dark:text-purple-400 text-sm">
+                    {proFeatures.price_usd || "$60/oy"}
+                  </td>
+                </tr>
+
+                {/* Row 2: Mahsulotlar katalogi */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Mahsulotlar katalogi</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.catalog || "✓"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.catalog || "✓"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.catalog || "✓"}</td>
+                </tr>
+
+                {/* Row 3: Narxlarni solishtirish */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narxlarni solishtirish</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.comparison || "✓"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.comparison || "✓"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.comparison || "✓"}</td>
+                </tr>
+
+                {/* Row 4: Hududlar bo'yicha narx */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Hududlar bo'yicha narx</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.region_prices || "✓"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.region_prices || "✓"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.region_prices || "✓"}</td>
+                </tr>
+
+                {/* Row 5: Narxlar tarixi */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narxlar tarixi</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.price_history || "30 kun"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.price_history || "1 yil"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.price_history || "Cheksiz"}</td>
+                </tr>
+
+                {/* Row 6: Talab/taklif tahlili */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Talab/taklif tahlili</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.demand_supply || "Basic + AI"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.demand_supply || "Advanced + AI"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.demand_supply || "Professional + AI"}</td>
+                </tr>
+
+                {/* Row 7: Narx o'zgarishi alertlari */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narx o'zgarishi alertlari</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.price_alerts || "5 ta"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.price_alerts || "30 ta"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.price_alerts || "Cheksiz"}</td>
+                </tr>
+
+                {/* Row 8: Sotuvchi/ta'minotchi qidirish */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Sotuvchi/ta'minotchi qidirish</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.supplier_search || "✓"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.supplier_search || "✓"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.supplier_search || "✓"}</td>
+                </tr>
+
+                {/* Row 9: Bozor hisobotlari */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Bozor hisobotlari</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.market_reports || "—"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.market_reports || "✓"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.market_reports || "✓ + AI"}</td>
+                </tr>
+
+                {/* Row 10: Excel/CSV eksport */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Excel/CSV eksport</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.excel_export || "—"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.excel_export || "✓"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.excel_export || "✓"}</td>
+                </tr>
+
+                {/* Row 11: API */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">API</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.api || "—"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{bizFeatures.api || "—"}</td>
+                  <td className="py-2.5 px-4">{proFeatures.api || "✓"}</td>
+                </tr>
+
+                {/* Row 12: AI Market Assistant */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">AI Market Assistant</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.ai_assistant || "✓"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.ai_assistant || "✓"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.ai_assistant || "✓ Advanced"}</td>
+                </tr>
+
+                {/* Row 13: Bir nechta xodim */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Bir nechta xodim</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-right pr-6">{startFeatures.team_seats || "1"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-right pr-6">{bizFeatures.team_seats || "5"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white text-right pr-6">{proFeatures.team_seats || "15"}</td>
+                </tr>
+
+                {/* Row 14: Qo'llab-quvvatlash */}
+                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
+                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Qo'llab-quvvatlash</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.support || "Standard"}</td>
+                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.support || "Priority"}</td>
+                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.support || "Dedicated"}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* 5. HOW IT WORKS (3-STEP PROCESS)                                          */}
+      {/* ========================================================================= */}
+      <section className="w-full bg-slate-50/90 dark:bg-[#090D16] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 lg:p-14 shadow-2xs">
         <div className="text-center max-w-xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/70 text-orange-800 text-[11px] font-bold uppercase tracking-wider mb-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100/70 dark:bg-orange-950/60 text-orange-800 dark:text-orange-300 text-[11px] font-bold uppercase tracking-wider mb-2">
             <CheckCircleIcon size={13} />
             Qulay & Shaffof
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
             Milliy Narx qanday ishlaydi?
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
             Oddiy, shaffof va eng asosiysi — faqat real sotuvchilar ma'lumotlariga asoslangan 3 bosqich
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Step 1 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between group">
+          <div className="bg-white dark:bg-[#0c121e] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 dark:hover:border-orange-600 transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-5">
-                <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800/60 flex items-center justify-center font-bold">
                   <MagnifierIcon size={20} />
                 </div>
-                <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
+                <span className="text-xs font-mono font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-md">
                   01-BOSQICH
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 Mahsulotni qidiring
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 Katalogdan kerakli model, SKU yoki brend nomini kiriting. Tizim tasdiqlangan barcha rasmiy do'konlar narxlarini jamlaydi.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1 text-xs text-slate-400">
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
               <BoxIcon size={13} />
               <span>Barcha do'konlar katalogi</span>
             </div>
           </div>
 
           {/* Step 2 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between group">
+          <div className="bg-white dark:bg-[#0c121e] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 dark:hover:border-orange-600 transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-5">
-                <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800/60 flex items-center justify-center font-bold">
                   <ScaleIcon size={20} />
                 </div>
-                <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
+                <span className="text-xs font-mono font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-md">
                   02-BOSQICH
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 Narxlarni solishtiring
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 2 tadan 5 tagacha bo'lgan takliflarni bitta jadvalda kafolat, yetkazib berish va narx ko'rsatkichlari bo'yicha taqqoslang.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1 text-xs text-slate-400">
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
               <ChartIcon size={13} />
               <span>Texnik xususiyatlar solishtiruvi</span>
             </div>
           </div>
 
           {/* Step 3 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 transition-all flex flex-col justify-between group">
+          <div className="bg-white dark:bg-[#0c121e] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-8 relative shadow-2xs hover:shadow-md hover:border-orange-300 dark:hover:border-orange-600 transition-all flex flex-col justify-between group">
             <div>
               <div className="flex items-center justify-between mb-5">
-                <div className="w-11 h-11 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center font-bold">
+                <div className="w-11 h-11 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800/60 flex items-center justify-center font-bold">
                   <BellIcon size={20} />
                 </div>
-                <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-md">
+                <span className="text-xs font-mono font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/60 px-2.5 py-1 rounded-md">
                   03-BOSQICH
                 </span>
               </div>
-              <h3 className="text-base font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                 Eng maqbul narxda oling
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
                 Haqiqiy narx tarixini ko'rib xarid qiling yoki narx tushganda avtomatik xabar beruvchi "Narx ogohlantirishini" yoqing.
               </p>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1 text-xs text-slate-400">
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
               <CheckCircleIcon size={13} />
               <span>Foydali xarid kafolati</span>
             </div>
@@ -549,20 +850,20 @@ export const LandingPage = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 5. BUYER & SELLER DUAL SHOWCASE                                            */}
+      {/* 6. BUYER & SELLER DUAL SHOWCASE                                            */}
       {/* ========================================================================= */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* For Buyers */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xs hover:border-orange-400 transition-all">
+        <div className="bg-white dark:bg-[#090D16] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xs hover:border-orange-400 transition-all">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 border border-orange-200 text-orange-700 text-xs font-bold mb-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800/60 text-orange-700 dark:text-orange-300 text-xs font-bold mb-4">
               <UserIcon size={15} />
               <span>Xaridorlar uchun</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
               Xarid qilishdan oldin bozor haqiqatini biling
             </h3>
-            <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 mb-8">
+            <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-8">
               <li className="flex items-start gap-2.5">
                 <CheckCircleIcon size={18} className="text-orange-600 shrink-0 mt-0.5" />
                 <span>Bozordagi eng past, eng yuqori va o'rtacha muvozanatli narxni ko'rish</span>
@@ -592,16 +893,16 @@ export const LandingPage = () => {
         </div>
 
         {/* For Sellers */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xs hover:border-amber-400 transition-all">
+        <div className="bg-white dark:bg-[#090D16] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xs hover:border-amber-400 transition-all">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold mb-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 text-amber-800 dark:text-amber-300 text-xs font-bold mb-4">
               <ShopIcon size={15} />
               <span>Do'konlar va Sotuvchilar uchun</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-3">
               Raqobatchilar narxlarini kuzating va savdoni oshiring
             </h3>
-            <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 mb-8">
+            <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-8">
               <li className="flex items-start gap-2.5">
                 <CheckCircleIcon size={18} className="text-amber-600 shrink-0 mt-0.5" />
                 <span>Rasmiy verifikatsiyadan o'tgan ishonchli do'kon maqomi</span>

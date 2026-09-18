@@ -4,7 +4,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { alertService } from '../../api/services';
 import SolarIcon from '../common/SolarIcon';
-import KatalogMenu from './KatalogMenu';
 import SearchAutocomplete from '../common/SearchAutocomplete';
 
 export const Header = () => {
@@ -12,7 +11,6 @@ export const Header = () => {
   const { theme, isDark, toggleTheme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const [katalogOpen, setKatalogOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showNotifs, setShowNotifs] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -20,8 +18,6 @@ export const Header = () => {
   const location = useLocation();
   const userMenuRef = useRef(null);
   const notifRef = useRef(null);
-  const katalogRef = useRef(null);
-  const katalogBtnRef = useRef(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,17 +36,13 @@ export const Header = () => {
       if (notifRef.current && !notifRef.current.contains(e.target)) {
         setShowNotifs(false);
       }
-      if (katalogRef.current && !katalogRef.current.contains(e.target) && !katalogBtnRef.current?.contains(e.target)) {
-        setKatalogOpen(false);
-      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Close Katalog when route changes
+  // Close user menu when route changes
   useEffect(() => {
-    setKatalogOpen(false);
     setShowUserMenu(false);
   }, [location.pathname]);
 
@@ -76,7 +68,13 @@ export const Header = () => {
 
   // Main navigation links including dedicated AI Maslahatchi section
   const mainNavLinks = [
-    { to: '/', label: 'Bozor', sub: 'Asosiy sahifa', icon: 'Dashboard', exact: true },
+    { 
+      to: isAuthenticated ? '/dashboard' : '/', 
+      label: 'Bosh sahifa', 
+      sub: isAuthenticated ? 'Bozor terminali' : 'Platforma', 
+      icon: isAuthenticated ? 'Dashboard' : 'Home2', 
+      exact: true 
+    },
     { to: '/search', label: 'Narx tahlili', sub: 'Bozor qidiruvi', icon: 'Search' },
     { to: '/ai-advisor', label: 'AI Maslahatchi', sub: 'Aqlli tahlil', icon: 'Sparkles' },
     { to: '/compare', label: 'Taqqoslash', sub: '2-5 mahsulot', icon: 'Compare' },
@@ -87,6 +85,7 @@ export const Header = () => {
   // Contextual sub-navs
   const isSellerArea = location.pathname.startsWith('/seller');
   const isAdminArea = location.pathname.startsWith('/admin');
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname.startsWith('/onboarding');
 
   const sellerSubNav = [
     { to: '/seller', label: 'Ko\'rsatkichlar', exact: true },
@@ -110,7 +109,7 @@ export const Header = () => {
     <div className="sticky top-0 z-50 w-full bg-white dark:bg-[#0B0F19] border-b border-slate-200 dark:border-slate-800 shadow-xs transition-colors duration-200">
       {/* Primary Top Bar: Brand, Katalog, Search, User Actions */}
       <header className="w-full bg-white dark:bg-[#0B0F19] border-b border-slate-100 dark:border-slate-800/80 px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3 sm:gap-6">
-        {/* Left: Brand Logo & KATALOG Button */}
+        {/* Left: Brand Logo */}
         <div className="flex items-center gap-3 sm:gap-4 shrink-0">
           <NavLink to="/" className="flex items-center group py-0.5" title="Milliy Narx">
             <img
@@ -119,29 +118,6 @@ export const Header = () => {
               className="h-7 sm:h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-[1.02]"
             />
           </NavLink>
-
-          {/* Prominent Flame-Orange KATALOG Button */}
-          <button
-            ref={katalogBtnRef}
-            type="button"
-            onClick={() => setKatalogOpen(!katalogOpen)}
-            className={`
-              flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-xl font-bold text-xs sm:text-sm
-              transition-all shadow-xs active:scale-95 cursor-pointer shrink-0 border
-              ${katalogOpen 
-                ? 'bg-orange-50 border-orange-300 text-orange-700 shadow-2xs' 
-                : 'bg-orange-600 hover:bg-orange-700 text-white border-transparent'}
-            `}
-            title="Katalog va Bozor bo'limlarini ochish"
-          >
-            <SolarIcon name={katalogOpen ? 'Close' : 'Grid'} size={17} />
-            <span>Katalog</span>
-            <SolarIcon 
-              name="ChevronDown" 
-              size={13} 
-              className={`transition-transform duration-200 ${katalogOpen ? 'rotate-180 text-orange-600' : 'text-white'}`} 
-            />
-          </button>
         </div>
 
         {/* Center: Spacious, Uncramped Global Search Input with Autocomplete (Desktop/Tablet) */}
@@ -280,6 +256,14 @@ export const Header = () => {
 
                   <div className="py-1">
                     <button
+                      onClick={() => { setShowUserMenu(false); navigate('/dashboard'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-orange-700 hover:bg-orange-50 font-bold text-left transition-colors cursor-pointer"
+                    >
+                      <SolarIcon name="Dashboard" size={16} className="text-orange-600" />
+                      <span>Shaxsiy Dashboard</span>
+                    </button>
+
+                    <button
                       onClick={() => { setShowUserMenu(false); navigate('/profile'); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-slate-700 hover:bg-orange-50 hover:text-orange-700 text-left transition-colors cursor-pointer"
                     >
@@ -400,54 +384,56 @@ export const Header = () => {
         </div>
       )}
 
-      {/* Secondary Navigation Strip: Displayed on Tablet/Desktop; on Mobile replaced by MobileTabBar */}
-      <nav className="hidden md:flex w-full bg-slate-50 dark:bg-[#0D1424] border-b border-slate-200/80 dark:border-slate-800/90 px-4 sm:px-6 lg:px-8 h-11 items-center justify-between overflow-x-auto gap-4 scrollbar-none transition-colors duration-200">
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {mainNavLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.exact}
-              className={({ isActive }) => `
-                flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap font-medium
-                ${isActive 
-                  ? 'bg-orange-600 text-white shadow-xs font-bold' 
-                  : 'text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-white dark:hover:bg-slate-800/80'}
-              `}
-            >
-              {link.to === '/ai-advisor' ? (
-                <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain shrink-0" />
-              ) : (
-                <SolarIcon name={link.icon} size={15} />
-              )}
-              <span>{link.label}</span>
-            </NavLink>
-          ))}
-        </div>
+      {/* Secondary Navigation Strip: Hidden on auth pages (login/register) and on landing page if not authenticated */}
+      {!isAuthPage && (isAuthenticated || location.pathname !== '/') && (
+        <nav className="hidden md:flex w-full bg-slate-50 dark:bg-[#0D1424] border-b border-slate-200/80 dark:border-slate-800/90 px-4 sm:px-6 lg:px-8 h-11 items-center justify-between overflow-x-auto gap-4 scrollbar-none transition-colors duration-200">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            {mainNavLinks.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.exact}
+                className={({ isActive }) => `
+                  flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-all whitespace-nowrap font-medium
+                  ${isActive 
+                    ? 'bg-orange-600 text-white shadow-xs font-bold' 
+                    : 'text-slate-700 dark:text-slate-200 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-white dark:hover:bg-slate-800/80'}
+                `}
+              >
+                {link.to === '/ai-advisor' ? (
+                  <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain shrink-0" />
+                ) : (
+                  <SolarIcon name={link.icon} size={15} />
+                )}
+                <span>{link.label}</span>
+              </NavLink>
+            ))}
+          </div>
 
-        {/* Live status badge & Quick role toggle on right */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          {isSeller && (
-            <NavLink 
-              to="/seller"
-              className="text-[11px] font-semibold text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-950/60 hover:bg-orange-200 dark:hover:bg-orange-900/60 border border-transparent dark:border-orange-800/40 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1"
-            >
-              <SolarIcon name="Store" size={13} />
-              <span>Do'kon paneli</span>
-            </NavLink>
-          )}
+          {/* Live status badge & Quick role toggle on right */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            {isSeller && (
+              <NavLink 
+                to="/seller"
+                className="text-[11px] font-semibold text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-950/60 hover:bg-orange-200 dark:hover:bg-orange-900/60 border border-transparent dark:border-orange-800/40 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1"
+              >
+                <SolarIcon name="Store" size={13} />
+                <span>Do'kon paneli</span>
+              </NavLink>
+            )}
 
-          {isAdmin && (
-            <NavLink 
-              to="/admin"
-              className="text-[11px] font-semibold text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 hover:bg-red-200 dark:hover:bg-red-900/60 border border-transparent dark:border-red-800/50 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 font-mono"
-            >
-              <SolarIcon name="Shield" size={13} />
-              <span>ROOT Terminal</span>
-            </NavLink>
-          )}
-        </div>
-      </nav>
+            {isAdmin && (
+              <NavLink 
+                to="/admin"
+                className="text-[11px] font-semibold text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 hover:bg-red-200 dark:hover:bg-red-900/60 border border-transparent dark:border-red-800/50 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 font-mono"
+              >
+                <SolarIcon name="Shield" size={13} />
+                <span>ROOT Terminal</span>
+              </NavLink>
+            )}
+          </div>
+        </nav>
+      )}
 
       {/* Contextual Sub-Nav Bar for Seller & Admin (when deep inside these panels) */}
       {isSellerArea && (
@@ -507,9 +493,6 @@ export const Header = () => {
           </div>
         </div>
       )}
-
-      {/* KATALOG Dropdown Mega-Menu (Shelf, No Modal Backdrop) */}
-      <KatalogMenu isOpen={katalogOpen} onClose={() => setKatalogOpen(false)} menuRef={katalogRef} />
     </div>
   );
 };

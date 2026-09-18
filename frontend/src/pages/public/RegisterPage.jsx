@@ -47,7 +47,7 @@ export const RegisterPage = () => {
     if (user.role === 'SELLER') {
       navigate('/onboarding');
     } else {
-      navigate('/');
+      navigate('/dashboard');
     }
   };
 

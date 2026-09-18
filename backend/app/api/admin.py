@@ -51,6 +51,52 @@ def get_admin_metrics(
         active_subscriptions=active_subscriptions
     )
 
+@router.get("/trends")
+def get_admin_trends(
+    admin_user: User = Depends(require_role(["ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    """
+    Returns platform-level real trends for searches, users, and price sync events.
+    100% genuine database data.
+    """
+    sync_rows = db.query(
+        func.date(PriceHistory.recorded_at).label('date'),
+        func.count(PriceHistory.id).label('synced_count')
+    ).group_by(func.date(PriceHistory.recorded_at)).order_by(func.date(PriceHistory.recorded_at)).all()
+    
+    search_rows = db.query(
+        func.date(Search.created_at).label('date'),
+        func.count(Search.id).label('search_count')
+    ).group_by(func.date(Search.created_at)).all()
+    search_map = {str(r.date): r.search_count for r in search_rows}
+    
+    user_rows = db.query(
+        func.date(User.created_at).label('date'),
+        func.count(User.id).label('user_count')
+    ).group_by(func.date(User.created_at)).all()
+    user_map = {str(r.date): r.user_count for r in user_rows}
+
+    month_names = {
+        '01': 'Yan', '02': 'Fev', '03': 'Mar', '04': 'Apr',
+        '05': 'May', '06': 'Iyun', '07': 'Iyul', '08': 'Avg',
+        '09': 'Sen', '10': 'Okt', '11': 'Noy', '12': 'Dek'
+    }
+
+    trends = []
+    for r in sync_rows:
+        d_str = str(r.date)
+        parts = d_str.split('-')
+        label = f"{int(parts[2])} {month_names.get(parts[1], parts[1])}" if len(parts) == 3 else d_str
+        trends.append({
+            "date": d_str,
+            "label": label,
+            "syncedPrices": r.synced_count,
+            "searches": search_map.get(d_str, 0),
+            "newUsers": user_map.get(d_str, 0)
+        })
+    return trends
+
 @router.get("/sellers")
 def get_admin_sellers(
     status_filter: Optional[str] = None,

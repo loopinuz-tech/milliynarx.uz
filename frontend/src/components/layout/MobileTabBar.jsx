@@ -22,13 +22,13 @@ export const MobileTabBar = () => {
     ? 'Admin' 
     : isSeller 
     ? 'Do\'kon' 
-    : 'Kabinet';
+    : 'Profil';
 
   const navItems = [
     {
-      to: '/',
-      label: 'Bozor',
-      icon: 'Home2',
+      to: isAuthenticated ? '/dashboard' : '/',
+      label: 'Bosh sahifa',
+      icon: isAuthenticated ? 'Dashboard' : 'Home2',
       exact: true
     },
     {

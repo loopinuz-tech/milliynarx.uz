@@ -12,6 +12,7 @@ import RegisterPage from '../pages/public/RegisterPage';
 import AiAdvisorPage from '../pages/public/AiAdvisorPage';
 
 // Buyer Pages
+import BuyerDashboard from '../pages/buyer/BuyerDashboard';
 import FavoritesPage from '../pages/buyer/FavoritesPage';
 import AlertsPage from '../pages/buyer/AlertsPage';
 import ProfilePage from '../pages/buyer/ProfilePage';
@@ -50,7 +51,8 @@ export const AppRouter = () => {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
-        {/* Buyer Routes */}
+        {/* Buyer & User Dashboard Routes */}
+        <Route path="dashboard" element={<ProtectedRoute><BuyerDashboard /></ProtectedRoute>} />
         <Route path="favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
         <Route path="alerts" element={<ProtectedRoute><AlertsPage /></ProtectedRoute>} />
         <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
