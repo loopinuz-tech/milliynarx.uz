@@ -42,6 +42,8 @@ class Settings(BaseSettings):
         "http://milliynarx.uz",
         "https://milliynarx.vercel.app",
         "http://milliynarx.vercel.app",
+        "https://milliynarx-uz-topaz.vercel.app",
+        "http://milliynarx-uz-topaz.vercel.app",
         "https://milliy-narx.uz",
         "http://milliy-narx.uz"
     ]
