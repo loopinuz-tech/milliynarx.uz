@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # 1. PostgreSQL Database on Contabo VPS
+  db:
+    image: postgres:16-alpine
+    container_name: milliynarx_db
+    restart: always
+    environment:
+      POSTGRES_DB: milliynarx
+      POSTGRES_USER: milliynarx_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-SecureContaboPass2026!}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U milliynarx_user -d milliynarx"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. FastAPI Backend
+  backend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.backend
+    container_name: milliynarx_backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://milliynarx_user:${DB_PASSWORD:-SecureContaboPass2026!}@db:5432/milliynarx
+      JWT_SECRET: ${JWT_SECRET:-super-secret-milliy-narx-jwt-token-key-2026}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      UPLOAD_DIR: /app/uploads
+      CORS_ORIGINS: '["https://milliy-narx.uz","http://milliy-narx.uz","http://localhost:5173"]'
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  # 3. Frontend & Reverse Proxy (Nginx)
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile.frontend
+    container_name: milliynarx_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - uploads_data:/var/www/milliynarx/uploads
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  postgres_data:
+  uploads_data:

@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: #F8FAFC;
+  color: #0F172A;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Dark Mode Global Base */
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark, html.dark body, html.dark #root {
+  background-color: #090D16;
+  color: #F8FAFC;
+}
+
+/* Full width terminal rules */
+.terminal-layout {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.terminal-main {
+  flex: 1 1 0%;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #F8FAFC;
+  transition: background-color 0.2s ease;
+}
+
+html.dark .terminal-main {
+  background-color: #090D16;
+}
+
+/* ========================================================================= */
+/* DARK MODE TEXT COLOR CONTRAST FIXES                                       */
+/* ========================================================================= */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-800 {
+  color: #F1F5F9 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #E2E8F0 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* ========================================================================= */
+/* DARK MODE BACKGROUNDS & BORDERS                                           */
+/* ========================================================================= */
+html.dark .bg-white,
+html.dark [class*="bg-white"] {
+  background-color: #111827 !important;
+}
+
+html.dark [class*="bg-slate-50"] {
+  background-color: #0F172A !important;
+}
+
+html.dark [class*="bg-slate-100"] {
+  background-color: #1E293B !important;
+}
+
+html.dark [class*="bg-orange-50"] {
+  background-color: rgba(67, 26, 10, 0.45) !important;
+}
+
+html.dark [class*="bg-amber-50"] {
+  background-color: rgba(69, 39, 16, 0.45) !important;
+}
+
+html.dark [class*="bg-emerald-50"] {
+  background-color: rgba(6, 78, 59, 0.3) !important;
+}
+
+html.dark [class*="bg-emerald-100"] {
+  background-color: rgba(6, 78, 59, 0.5) !important;
+}
+
+html.dark [class*="border-emerald-200"] {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+}
+
+html.dark [class*="text-emerald-800"],
+html.dark [class*="text-emerald-700"] {
+  color: #34D399 !important;
+}
+
+html.dark [class*="text-orange-950"],
+html.dark [class*="text-orange-900"] {
+  color: #FDBA74 !important;
+}
+
+html.dark [class*="text-amber-950"],
+html.dark [class*="text-amber-900"],
+html.dark [class*="text-amber-800"] {
+  color: #FCD34D !important;
+}
+
+html.dark [class*="text-amber-700"] {
+  color: #FBBF24 !important;
+}
+
+html.dark [class*="bg-amber-100"] {
+  background-color: rgba(120, 53, 15, 0.45) !important;
+}
+
+html.dark [class*="bg-amber-200"] {
+  background-color: rgba(180, 83, 9, 0.45) !important;
+}
+
+html.dark [class*="border-amber-200"],
+html.dark [class*="border-amber-300"] {
+  border-color: rgba(180, 83, 9, 0.4) !important;
+}
+
+html.dark [class*="border-slate-100"] {
+  border-color: #1E293B !important;
+}
+
+html.dark [class*="border-slate-200"] {
+  border-color: #27354A !important;
+}
+
+html.dark [class*="border-orange-100"] {
+  border-color: rgba(154, 52, 18, 0.35) !important;
+}
+
+html.dark [class*="border-orange-200"] {
+  border-color: rgba(154, 52, 18, 0.45) !important;
+}
+
+html.dark [class*="hover:bg-slate-50"]:hover {
+  background-color: #1E293B !important;
+}
+
+html.dark [class*="hover:bg-slate-100"]:hover {
+  background-color: #27354A !important;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #090D16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Tabular numbers for clean financial alignment */
+.font-numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* ========================================================================= */
+/* NATIVE MOBILE APP UX & TOUCH OPTIMIZATIONS                                */
+/* ========================================================================= */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  overscroll-behavior-y: contain;
+  touch-action: manipulation;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for clean app-like horizontal pill bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area insets for modern mobile bottom bars */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+
+.bottom-bar-safe {
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 0px));
+}

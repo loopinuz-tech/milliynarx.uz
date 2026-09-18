@@ -1,0 +1,29 @@
+[Unit]
+Description=Milliy Narx Market Intelligence FastAPI Backend Service
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/milliynarx
+Environment="PATH=/var/www/milliynarx/venv/bin"
+EnvironmentFile=/var/www/milliynarx/.env
+ExecStart=/var/www/milliynarx/venv/bin/uvicorn backend.app.main:app --host 127.0.0.1 --port 8000 --workers 4
+
+Restart=always
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=milliy-narx-api
+
+# Security sandboxing
+CapabilityBoundingSet=
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
