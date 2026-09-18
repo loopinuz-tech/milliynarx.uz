@@ -38,14 +38,8 @@ class Settings(BaseSettings):
         "http://127.0.0.1:5173",
         "http://localhost:3000",
         "http://localhost:8000",
-        "https://milliynarx.uz",
-        "http://milliynarx.uz",
-        "https://milliynarx.vercel.app",
-        "http://milliynarx.vercel.app",
-        "https://milliynarx-uz-topaz.vercel.app",
-        "http://milliynarx-uz-topaz.vercel.app",
-        "https://milliy-narx.uz",
-        "http://milliy-narx.uz"
+        "https://milliynarx.eduxa.uz",
+        "http://milliynarx.eduxa.uz",
     ]
     
     # Storage for Contabo VPS
