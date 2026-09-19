@@ -29,10 +29,12 @@ import SellerPriceHistory from '../pages/seller/SellerPriceHistory';
 import SellerStore from '../pages/seller/SellerStore';
 import OnboardingPage from '../pages/seller/OnboardingPage';
 
-// Standalone Admin Panel Redirect (Running separately on port 5174)
 const AdminRedirect = () => {
   React.useEffect(() => {
-    window.location.href = 'http://localhost:5174';
+    const adminUrl = window.location.hostname === 'localhost'
+      ? 'http://localhost:5174'
+      : 'https://adminmilliynarx.eduxa.uz';
+    window.location.href = adminUrl;
   }, []);
 
   return (
@@ -44,17 +46,8 @@ const AdminRedirect = () => {
         </svg>
       </div>
       <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
-        Administrator Boshqaruv Markaziga Yo'naltirilmoqda...
+        Admin paneliga yo'naltirilmoqda...
       </h2>
-      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-4">
-        Admin paneli xavfsizlik va mustaqillik talablariga asosan alohida xavfsiz portda (5174) ishlamoqda.
-      </p>
-      <a
-        href="http://localhost:5174"
-        className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors"
-      >
-        To'g'ridan-to'g'ri o'tish (5174) &rarr;
-      </a>
     </div>
   );
 };
