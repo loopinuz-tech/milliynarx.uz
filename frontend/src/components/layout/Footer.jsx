@@ -1,9 +1,11 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import SolarIcon from '../common/SolarIcon';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export const Footer = () => {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
 
   return (
     <footer className="w-full bg-white dark:bg-[#0B0F19] border-t border-slate-200/90 dark:border-slate-800 mt-auto transition-colors">
@@ -15,7 +17,7 @@ export const Footer = () => {
           <div className="sm:col-span-2 lg:col-span-2 space-y-4">
             <NavLink to="/" className="flex items-center group py-0.5 w-fit" title="Milliy Narx">
               <img
-                src="/topbarnmimg.png"
+                src={isDark ? "/topbarimgdark.png" : "/topbarnmimg.png"}
                 alt="Milliy Narx"
                 className="h-8 sm:h-9 w-auto object-contain transition-transform group-hover:scale-[1.01]"
               />

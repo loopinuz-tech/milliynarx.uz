@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import SolarIcon from '../../components/common/SolarIcon';
 import TelegramAuthModal from '../../components/auth/TelegramAuthModal';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
@@ -13,6 +14,7 @@ export const LoginPage = () => {
   const [telegramModalOpen, setTelegramModalOpen] = useState(false);
 
   const { login, loginWithToken } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -61,7 +63,7 @@ export const LoginPage = () => {
         {/* Header Brand Logo */}
         <div className="flex flex-col items-center justify-center mb-6 text-center">
           <Link to="/" className="inline-flex items-center justify-center group" title="Bosh sahifa">
-            <img src="/topbarnmimg.png" alt="Milliy Narx" className="h-8 sm:h-9 w-auto object-contain hover:opacity-90 transition-opacity" />
+            <img src={isDark ? "/topbarimgdark.png" : "/topbarnmimg.png"} alt="Milliy Narx" className="h-8 sm:h-9 w-auto object-contain hover:opacity-90 transition-opacity" />
           </Link>
         </div>
 

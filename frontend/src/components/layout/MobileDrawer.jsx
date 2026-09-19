@@ -76,7 +76,7 @@ export const MobileDrawer = ({
         {/* Drawer Header */}
         <div className="p-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between shrink-0 bg-slate-50/50 dark:bg-[#0F1422]">
           <NavLink to="/" onClick={onClose} className="flex items-center gap-2">
-            <img src="/topbarnmimg.png" alt="Milliy Narx" className="h-7 w-auto object-contain" />
+            <img src={isDark ? "/topbarimgdark.png" : "/topbarnmimg.png"} alt="Milliy Narx" className="h-7 w-auto object-contain" />
           </NavLink>
 
           <button

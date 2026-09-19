@@ -133,7 +133,7 @@ export const Header = () => {
           {/* Logo */}
           <NavLink to="/" className="flex items-center group py-0.5 shrink-0" title="Milliy Narx">
             <img
-              src="/topbarnmimg.png"
+              src={isDark ? "/topbarimgdark.png" : "/topbarnmimg.png"}
               alt="Milliy Narx"
               className="h-7 sm:h-8 md:h-9 w-auto object-contain transition-transform group-hover:scale-[1.02]"
             />
