@@ -1,9 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { compareService, productService } from '../../api/services';
+import { compareService, productService, aiService } from '../../api/services';
 import { formatPrice } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import Badge from '../../components/common/Badge';
+
+const SPEC_KEY_LABELS = {
+  unit: "O'lchov birligi",
+  source: "Ma'lumot manbai",
+  last_period: "Oxirgi davr",
+  direction: "Narx yo'nalishi",
+  change_percent: "O'zgarish foizi",
+  brand: "Brend",
+  model: "Model",
+  color: "Rangi",
+  weight: "Og'irligi",
+  size: "O'lchami",
+  material: "Materiali",
+  warranty: "Kafolat",
+  country: "Ishlab chiqaruvchi mamlakat",
+  power: "Quvvati",
+  voltage: "Kuchlanish",
+  capacity: "Sig'imi",
+  frequency: "Chastota",
+};
 
 export const ComparePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,6 +44,11 @@ export const ComparePage = () => {
   // Popular/recommended products for empty state
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [toastMessage, setToastMessage] = useState(null);
+
+  // AI Comparison
+  const [aiCompareResult, setAiCompareResult] = useState(null);
+  const [aiCompareLoading, setAiCompareLoading] = useState(false);
+  const [aiCompareTriggered, setAiCompareTriggered] = useState(false);
 
   const searchInputRef = useRef(null);
 
@@ -69,10 +94,37 @@ export const ComparePage = () => {
     fetchRecommended();
   }, []);
 
+  // Auto-trigger AI comparison when 2+ products loaded
+  useEffect(() => {
+    if (comparisonData?.products?.length >= 2 && !aiCompareTriggered) {
+      runAiComparison(comparisonData.products);
+    }
+  }, [comparisonData]);
+
+  async function runAiComparison(prods) {
+    if (!prods || prods.length < 2) return;
+    setAiCompareLoading(true);
+    setAiCompareTriggered(true);
+    try {
+      const productList = prods.map((p, i) =>
+        `${i + 1}. ${p.name} — Narxi: ${formatPrice(p.price)}, Sotuvchi: ${p.seller_name || "Do'kon"}, Kafolat: ${p.warranty || 'noaniq'}`
+      ).join('\n');
+      const message = `Quyidagi ${prods.length} ta mahsulotni qisqacha taqqoslab, har birining afzalligi va kamchiligi, ishlatish sarfi, quvvati, narxi va sifat-narx nisbati bo'yicha tahlil qiling. Javobni o'zbek tilida, 3-5 ta qisqa punkt ko'rinishida bering:\n\n${productList}`;
+      const res = await aiService.chat(message);
+      setAiCompareResult(res.response || res.message || res.analysis_text || '');
+    } catch (err) {
+      setAiCompareResult(null);
+    } finally {
+      setAiCompareLoading(false);
+    }
+  }
+
   async function loadComparison(ids) {
     try {
       setLoading(true);
       setError(null);
+      setAiCompareTriggered(false);
+      setAiCompareResult(null);
       const res = await compareService.compare(ids);
       setComparisonData(res);
     } catch (err) {
@@ -811,7 +863,7 @@ export const ComparePage = () => {
                       >
                         <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 sticky left-0 bg-white dark:bg-[#111827] z-10 border-r border-slate-200 dark:border-slate-800 w-32 sm:w-56">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span>{specKey}</span>
+                            <span>{SPEC_KEY_LABELS[specKey] || specKey}</span>
                             {isDiff && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300" title="Mahsulotlar orasida farq bor">
                                 Farqli
@@ -841,6 +893,48 @@ export const ComparePage = () => {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* AI COMPARISON SECTION */}
+        {!loading && !error && products.length >= 2 && (
+          <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-2xs">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <img src="/aiimg.png" alt="AI" className="w-5 h-5 rounded-full object-cover" />
+                <h2 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
+                  AI Taqqoslash Tahlili
+                </h2>
+              </div>
+              {!aiCompareLoading && (
+                <button
+                  onClick={() => {
+                    setAiCompareTriggered(false);
+                    setAiCompareResult(null);
+                    runAiComparison(products);
+                  }}
+                  className="px-3 py-1.5 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 text-orange-600 dark:text-orange-400 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center gap-1"
+                >
+                  <SolarIcon name="Refresh" size={14} />
+                  <span>Qayta tahlil</span>
+                </button>
+              )}
+            </div>
+
+            {aiCompareLoading ? (
+              <div className="flex items-center gap-3 py-6 justify-center text-sm text-slate-500 dark:text-slate-400">
+                <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                <span>AI mahsulotlarni taqqoslayapti...</span>
+              </div>
+            ) : aiCompareResult ? (
+              <div className="prose prose-sm max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                {aiCompareResult}
+              </div>
+            ) : (
+              <div className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">
+                AI tahlilini yuklashda xatolik yuz berdi. Qayta urinib ko'ring.
+              </div>
+            )}
           </div>
         )}
       </div>

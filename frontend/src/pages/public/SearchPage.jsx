@@ -50,6 +50,30 @@ const getCategoryImg = (cat) => {
   return CATEGORY_IMAGE_MAP[slug] || CATEGORY_IMAGE_MAP[name] || '/gadgetjs.png';
 };
 
+const CATEGORY_PLACEHOLDER_ICONS = {
+  "yoqilg'i": "GasStation", "energiya": "GasStation",
+  "o'g'it": "Leaf", "agrokimyo": "Leaf",
+  "oziq-ovqat": "Cup", "qishloq": "Cup",
+  "qurilish": "Buildings", "metall": "Widget", "metallurgiya": "Widget",
+  "moy": "WaterDrop", "surkov": "WaterDrop",
+  "kimyo": "TestTube", "plastik": "Box", "polimer": "Box",
+  "to'qimachilik": "Hanger", "tekstil": "Hanger", "paxta": "Leaf",
+  "smartfon": "Smartphone", "telefon": "Smartphone",
+  "noutbuk": "Laptop", "kompyuter": "Laptop",
+  "televizor": "Monitor", "maishiy": "Fridge", "texnika": "Fridge",
+  "mebel": "Armchair", "kiyim": "Hanger",
+  "tibbiyot": "Heart", "farmatsevtika": "Heart",
+};
+
+function getProductIcon(categoryName) {
+  if (!categoryName) return "Box";
+  const lower = categoryName.toLowerCase();
+  for (const [keyword, icon] of Object.entries(CATEGORY_PLACEHOLDER_ICONS)) {
+    if (lower.includes(keyword)) return icon;
+  }
+  return "Box";
+}
+
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -65,7 +89,7 @@ export const SearchPage = () => {
   const [categoryStats, setCategoryStats] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('grid'); // Default to G2G grid cards (Image 1)
+  const [viewMode, setViewMode] = useState('table');
 
   // Drawer state for multi-seller comparison (Images 2 & 3)
   const [comparisonProductId, setComparisonProductId] = useState(null);
@@ -613,7 +637,11 @@ export const SearchPage = () => {
                             className="h-full w-full object-contain p-2 sm:p-3 group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
-                          <SolarIcon name="Box" size={32} className="text-slate-300 dark:text-slate-600" />
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
+                              <SolarIcon name={getProductIcon(p.category_name)} size={24} className="text-orange-400 dark:text-orange-500" />
+                            </div>
+                          </div>
                         )}
                       </div>
 
@@ -690,7 +718,7 @@ export const SearchPage = () => {
                                 {primaryImg ? (
                                   <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
                                 ) : (
-                                  <SolarIcon name="Box" size={20} className="text-slate-400" />
+                                  <SolarIcon name={getProductIcon(p.category_name)} size={20} className="text-orange-400" />
                                 )}
                               </div>
                               <div className="truncate max-w-[140px] sm:max-w-xs md:max-w-sm">

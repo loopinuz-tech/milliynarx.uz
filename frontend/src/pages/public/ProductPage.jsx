@@ -27,6 +27,66 @@ function cleanAiSummary(text) {
   return cleaned;
 }
 
+const SPEC_KEY_LABELS = {
+  unit: "O'lchov birligi",
+  source: "Ma'lumot manbai",
+  last_period: "Oxirgi davr",
+  direction: "Narx yo'nalishi",
+  change_percent: "O'zgarish foizi",
+  brand: "Brend",
+  model: "Model",
+  color: "Rangi",
+  weight: "Og'irligi",
+  size: "O'lchami",
+  material: "Materiali",
+  warranty: "Kafolat",
+  country: "Ishlab chiqaruvchi mamlakat",
+  power: "Quvvati",
+  voltage: "Kuchlanish",
+  capacity: "Sig'imi",
+  frequency: "Chastota",
+};
+
+const CATEGORY_PLACEHOLDER_ICONS = {
+  "yoqilg'i": "GasStation",
+  "energiya": "GasStation",
+  "o'g'it": "Leaf",
+  "agrokimyo": "Leaf",
+  "oziq-ovqat": "Cup",
+  "qishloq": "Cup",
+  "qurilish": "Buildings",
+  "metall": "Widget",
+  "metallurgiya": "Widget",
+  "moy": "WaterDrop",
+  "surkov": "WaterDrop",
+  "kimyo": "TestTube",
+  "plastik": "Box",
+  "polimer": "Box",
+  "to'qimachilik": "Hanger",
+  "tekstil": "Hanger",
+  "paxta": "Leaf",
+  "smartfon": "Smartphone",
+  "telefon": "Smartphone",
+  "noutbuk": "Laptop",
+  "kompyuter": "Laptop",
+  "televizor": "Monitor",
+  "maishiy": "Fridge",
+  "texnika": "Fridge",
+  "mebel": "Armchair",
+  "kiyim": "Hanger",
+  "tibbiyot": "Heart",
+  "farmatsevtika": "Heart",
+};
+
+function getCategoryIcon(categoryName) {
+  if (!categoryName) return "Box";
+  const lower = categoryName.toLowerCase();
+  for (const [keyword, icon] of Object.entries(CATEGORY_PLACEHOLDER_ICONS)) {
+    if (lower.includes(keyword)) return icon;
+  }
+  return "Box";
+}
+
 export const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -352,7 +412,12 @@ export const ProductPage = () => {
                 className="max-h-full max-w-full object-contain p-6 group-hover:scale-105 transition-transform duration-200"
               />
             ) : (
-              <SolarIcon name="Box" size={56} className="text-slate-300 dark:text-slate-700" />
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-20 h-20 rounded-2xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
+                  <SolarIcon name={getCategoryIcon(product.category_name)} size={40} className="text-orange-400 dark:text-orange-500" />
+                </div>
+                <span className="text-xs text-slate-400 font-medium">{product.category_name || 'Mahsulot'}</span>
+              </div>
             )}
           </div>
 
@@ -482,7 +547,10 @@ export const ProductPage = () => {
         </div>
       </div>
 
-      {/* 4. SELLER OFFERS */}
+      {/* 4. HISTORICAL PRICE TREND CHART */}
+      <PriceChart data={price_history} height={360} />
+
+      {/* 5. SELLER OFFERS */}
       <div id="sellers-section" className="w-full bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-xs space-y-2 transition-colors">
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-2">
@@ -603,10 +671,7 @@ export const ProductPage = () => {
         </div>
       </div>
 
-      {/* 6. HISTORICAL PRICE TREND CHART (MAGNETIC INTERACTION & MULTI-TIMEFRAMES) */}
-      <PriceChart data={price_history} height={360} />
-
-      {/* 7. DETAILED SPECIFICATIONS MATRIX */}
+      {/* 6. DETAILED SPECIFICATIONS MATRIX */}
       {product.specifications && Object.keys(product.specifications).length > 0 && (
         <div className="w-full bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xs">
           <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight mb-4 flex items-center gap-2">
@@ -616,7 +681,7 @@ export const ProductPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-xs">
             {Object.entries(product.specifications).map(([key, val]) => (
               <div key={key} className="flex justify-between py-2.5 border-b border-slate-100">
-                <span className="text-slate-500 font-medium">{key}</span>
+                <span className="text-slate-500 font-medium">{SPEC_KEY_LABELS[key] || key}</span>
                 <span className="text-slate-900 font-bold text-right">{String(val)}</span>
               </div>
             ))}
@@ -674,7 +739,9 @@ export const ProductPage = () => {
                           className="w-full h-full object-contain"
                         />
                       ) : (
-                        <SolarIcon name="Box" size={32} className="text-slate-300" />
+                        <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
+                          <SolarIcon name={getCategoryIcon(item.category_name)} size={24} className="text-orange-400" />
+                        </div>
                       )}
                       {item.condition && (
                         <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-slate-900/70 text-white text-[9px] font-bold rounded uppercase">
