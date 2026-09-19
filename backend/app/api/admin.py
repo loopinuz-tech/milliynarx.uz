@@ -12,7 +12,7 @@ from backend.app.api.auth import require_role
 from backend.app.core.security import get_password_hash
 from backend.app.schemas.schemas import (
     AdminMetricsOut, ProductOut, ProductCreate, CategoryCreate, CategoryUpdate, BrandCreate, BrandUpdate, 
-    ProductUpdate, UserOut
+    ProductUpdate, UserOut, AdminUserUpdate
 )
 from backend.app.core.slug import generate_unique_slug
 
@@ -217,6 +217,41 @@ def get_seller_details(
             } for p in seller.products
         ]
     }
+
+@router.delete("/sellers/{seller_id}")
+def delete_seller(
+    seller_id: str,
+    admin_user: User = Depends(require_role(["ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    seller = db.query(Seller).filter(Seller.id == seller_id).first()
+    if not seller:
+        raise HTTPException(status_code=404, detail="Sotuvchi do'koni topilmadi")
+        
+    store_name = seller.store_name
+    seller_user = seller.user
+    
+    # Remove related price history entries
+    db.query(PriceHistory).filter(PriceHistory.seller_id == seller.id).delete()
+    
+    # Audit log before deletion
+    audit = AuditLog(
+        user_id=admin_user.id,
+        action="DELETE_SELLER",
+        entity_type="SELLER",
+        entity_id=seller.id,
+        old_values={"store_name": store_name, "user_id": seller.user_id},
+        new_values=None
+    )
+    db.add(audit)
+    
+    # Demote seller's user role to BUYER if applicable
+    if seller_user and seller_user.role == "SELLER":
+        seller_user.role = "BUYER"
+    
+    db.delete(seller)
+    db.commit()
+    return {"message": f"'{store_name}' do'koni va barcha tovarlari muvaffaqiyatli o'chirildi", "id": seller_id}
 
 @router.get("/products", response_model=List[ProductOut])
 def get_admin_products(
@@ -499,6 +534,112 @@ def get_admin_users(
             "store_name": u.seller.store_name if u.seller else None
         } for u in users
     ]
+
+@router.patch("/users/{user_id}")
+def update_admin_user(
+    user_id: str,
+    user_in: AdminUserUpdate,
+    admin_user: User = Depends(require_role(["ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+        
+    old_values = {
+        "role": user.role,
+        "is_active": user.is_active,
+        "phone": user.phone,
+        "full_name": user.profile.full_name if user.profile else None
+    }
+    
+    if user_in.full_name is not None:
+        if not user.profile:
+            user.profile = Profile(user_id=user.id, full_name=user_in.full_name)
+            db.add(user.profile)
+        else:
+            user.profile.full_name = user_in.full_name
+            
+    if user_in.phone is not None:
+        user.phone = user_in.phone
+        if user.profile:
+            user.profile.phone = user_in.phone
+            
+    if user_in.role is not None:
+        if user_in.role not in ["BUYER", "SELLER", "ADMIN"]:
+            raise HTTPException(status_code=400, detail="Noto'g'ri rol kiritildi")
+        user.role = user_in.role
+        
+    if user_in.is_active is not None:
+        user.is_active = user_in.is_active
+        
+    user.updated_at = datetime.utcnow()
+    
+    audit = AuditLog(
+        user_id=admin_user.id,
+        action="UPDATE_USER",
+        entity_type="USER",
+        entity_id=user.id,
+        old_values=old_values,
+        new_values=user_in.dict(exclude_unset=True)
+    )
+    db.add(audit)
+    
+    db.commit()
+    db.refresh(user)
+    
+    return {
+        "id": user.id,
+        "email": user.email,
+        "phone": user.phone,
+        "role": user.role,
+        "is_active": user.is_active,
+        "is_verified": user.is_verified,
+        "created_at": user.created_at,
+        "full_name": user.profile.full_name if user.profile else None,
+        "store_name": user.seller.store_name if user.seller else None
+    }
+
+@router.delete("/users/{user_id}")
+def delete_admin_user(
+    user_id: str,
+    admin_user: User = Depends(require_role(["ADMIN"])),
+    db: Session = Depends(get_db)
+):
+    if user_id == admin_user.id:
+        raise HTTPException(
+            status_code=400, 
+            detail="O'zingizning administrator akkauntingizni o'chira olmaysiz!"
+        )
+        
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Foydalanuvchi topilmadi")
+        
+    email = user.email
+    user_role = user.role
+    
+    # If user has a seller, delete price histories first
+    if user.seller:
+        db.query(PriceHistory).filter(PriceHistory.seller_id == user.seller.id).delete()
+        
+    # Unlink user from audit logs so FK ondelete doesn't conflict
+    db.query(AuditLog).filter(AuditLog.user_id == user.id).update({AuditLog.user_id: None})
+    
+    audit = AuditLog(
+        user_id=admin_user.id,
+        action="DELETE_USER",
+        entity_type="USER",
+        entity_id=user.id,
+        old_values={"email": email, "role": user_role},
+        new_values=None
+    )
+    db.add(audit)
+    
+    db.delete(user)
+    db.commit()
+    
+    return {"message": f"Foydalanuvchi '{email}' muvaffaqiyatli o'chirildi", "id": user_id}
 
 @router.get("/categories")
 def get_categories(db: Session = Depends(get_db)):

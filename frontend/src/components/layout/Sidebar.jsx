@@ -24,16 +24,6 @@ export const Sidebar = ({ isOpen, onClose }) => {
     { to: '/seller/store', icon: 'Store', label: 'Do\'kon profili', sub: 'Biznes ma\'lumotlari' },
   ];
 
-  const adminNav = [
-    { to: '/admin', icon: 'Dashboard', label: 'Terminal', sub: 'Asosiy monitoring', exact: true },
-    { to: '/admin/sellers', icon: 'Store', label: 'Sotuvchilar', sub: 'Tasdiqlash & nazorat' },
-    { to: '/admin/products', icon: 'Box', label: 'Mahsulotlar', sub: 'Moderatsiya' },
-    { to: '/admin/users', icon: 'Users', label: 'Foydalanuvchilar', sub: 'Baza nazorati' },
-    { to: '/admin/categories', icon: 'Database', label: 'Katalog daraxti', sub: 'Kategoriya & Brend' },
-    { to: '/admin/data-sources', icon: 'Shield', label: 'Platforma manbalari', sub: 'Adapterlar holati' },
-    { to: '/admin/audit-logs', icon: 'Document', label: 'Audit jurnali', sub: 'Xavfsizlik loglari' },
-  ];
-
   return (
     <>
       {/* Mobile Backdrop */}
@@ -147,28 +137,16 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   ROOT
                 </span>
               </div>
-              <nav className="space-y-1">
-                {adminNav.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.exact}
-                    onClick={() => onClose && onClose()}
-                    className={({ isActive }) => `
-                      flex items-center gap-3 px-3 py-2.5 rounded-md text-xs font-medium transition-all group
-                      ${isActive 
-                        ? 'bg-orange-600 text-white shadow-sm' 
-                        : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'}
-                    `}
-                  >
-                    <SolarIcon name={item.icon} size={18} />
-                    <div className="flex flex-col text-left">
-                      <span className="leading-tight">{item.label}</span>
-                      <span className="text-[10px] opacity-70 font-normal leading-tight">{item.sub}</span>
-                    </div>
-                  </NavLink>
-                ))}
-              </nav>
+              <a
+                href="http://localhost:5174"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-red-300 bg-red-950/40 hover:bg-red-950/80 border border-red-900/60 hover:text-white transition-all group shadow-sm"
+              >
+                <SolarIcon name="Shield" size={18} />
+                <div className="flex flex-col text-left">
+                  <span className="leading-tight font-bold">Admin Terminali &rarr;</span>
+                  <span className="text-[10px] opacity-70 font-mono leading-tight mt-0.5">Alohida ilova (port 5174)</span>
+                </div>
+              </a>
             </div>
           )}
         </div>

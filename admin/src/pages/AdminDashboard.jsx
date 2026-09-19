@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { adminService } from '../../api/services';
-import { formatPrice } from '../../utils/formatters';
-import SolarIcon from '../../components/common/SolarIcon';
-import Badge from '../../components/common/Badge';
-import { MetricSkeleton } from '../../components/common/Skeleton';
+import { adminService } from '../api/services';
+import { formatPrice } from '../utils/formatters';
+import SolarIcon from '../components/common/SolarIcon';
+import Badge from '../components/common/Badge';
+import { MetricSkeleton } from '../components/common/Skeleton';
 
 export const AdminDashboard = () => {
   const [metrics, setMetrics] = useState(null);
@@ -47,14 +47,14 @@ export const AdminDashboard = () => {
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <button
-            onClick={() => navigate('/admin/sellers')}
+            onClick={() => navigate('/sellers')}
             className="flex-1 sm:flex-none justify-center px-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-semibold rounded-xl shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <SolarIcon name="Store" size={15} className="text-slate-500 dark:text-slate-400" />
             <span>Sotuvchilar</span>
           </button>
           <button
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate('/products')}
             className="flex-1 sm:flex-none justify-center px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm shadow-orange-600/20 transition-all cursor-pointer flex items-center gap-1.5 active:scale-95"
           >
             <SolarIcon name="Box" size={15} />
@@ -253,7 +253,7 @@ export const AdminDashboard = () => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/admin/sellers')}
+                onClick={() => navigate('/sellers')}
                 className="w-full sm:w-auto px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 text-center justify-center"
               >
                 Tasdiqlash &rarr;
@@ -277,7 +277,7 @@ export const AdminDashboard = () => {
                 </div>
               </div>
               <button
-                onClick={() => navigate('/admin/products')}
+                onClick={() => navigate('/products')}
                 className="w-full sm:w-auto px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 text-center justify-center"
               >
                 Tekshirish &rarr;
@@ -294,7 +294,7 @@ export const AdminDashboard = () => {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div 
-            onClick={() => navigate('/admin/sellers')}
+            onClick={() => navigate('/sellers')}
             className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
           >
             <div>
@@ -315,7 +315,7 @@ export const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate('/products')}
             className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
           >
             <div>
@@ -336,7 +336,7 @@ export const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => navigate('/admin/data-sources')}
+            onClick={() => navigate('/data-sources')}
             className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
           >
             <div>
@@ -357,7 +357,7 @@ export const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => navigate('/admin/audit-logs')}
+            onClick={() => navigate('/audit-logs')}
             className="p-5 sm:p-6 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md cursor-pointer transition-all flex flex-col justify-between group"
           >
             <div>
@@ -383,3 +383,5 @@ export const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+

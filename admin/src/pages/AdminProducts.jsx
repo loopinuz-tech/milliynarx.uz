@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { adminService, uploadService } from '../../api/services';
-import { formatPrice, formatDate } from '../../utils/formatters';
-import SolarIcon from '../../components/common/SolarIcon';
-import Badge from '../../components/common/Badge';
-import EmptyState from '../../components/common/EmptyState';
+import React, { useState, useEffect, useMemo } from 'react';
+import { adminService, uploadService } from '../api/services';
+import { formatPrice, formatDate } from '../utils/formatters';
+import SolarIcon from '../components/common/SolarIcon';
+import Badge from '../components/common/Badge';
+import EmptyState from '../components/common/EmptyState';
 
 const REJECTION_REASONS = [
   "Narx bozordagi narxga mos kelmaydi yoki noto'g'ri ko'rsatilgan",
@@ -13,11 +13,33 @@ const REJECTION_REASONS = [
   "Kategoriya yoki brend noto'g'ri tanlangan"
 ];
 
+const ProductThumbnail = ({ src, alt, className = "w-11 h-11", iconSize = 20 }) => {
+  const [imgError, setImgError] = useState(false);
+  if (!src || imgError) {
+    return (
+      <div className={`${className} rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center shrink-0`}>
+        <SolarIcon name="Box" size={iconSize} className="text-slate-400" />
+      </div>
+    );
+  }
+  return (
+    <div className={`${className} rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden`}>
+      <img
+        src={src}
+        alt={alt || "Mahsulot"}
+        onError={() => setImgError(true)}
+        className="w-full h-full object-contain p-0.5"
+      />
+    </div>
+  );
+};
+
 export const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [actionLoading, setActionLoading] = useState(null);
   const [notification, setNotification] = useState(null);
 
@@ -176,6 +198,19 @@ export const AdminProducts = () => {
   const activeCount = allProducts.filter(p => p.status === 'ACTIVE').length;
   const rejectedCount = allProducts.filter(p => p.status === 'REJECTED').length;
 
+  const displayProducts = useMemo(() => {
+    if (!searchTerm.trim()) return products;
+    const q = searchTerm.toLowerCase().trim();
+    return products.filter(p => 
+      p.name?.toLowerCase().includes(q) ||
+      p.sku?.toLowerCase().includes(q) ||
+      p.model?.toLowerCase().includes(q) ||
+      p.seller_name?.toLowerCase().includes(q) ||
+      p.category_name?.toLowerCase().includes(q) ||
+      p.brand_name?.toLowerCase().includes(q)
+    );
+  }, [products, searchTerm]);
+
   const openCreateModal = () => {
     setCreateName('');
     setCreateCatId(categories[0]?.id || '');
@@ -307,43 +342,45 @@ export const AdminProducts = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-24 md:pb-12">
-      {/* Page Header & Status Filter Pills */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <h1 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
               Mahsulotlar Moderatsiyasi
             </h1>
-            <span className="text-xs font-bold text-orange-700 bg-orange-50 border border-orange-200 px-2.5 py-0.5 rounded-full font-numeric">
-              {products.length} ta mahsulot
+            <span className="text-xs font-bold text-orange-700 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 px-2.5 py-0.5 rounded-full font-numeric">
+              {displayProducts.length} ta mahsulot
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Sotuvchilar tomonidan kiritilgan takliflarni tekshirish, rad etish sababini belgilash va faollashtirish
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={openCreateModal}
-            className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-          >
-            <SolarIcon name="Plus" size={16} />
-            <span>Yangi mahsulot qo'shish</span>
-          </button>
+        <button
+          onClick={openCreateModal}
+          className="w-full sm:w-auto px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 active:scale-95"
+        >
+          <SolarIcon name="Plus" size={16} />
+          <span>Yangi mahsulot qo'shish</span>
+        </button>
+      </div>
 
-          {/* Responsive Filter Tabs */}
-          <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl text-xs overflow-x-auto shrink-0 scrollbar-none">
+      {/* Toolbar: Status Filter Tabs + Live Search */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* Status Filter Tabs (Scrollable on mobile) */}
+        <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl text-xs overflow-x-auto scrollbar-none border border-slate-200/60 dark:border-slate-800 w-full sm:w-auto shrink-0">
           <button
             onClick={() => setStatusFilter('')}
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               statusFilter === '' 
-                ? 'bg-white text-slate-900 shadow-xs font-bold' 
-                : 'text-slate-600 hover:text-slate-900 font-medium'
+                ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-bold' 
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
             }`}
           >
             <span>Barchasi</span>
-            <span className="text-[10px] px-1.5 py-0.2 bg-slate-200/80 rounded-full font-numeric">
+            <span className="text-[10px] px-1.5 py-0.2 bg-slate-200/80 dark:bg-slate-700 rounded-full font-numeric">
               {allProducts.length}
             </span>
           </button>
@@ -353,14 +390,14 @@ export const AdminProducts = () => {
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               statusFilter === 'PENDING_APPROVAL' 
                 ? 'bg-amber-500 text-white shadow-xs font-bold' 
-                : 'text-slate-600 hover:text-amber-700 font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:text-amber-600 font-medium'
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
             <span>Kutilmoqda</span>
             {pendingCount > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold font-numeric ${
-                statusFilter === 'PENDING_APPROVAL' ? 'bg-amber-600 text-white' : 'bg-amber-100 text-amber-800'
+                statusFilter === 'PENDING_APPROVAL' ? 'bg-amber-600 text-white' : 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
               }`}>
                 {pendingCount}
               </span>
@@ -372,14 +409,14 @@ export const AdminProducts = () => {
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               statusFilter === 'ACTIVE' 
                 ? 'bg-emerald-600 text-white shadow-xs font-bold' 
-                : 'text-slate-600 hover:text-emerald-700 font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:text-emerald-600 font-medium'
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
             <span>Faol</span>
             {activeCount > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold font-numeric ${
-                statusFilter === 'ACTIVE' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'
+                statusFilter === 'ACTIVE' ? 'bg-emerald-700 text-white' : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
               }`}>
                 {activeCount}
               </span>
@@ -391,20 +428,39 @@ export const AdminProducts = () => {
             className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
               statusFilter === 'REJECTED' 
                 ? 'bg-rose-600 text-white shadow-xs font-bold' 
-                : 'text-slate-600 hover:text-rose-700 font-medium'
+                : 'text-slate-600 dark:text-slate-400 hover:text-rose-600 font-medium'
             }`}
           >
             <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
             <span>Rad etilgan</span>
             {rejectedCount > 0 && (
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold font-numeric ${
-                statusFilter === 'REJECTED' ? 'bg-rose-700 text-white' : 'bg-rose-100 text-rose-800'
+                statusFilter === 'REJECTED' ? 'bg-rose-700 text-white' : 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300'
               }`}>
                 {rejectedCount}
               </span>
             )}
           </button>
-          </div>
+        </div>
+
+        {/* Live Search Input */}
+        <div className="relative w-full sm:w-72 lg:w-80">
+          <SolarIcon name="Search" size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Mahsulot, SKU, do'kon qidirish..."
+            className="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-orange-500 transition-colors shadow-2xs"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <SolarIcon name="CloseCircle" size={14} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -412,8 +468,8 @@ export const AdminProducts = () => {
       {notification && (
         <div className={`p-4 rounded-xl border text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 shadow-sm animate-in fade-in slide-in-from-top-2 ${
           notification.type === 'success' 
-            ? 'bg-emerald-50 border-emerald-200 text-emerald-800' 
-            : 'bg-amber-50 border-amber-200 text-amber-800'
+            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' 
+            : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300'
         }`}>
           <div className="flex items-center gap-2">
             <SolarIcon name={notification.type === 'success' ? 'CheckCircle' : 'Warning'} size={18} />
@@ -421,30 +477,36 @@ export const AdminProducts = () => {
           </div>
           <button 
             onClick={() => setNotification(null)}
-            className="text-slate-400 hover:text-slate-600 cursor-pointer text-xs"
+            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer text-xs"
           >
             Yopish
           </button>
         </div>
       )}
 
-      {/* Products Table */}
+      {/* Products Table / Cards */}
       {loading ? (
-        <div className="bg-white border border-slate-200/80 rounded-2xl p-16 text-center shadow-xs">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl p-16 text-center shadow-xs">
           <div className="w-10 h-10 border-3 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-xs text-slate-500 font-medium">Mahsulotlar moderatsiya ro'yxati yuklanmoqda...</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Mahsulotlar moderatsiya ro'yxati yuklanmoqda...</p>
         </div>
-      ) : products.length === 0 ? (
+      ) : displayProducts.length === 0 ? (
         <EmptyState
           icon="Box"
           title="Mahsulotlar topilmadi"
-          description={statusFilter ? `Ushbu "${statusFilter}" filtri bo'yicha hech qanday mahsulot mavjud emas.` : "Platformada hali birorta ham mahsulot qo'shilmagan."}
+          description={
+            searchTerm 
+              ? `"${searchTerm}" bo'yicha hech qanday mahsulot topilmadi.` 
+              : statusFilter 
+                ? `Ushbu "${statusFilter}" filtri bo'yicha hech qanday mahsulot mavjud emas.` 
+                : "Platformada hali birorta ham mahsulot qo'shilmagan."
+          }
         />
       ) : (
         <div className="space-y-4 pb-24 md:pb-8">
           {/* Mobile Card Layout (< md screens) */}
           <div className="block md:hidden space-y-3">
-            {products.map(p => {
+            {displayProducts.map(p => {
               const primaryImg = p.images?.find(i => i.is_primary)?.image_url || p.images?.[0]?.image_url;
               const isActioning = actionLoading === p.id;
               return (
@@ -455,13 +517,9 @@ export const AdminProducts = () => {
                   <div className="flex items-start gap-3">
                     <div 
                       onClick={() => openInspectModal(p)}
-                      className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer"
+                      className="cursor-pointer"
                     >
-                      {primaryImg ? (
-                        <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                      ) : (
-                        <SolarIcon name="Box" size={20} className="text-slate-400" />
-                      )}
+                      <ProductThumbnail src={primaryImg} alt={p.name} className="w-14 h-14" iconSize={24} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-1 mb-1">
@@ -485,13 +543,13 @@ export const AdminProducts = () => {
                   <div className="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl text-xs">
                     <div>
                       <span className="text-[10px] text-slate-400 block">Narxi</span>
-                      <span className="font-bold text-slate-900 dark:text-white font-numeric">
+                      <span className="font-bold text-slate-900 dark:text-white font-numeric whitespace-nowrap block">
                         {formatPrice(p.price)}
                       </span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 block">Zaxira</span>
-                      <span className={p.stock > 0 ? 'text-slate-700 dark:text-slate-300 font-semibold' : 'text-rose-600 font-bold'}>
+                      <span className={`whitespace-nowrap font-semibold ${p.stock > 0 ? 'text-slate-700 dark:text-slate-300' : 'text-rose-600 font-bold'}`}>
                         {p.stock} dona
                       </span>
                     </div>
@@ -500,7 +558,7 @@ export const AdminProducts = () => {
                   <div className="flex items-center justify-between pt-1 gap-2 flex-wrap">
                     <button
                       onClick={() => openInspectModal(p)}
-                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1 active:scale-95"
+                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-xs font-semibold flex items-center gap-1 active:scale-95"
                     >
                       <SolarIcon name="Eye" size={13} />
                       <span>Ko'rish</span>
@@ -544,45 +602,42 @@ export const AdminProducts = () => {
 
           {/* Desktop Table (>= md screens) */}
           <div className="hidden md:block bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[850px] text-xs">
+            <div className="overflow-x-auto scrollbar-thin">
+              <table className="w-full text-left border-collapse min-w-[980px] text-xs">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200/70 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                    <th className="py-3 px-4">Mahsulot</th>
-                    <th className="py-3 px-3">Do'kon (Seller)</th>
-                    <th className="py-3 px-3">Kategoriya & Brend</th>
-                    <th className="py-3 px-4 text-right">Narxi</th>
-                    <th className="py-3 px-3 text-center">Zaxira</th>
-                    <th className="py-3 px-3 text-center">Holat</th>
-                    <th className="py-3 px-4 text-right">Harakatlar</th>
+                    <th className="py-3.5 px-4 min-w-[280px]">Mahsulot</th>
+                    <th className="py-3.5 px-3 min-w-[160px]">Do'kon (Seller)</th>
+                    <th className="py-3.5 px-3 min-w-[150px]">Kategoriya & Brend</th>
+                    <th className="py-3.5 px-4 text-right min-w-[140px] whitespace-nowrap">Narxi</th>
+                    <th className="py-3.5 px-3 text-center min-w-[90px] whitespace-nowrap">Zaxira</th>
+                    <th className="py-3.5 px-3 text-center min-w-[95px] whitespace-nowrap">Holat</th>
+                    <th className="py-3.5 px-4 text-right min-w-[160px] whitespace-nowrap">Harakatlar</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-normal">
-                  {products.map(p => {
+                  {displayProducts.map(p => {
                     const primaryImg = p.images?.find(i => i.is_primary)?.image_url || p.images?.[0]?.image_url;
                     const isActioning = actionLoading === p.id;
                     return (
                       <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3.5 px-4">
+                        <td className="py-3.5 px-4 min-w-[280px]">
                           <div className="flex items-center gap-3">
                             <div 
                               onClick={() => openInspectModal(p)}
-                              className="w-11 h-11 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden cursor-pointer hover:border-orange-500 transition-colors"
+                              className="cursor-pointer hover:opacity-80 transition-opacity"
                             >
-                              {primaryImg ? (
-                                <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                              ) : (
-                                <SolarIcon name="Box" size={20} className="text-slate-400" />
-                              )}
+                              <ProductThumbnail src={primaryImg} alt={p.name} className="w-11 h-11" iconSize={20} />
                             </div>
-                            <div className="max-w-xs">
+                            <div className="max-w-xs min-w-0">
                               <span 
                                 onClick={() => openInspectModal(p)}
                                 className="font-bold text-slate-900 dark:text-white block truncate hover:text-orange-600 cursor-pointer"
+                                title={p.name}
                               >
                                 {p.name}
                               </span>
-                              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono mt-0.5">
+                              <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono mt-0.5 whitespace-nowrap">
                                 <span>Model: {p.model || '-'}</span>
                                 <span>&bull;</span>
                                 <span>SKU: {p.sku || '-'}</span>
@@ -591,44 +646,46 @@ export const AdminProducts = () => {
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-3">
-                          <div className="font-semibold text-slate-800 dark:text-slate-200">{p.seller_name || 'Noma\'lum'}</div>
+                        <td className="py-3.5 px-3 min-w-[160px]">
+                          <div className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[180px]" title={p.seller_name}>
+                            {p.seller_name || 'Noma\'lum'}
+                          </div>
                           <div className="flex items-center gap-1 text-[10px] text-amber-600 mt-0.5">
                             <SolarIcon name="Star" size={10} />
                             <span>{p.seller_rating ? Number(p.seller_rating).toFixed(1) : "5.0"}</span>
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-3">
-                          <div className="text-slate-800 dark:text-slate-200 font-medium">{p.category_name || '-'}</div>
-                          <div className="text-[10px] text-slate-400 font-semibold">{p.brand_name || '-'}</div>
+                        <td className="py-3.5 px-3 min-w-[150px]">
+                          <div className="text-slate-800 dark:text-slate-200 font-medium truncate max-w-[160px]">{p.category_name || '-'}</div>
+                          <div className="text-[10px] text-slate-400 font-semibold truncate max-w-[160px]">{p.brand_name || '-'}</div>
                         </td>
 
-                        <td className="py-3.5 px-4 text-right font-numeric">
-                          <span className="font-bold text-slate-900 dark:text-white text-xs">
+                        <td className="py-3.5 px-4 text-right font-numeric whitespace-nowrap min-w-[140px]">
+                          <span className="font-bold text-slate-900 dark:text-white text-xs whitespace-nowrap block">
                             {formatPrice(p.price)}
                           </span>
                           {p.old_price && (
-                            <div className="text-[10px] text-slate-400 line-through">
+                            <div className="text-[10px] text-slate-400 line-through whitespace-nowrap mt-0.5">
                               {formatPrice(p.old_price)}
                             </div>
                           )}
                         </td>
 
-                        <td className="py-3.5 px-3 text-center font-numeric">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        <td className="py-3.5 px-3 text-center font-numeric whitespace-nowrap min-w-[90px]">
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
                             p.stock > 0 ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300' : 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400'
                           }`}>
                             {p.stock} dona
                           </span>
                         </td>
 
-                        <td className="py-3.5 px-3 text-center">
+                        <td className="py-3.5 px-3 text-center whitespace-nowrap min-w-[95px]">
                           <Badge status={p.status} size="xs" />
                         </td>
 
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="inline-flex items-center gap-1.5">
+                        <td className="py-3.5 px-4 text-right whitespace-nowrap min-w-[160px]">
+                          <div className="inline-flex items-center justify-end gap-1.5 whitespace-nowrap">
                             <button
                               onClick={() => openInspectModal(p)}
                               className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg transition-colors cursor-pointer"
@@ -645,7 +702,7 @@ export const AdminProducts = () => {
                                 title="Tasdiqlash va faollashtirish"
                               >
                                 <SolarIcon name="Check" size={13} />
-                                <span className="hidden sm:inline">Tasdiqlash</span>
+                                <span className="hidden xl:inline">Tasdiqlash</span>
                               </button>
                             )}
 
@@ -657,13 +714,13 @@ export const AdminProducts = () => {
                                 title="Rad etish"
                               >
                                 <SolarIcon name="Close" size={13} />
-                                <span className="hidden sm:inline">Rad etish</span>
+                                <span className="hidden xl:inline">Rad etish</span>
                               </button>
                             )}
 
                             <button
                               onClick={() => setProductToDelete(p)}
-                              className="p-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 hover:text-rose-700 border border-rose-200 dark:border-rose-900/50 rounded-lg transition-colors cursor-pointer"
+                              className="p-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50 rounded-lg transition-colors cursor-pointer"
                               title="Mahsulotni o'chirish"
                             >
                               <SolarIcon name="Trash" size={14} />
@@ -1306,3 +1363,4 @@ export const AdminProducts = () => {
 };
 
 export default AdminProducts;
+

@@ -23,7 +23,7 @@ export const LoginPage = () => {
     if (redirectUrl) {
       navigate(decodeURIComponent(redirectUrl));
     } else if (user.role === 'ADMIN') {
-      navigate('/admin');
+      window.location.href = 'http://localhost:5174';
     } else if (user.role === 'SELLER') {
       if (user.seller_status === 'PENDING' || !user.store_name) {
         navigate('/onboarding');

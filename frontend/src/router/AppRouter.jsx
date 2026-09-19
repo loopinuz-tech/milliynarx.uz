@@ -29,14 +29,35 @@ import SellerPriceHistory from '../pages/seller/SellerPriceHistory';
 import SellerStore from '../pages/seller/SellerStore';
 import OnboardingPage from '../pages/seller/OnboardingPage';
 
-// Admin Pages
-import AdminDashboard from '../pages/admin/AdminDashboard';
-import AdminSellers from '../pages/admin/AdminSellers';
-import AdminProducts from '../pages/admin/AdminProducts';
-import AdminUsers from '../pages/admin/AdminUsers';
-import AdminCategories from '../pages/admin/AdminCategories';
-import AdminDataSources from '../pages/admin/AdminDataSources';
-import AdminAuditLogs from '../pages/admin/AdminAuditLogs';
+// Standalone Admin Panel Redirect (Running separately on port 5174)
+const AdminRedirect = () => {
+  React.useEffect(() => {
+    window.location.href = 'http://localhost:5174';
+  }, []);
+
+  return (
+    <div className="min-h-[50vh] flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-12 h-12 rounded-2xl bg-orange-100 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-4">
+        <svg className="w-6 h-6 animate-spin" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        </svg>
+      </div>
+      <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+        Administrator Boshqaruv Markaziga Yo'naltirilmoqda...
+      </h2>
+      <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-4">
+        Admin paneli xavfsizlik va mustaqillik talablariga asosan alohida xavfsiz portda (5174) ishlamoqda.
+      </p>
+      <a
+        href="http://localhost:5174"
+        className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold rounded-xl shadow-sm transition-colors"
+      >
+        To'g'ridan-to'g'ri o'tish (5174) &rarr;
+      </a>
+    </div>
+  );
+};
 
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 
@@ -79,14 +100,9 @@ export const AppRouter = () => {
         <Route path="seller/price-history" element={<ProtectedRoute requiredRole="SELLER"><SellerPriceHistory /></ProtectedRoute>} />
         <Route path="seller/store" element={<ProtectedRoute requiredRole="SELLER"><SellerStore /></ProtectedRoute>} />
 
-        {/* Admin Routes */}
-        <Route path="admin" element={<ProtectedRoute requiredRole="ADMIN"><AdminDashboard /></ProtectedRoute>} />
-        <Route path="admin/sellers" element={<ProtectedRoute requiredRole="ADMIN"><AdminSellers /></ProtectedRoute>} />
-        <Route path="admin/products" element={<ProtectedRoute requiredRole="ADMIN"><AdminProducts /></ProtectedRoute>} />
-        <Route path="admin/users" element={<ProtectedRoute requiredRole="ADMIN"><AdminUsers /></ProtectedRoute>} />
-        <Route path="admin/categories" element={<ProtectedRoute requiredRole="ADMIN"><AdminCategories /></ProtectedRoute>} />
-        <Route path="admin/data-sources" element={<ProtectedRoute requiredRole="ADMIN"><AdminDataSources /></ProtectedRoute>} />
-        <Route path="admin/audit-logs" element={<ProtectedRoute requiredRole="ADMIN"><AdminAuditLogs /></ProtectedRoute>} />
+        {/* Admin Routes - Seamless Redirect to Standalone Admin App (port 5174) */}
+        <Route path="admin" element={<AdminRedirect />} />
+        <Route path="admin/*" element={<AdminRedirect />} />
 
         {/* 404 Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

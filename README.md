@@ -107,27 +107,32 @@ milliynarx/
 │   ├── requirements.txt            # Python kutubxonalari
 │   └── run.py                      # Uvicorn ishga tushirish skripti
 │
-├── frontend/                       # React 19 + Vite Frontend
+├── frontend/                       # React 19 + Vite Platforma (Port 5173 - Xaridor & Sotuvchilar)
 │   ├── public/                     # Favicon, logotiplar va statik resurslar
 │   ├── src/
 │   │   ├── api/                    # Axios API mijozi va servislar
-│   │   │   ├── client.js           # JWT interceptor va xatoliklar filtri
-│   │   │   └── services.js         # REST so'rov funksiyalari
-│   │   ├── components/             # Qayta ishlatiluvchi komponentlar
-│   │   │   ├── auth/               # GoogleLoginButton, TelegramModal, ProtectedRoute
-│   │   │   ├── common/             # LineChart, SolarIcon, PlanBillingModal
-│   │   │   └── layout/             # Header, Footer, Sidebar, DashboardLayout
-│   │   ├── contexts/               # React Context (AuthContext, ThemeContext)
-│   │   ├── pages/                  # Ilova sahifalari
-│   │   │   ├── public/             # Landing, Search, Product, Compare, AI Advisor,
-│   │   │   │                       # TermsPage, PrivacyPage, PolicyPage, Login, Register
+│   │   ├── components/             # Layout, auth, modal va UI komponentlari
+│   │   ├── contexts/               # AuthContext, ThemeContext
+│   │   ├── pages/
+│   │   │   ├── public/             # Landing, Search, Product, Compare, AI Advisor, Legal
 │   │   │   ├── buyer/              # Dashboard, Favorites, Alerts, Profile
-│   │   │   ├── seller/             # SellerDashboard, SellerProducts, Onboarding, Store
-│   │   │   └── admin/              # AdminDashboard, AdminSellers, AdminProducts, Users
-│   │   ├── router/                 # AppRouter (Marshrutlash va redirectlar)
+│   │   │   └── seller/             # SellerDashboard, SellerProducts, Onboarding, Store
+│   │   ├── router/                 # AppRouter (Marshrutlash va admin redirect)
 │   │   └── index.css               # Tailwind CSS v4 dizayn tizimi
 │   ├── package.json                # NPM paketlari va skriptlar
-│   └── vite.config.js              # Vite konfiguratsiyasi
+│   └── vite.config.js              # Vite konfiguratsiyasi (Port 5173)
+│
+├── admin/                          # React 19 + Vite Standalone Admin Terminal (Port 5174)
+│   ├── src/
+│   │   ├── api/                    # Admin API mijozi va servislar
+│   │   ├── components/             # AdminLayout, AdminSidebar, AdminHeader, Badge
+│   │   ├── contexts/               # Admin AuthContext (faqat ADMIN roli uchun)
+│   │   ├── pages/                  # AdminDashboard, AdminSellers, AdminProducts,
+│   │   │                           # AdminUsers, AdminCategories, DataSources, AuditLogs
+│   │   ├── router/                 # AdminRouter va AdminProtectedRoute
+│   │   └── index.css               # Qorong'i/yorug' rejim stillari
+│   ├── package.json                # Admin mustaqil bog'liqliklari
+│   └── vite.config.js              # Vite konfiguratsiyasi (Port 5174, backend proxy)
 │
 ├── deployment/                     # Serverga o'rnatish skriptlari
 │   ├── nginx_milliynarx.conf       # Nginx konfiguratsiya shabloni

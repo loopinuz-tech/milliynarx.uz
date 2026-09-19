@@ -276,11 +276,11 @@ export const MobileDrawer = ({
             {isAdmin && (
               <button
                 type="button"
-                onClick={() => handleNavigate('/admin')}
+                onClick={() => { onClose(); window.location.href = 'http://localhost:5174'; }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-slate-800 rounded-xl font-bold text-left transition-colors cursor-pointer font-mono"
               >
                 <SolarIcon name="Shield" size={16} />
-                <span>Administrator Terminali</span>
+                <span>Administrator Terminali &rarr;</span>
               </button>
             )}
           </div>

@@ -23,7 +23,7 @@ export const RegisterPage = () => {
     if (redirectUrl) {
       navigate(redirectUrl);
     } else if (user?.role === 'ADMIN') {
-      navigate('/admin');
+      window.location.href = 'http://localhost:5174';
     } else if (user?.role === 'SELLER') {
       navigate('/seller');
     } else {

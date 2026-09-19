@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { adminService } from '../../api/services';
-import { formatDate } from '../../utils/formatters';
-import SolarIcon from '../../components/common/SolarIcon';
-import EmptyState from '../../components/common/EmptyState';
+import { adminService } from '../api/services';
+import { formatDate } from '../utils/formatters';
+import SolarIcon from '../components/common/SolarIcon';
+import EmptyState from '../components/common/EmptyState';
 
 export const AdminAuditLogs = () => {
   const [logs, setLogs] = useState([]);
@@ -53,6 +53,15 @@ export const AdminAuditLogs = () => {
         />
       ) : (
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs">
+          {/* Mobile swipe hint banner */}
+          <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-[11px] text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700">
+            <span className="flex items-center gap-1.5 font-medium">
+              <SolarIcon name="AltArrowLeft" size={13} className="text-orange-600 animate-pulse" />
+              <span>Jadvalni surib ko'ring</span>
+              <SolarIcon name="AltArrowRight" size={13} className="text-orange-600 animate-pulse" />
+            </span>
+            <span className="font-bold text-slate-500 font-numeric">{logs.length} ta qayd</span>
+          </div>
           <div className="overflow-x-auto scrollbar-thin">
             <table className="w-full text-left border-collapse min-w-[760px] text-xs">
               <thead>
@@ -64,14 +73,14 @@ export const AdminAuditLogs = () => {
                   <th className="py-3.5 px-4">Yangi qiymatlar</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700 font-mono">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300 font-mono">
                 {logs.map(l => (
-                  <tr key={l.id} className="hover:bg-orange-50/20 transition-colors">
-                    <td className="py-3.5 px-4 text-slate-500 font-numeric text-[11px]">
+                  <tr key={l.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3.5 px-4 text-slate-500 dark:text-slate-400 font-numeric text-[11px] whitespace-nowrap">
                       {formatDate(l.created_at)}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded-md bg-orange-50 text-orange-700 border border-orange-200/80 font-bold text-[11px]">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span className="px-2 py-0.5 rounded-md bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300 border border-orange-200/80 dark:border-orange-800/60 font-bold text-[11px]">
                         {l.action}
                       </span>
                     </td>
@@ -96,3 +105,4 @@ export const AdminAuditLogs = () => {
 };
 
 export default AdminAuditLogs;
+

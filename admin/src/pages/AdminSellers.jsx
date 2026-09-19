@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { adminService } from '../../api/services';
-import { formatDate, formatPrice } from '../../utils/formatters';
-import SolarIcon from '../../components/common/SolarIcon';
-import Badge from '../../components/common/Badge';
-import EmptyState from '../../components/common/EmptyState';
+import { adminService } from '../api/services';
+import { formatDate, formatPrice } from '../utils/formatters';
+import SolarIcon from '../components/common/SolarIcon';
+import Badge from '../components/common/Badge';
+import EmptyState from '../components/common/EmptyState';
 
 export const AdminSellers = () => {
   const [sellers, setSellers] = useState([]);
@@ -18,6 +18,10 @@ export const AdminSellers = () => {
   const [selectedSellerId, setSelectedSellerId] = useState(null);
   const [sellerDetails, setSellerDetails] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
+
+  // Delete Seller Modal
+  const [deletingSeller, setDeletingSeller] = useState(null);
+  const [deletingLoading, setDeletingLoading] = useState(false);
 
   useEffect(() => {
     loadSellers();
@@ -82,6 +86,29 @@ export const AdminSellers = () => {
       alert("Holatni o'zgartirishda xatolik yuz berdi: " + (err.response?.data?.detail || err.message));
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleDeleteSeller = async () => {
+    if (!deletingSeller) return;
+    try {
+      setDeletingLoading(true);
+      await adminService.deleteSeller(deletingSeller.id);
+      setSellers(prev => prev.filter(s => s.id !== deletingSeller.id));
+      setAllSellers(prev => prev.filter(s => s.id !== deletingSeller.id));
+      setNotification({
+        type: 'success',
+        message: `"${deletingSeller.store_name}" do'koni va barcha tovarlari muvaffaqiyatli o'chirildi.`
+      });
+      setDeletingSeller(null);
+      if (selectedSellerId === deletingSeller.id) {
+        setSelectedSellerId(null);
+      }
+      setTimeout(() => setNotification(null), 5000);
+    } catch (err) {
+      alert("Do'konni o'chirishda xatolik: " + (err.response?.data?.detail || err.message));
+    } finally {
+      setDeletingLoading(false);
     }
   };
 
@@ -251,30 +278,103 @@ export const AdminSellers = () => {
           }
         />
       ) : (
-        <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs">
-          {/* Mobile swipe hint banner */}
-          <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-100/90 text-[11px] text-slate-600 border-b border-slate-200">
-            <span className="flex items-center gap-1.5 font-medium">
-              <SolarIcon name="AltArrowLeft" size={13} className="text-orange-600 animate-pulse" />
-              <span>Jadvalni surib ko'ring</span>
-              <SolarIcon name="AltArrowRight" size={13} className="text-orange-600 animate-pulse" />
-            </span>
-            <span className="font-bold text-slate-500 font-numeric">{filteredSellers.length} ta do'kon</span>
+        <div className="space-y-4">
+          {/* Mobile Card Layout (< md screens) */}
+          <div className="block md:hidden space-y-3">
+            {filteredSellers.map(s => (
+              <div key={s.id} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-3 shadow-2xs">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <div 
+                      onClick={() => openSellerDetails(s.id)}
+                      className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0 border border-orange-100 dark:border-orange-800/50 cursor-pointer"
+                    >
+                      <SolarIcon name="Shop" size={20} />
+                    </div>
+                    <div>
+                      <div 
+                        onClick={() => openSellerDetails(s.id)}
+                        className="font-bold text-slate-900 dark:text-white text-xs sm:text-sm hover:text-orange-600 cursor-pointer"
+                      >
+                        {s.store_name}
+                      </div>
+                      <div className="text-[10px] text-slate-400 font-mono">
+                        {s.city || 'Xorazm'} • {s.products_count} ta tovar
+                      </div>
+                    </div>
+                  </div>
+                  <Badge status={s.status} size="xs" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-[11px] pt-2 border-t border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                  <div>
+                    <span className="block text-[10px] text-slate-400">INN / STIR:</span>
+                    <span className="font-mono font-medium text-slate-800 dark:text-slate-200">{s.tax_id || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] text-slate-400">Telefon / Email:</span>
+                    <span className="font-mono text-slate-700 dark:text-slate-300 truncate block">{s.phone || s.email || '-'}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
+                  <span className="text-[10px] text-slate-400 font-numeric">{formatDate(s.created_at)}</span>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => openSellerDetails(s.id)}
+                      className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs"
+                      title="Ko'rish"
+                    >
+                      <SolarIcon name="Eye" size={14} />
+                    </button>
+                    {s.status !== 'APPROVED' && (
+                      <button
+                        onClick={() => handleUpdateStatus(s, 'APPROVED')}
+                        disabled={actionLoading === s.id}
+                        className="px-2 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold flex items-center gap-1"
+                      >
+                        <SolarIcon name="CheckCircle" size={13} />
+                        <span>Tasdiqlash</span>
+                      </button>
+                    )}
+                    {s.status !== 'REJECTED' && s.status !== 'SUSPENDED' && (
+                      <button
+                        onClick={() => handleUpdateStatus(s, 'REJECTED')}
+                        disabled={actionLoading === s.id}
+                        className="px-2 py-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 rounded-lg text-xs font-bold border border-rose-200/80"
+                      >
+                        <SolarIcon name="CloseCircle" size={13} />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setDeletingSeller(s)}
+                      className="p-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 rounded-lg text-xs border border-rose-200/60"
+                      title="O'chirish"
+                    >
+                      <SolarIcon name="Trash" size={14} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="overflow-x-auto scrollbar-thin">
-            <table className="w-full text-left border-collapse min-w-[720px] text-xs">
+
+          {/* Desktop Table View (>= md screens) */}
+          <div className="hidden md:block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-2xs">
+            <div className="overflow-x-auto scrollbar-thin">
+              <table className="w-full text-left border-collapse min-w-[900px] text-xs">
               <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="py-3.5 px-4">Do'kon nomi</th>
-                  <th className="py-3.5 px-3">Elektron pochta & Tel</th>
-                  <th className="py-3.5 px-3">STIR (INN) & Reg</th>
-                  <th className="py-3.5 px-3">Shahar</th>
-                  <th className="py-3.5 px-3 text-center">Mahsulotlar</th>
-                  <th className="py-3.5 px-3 text-center">Holat</th>
-                  <th className="py-3.5 px-4 text-right">Moderatsiya amali</th>
+                <tr className="bg-slate-50/80 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-wider">
+                  <th className="py-3.5 px-4 min-w-[220px]">Do'kon nomi</th>
+                  <th className="py-3.5 px-3 min-w-[170px]">Elektron pochta & Tel</th>
+                  <th className="py-3.5 px-3 min-w-[140px]">STIR (INN) & Reg</th>
+                  <th className="py-3.5 px-3 min-w-[100px]">Shahar</th>
+                  <th className="py-3.5 px-3 text-center min-w-[90px] whitespace-nowrap">Mahsulotlar</th>
+                  <th className="py-3.5 px-3 text-center min-w-[90px] whitespace-nowrap">Holat</th>
+                  <th className="py-3.5 px-4 text-right min-w-[160px] whitespace-nowrap">Moderatsiya amali</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
                 {filteredSellers.map(s => (
                   <tr key={s.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-3.5 px-4">
@@ -311,16 +411,16 @@ export const AdminSellers = () => {
                       {s.city || 'Xorazm'}
                     </td>
 
-                    <td className="py-3.5 px-3 text-center font-black text-slate-900 font-numeric text-xs sm:text-sm">
+                    <td className="py-3.5 px-3 text-center font-black text-slate-900 dark:text-white font-numeric text-xs sm:text-sm whitespace-nowrap">
                       {s.products_count} ta
                     </td>
 
-                    <td className="py-3.5 px-3 text-center">
+                    <td className="py-3.5 px-3 text-center whitespace-nowrap">
                       <Badge status={s.status} size="xs" />
                     </td>
 
-                    <td className="py-3.5 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
+                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
                         <button
                           onClick={() => openSellerDetails(s.id)}
                           className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors cursor-pointer"
@@ -345,13 +445,21 @@ export const AdminSellers = () => {
                           <button
                             onClick={() => handleUpdateStatus(s, 'REJECTED')}
                             disabled={actionLoading === s.id}
-                            className="px-2.5 py-1.5 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-[11px] font-bold transition-all disabled:opacity-50 cursor-pointer border border-rose-200/80 flex items-center gap-1"
+                            className="px-2.5 py-1.5 bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 hover:bg-rose-100 rounded-lg text-[11px] font-bold transition-all disabled:opacity-50 cursor-pointer border border-rose-200/80 dark:border-rose-800/60 flex items-center gap-1"
                             title="Do'konni rad etish"
                           >
                             <SolarIcon name="CloseCircle" size={13} />
                             <span className="hidden sm:inline">Rad etish</span>
                           </button>
                         )}
+
+                        <button
+                          onClick={() => setDeletingSeller(s)}
+                          className="p-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 rounded-lg transition-colors cursor-pointer border border-rose-200/60 dark:border-rose-800/50"
+                          title="Do'konni butunlay o'chirish"
+                        >
+                          <SolarIcon name="Trash" size={14} />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -360,6 +468,7 @@ export const AdminSellers = () => {
             </table>
           </div>
         </div>
+      </div>
       )}
 
       {/* Seller Details Modal */}
@@ -475,12 +584,24 @@ export const AdminSellers = () => {
                 </div>
 
                 {/* Moderation Actions Inside Modal */}
-                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => {
+                        const s = sellerDetails;
+                        setSelectedSellerId(null);
+                        setDeletingSeller(s);
+                      }}
+                      className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-700 dark:text-rose-400 rounded-lg font-bold border border-rose-200 dark:border-rose-800/60 transition-colors cursor-pointer flex items-center gap-1.5"
+                    >
+                      <SolarIcon name="Trash" size={14} />
+                      <span>Do'konni o'chirish</span>
+                    </button>
+
                     {sellerDetails.status !== 'SUSPENDED' && (
                       <button
                         onClick={() => handleUpdateStatus(sellerDetails, 'SUSPENDED')}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-rose-50 text-rose-700 rounded-lg font-bold border border-slate-200 transition-colors cursor-pointer"
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-50 text-rose-700 dark:text-rose-400 rounded-lg font-bold border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
                       >
                         Faoliyatni to'xtatish
                       </button>
@@ -491,7 +612,7 @@ export const AdminSellers = () => {
                     {sellerDetails.status !== 'REJECTED' && (
                       <button
                         onClick={() => handleUpdateStatus(sellerDetails, 'REJECTED')}
-                        className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 rounded-lg font-bold border border-rose-200 transition-colors cursor-pointer"
+                        className="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-800 dark:text-rose-300 rounded-lg font-bold border border-rose-200 dark:border-rose-800 transition-colors cursor-pointer"
                       >
                         Rad etish
                       </button>
@@ -512,8 +633,59 @@ export const AdminSellers = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Seller Confirmation Modal */}
+      {deletingSeller && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150 text-xs">
+            <div className="flex items-center gap-3 text-rose-600 dark:text-rose-400">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/60 flex items-center justify-center shrink-0 border border-rose-200 dark:border-rose-800/60">
+                <SolarIcon name="Trash" size={20} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Do'konni o'chirish</h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Ushbu amalni ortga qaytarib bo'lmaydi</p>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-rose-50/60 dark:bg-rose-950/40 rounded-xl border border-rose-200/80 dark:border-rose-800/50 text-slate-700 dark:text-slate-300 space-y-1">
+              <div className="font-semibold text-slate-900 dark:text-white text-sm">
+                "{deletingSeller.store_name}" do'koni platformadan o'chiriladi.
+              </div>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                STIR (INN): <strong className="font-mono text-slate-800 dark:text-slate-200">{deletingSeller.tax_id || "Mavjud emas"}</strong>
+                {deletingSeller.products_count !== undefined && ` • Tovarlar soni: ${deletingSeller.products_count} ta`}
+              </div>
+              <p className="text-[11px] text-rose-700 dark:text-rose-400 pt-1 font-medium leading-relaxed">
+                Do'konga tegishli barcha tovarlar, rasmlar, narxlar tarixi bazadan o'chiriladi. Foydalanuvchi hisobi saqlanib qolib, uning roli "Xaridor" (BUYER) darajasiga qaytariladi.
+              </p>
+            </div>
+
+            <div className="pt-2 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setDeletingSeller(null)}
+                disabled={deletingLoading}
+                className="px-3.5 py-2 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer font-medium"
+              >
+                Bekor qilish
+              </button>
+              <button
+                type="button"
+                onClick={handleDeleteSeller}
+                disabled={deletingLoading}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              >
+                {deletingLoading && <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />}
+                <span>Ha, butunlay o'chirilsin</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default AdminSellers;
+

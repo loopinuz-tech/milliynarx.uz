@@ -637,21 +637,16 @@ def get_category_analytics(category_id: str, db: Session = Depends(get_db)):
             "spread_pct": round(((p_max - p_min) / p_min) * 100, 1) if p_min > 0 else 0
         })
 
-    # AI Bozor Tahlili va Treyderlik Xulosasi (#19-vazifa: Savdo-sanoat palatasi)
-    top_sellers_names = ", ".join([s.store_name for s in seller_objs[:3]])
+    # AI Bozor Tahlili va Xulosasi
     ai_summary = (
-        f"Codexa AI Bozor Tahlili (Savdo-sanoat palatasi 19-muammo yechimi): '{cat.name}' toifasida "
-        f"tasdiqlangan {len(seller_objs)} ta mustaqil savdo subyektlari bo'yicha jami {len(prods)} ta narx taklifi qayd etildi. "
-        f"Bozorning o'rtacha benchmark narxi {avg_p:,.0f} so'mni tashkil qilmoqda. Eng qulay taklif {min_p:,.0f} so'm, "
-        f"eng yuqori narx esa {max_p:,.0f} so'm bo'lib, narx spredi {spread_amt:,.0f} so'm ({spread_pct}%) ga yetmoqda. "
-        f"Asosiy likvid takliflar {top_sellers_names or 'ulgurji markazlar'} tomonidan taqdim etilmoqda. "
-        f"Tadbirkorlar va xaridorlar ushbu narx spredidan foydalanib o'rtacha {spread_pct}% gacha xarid xarajatlarini tejashlari mumkin."
+        f"'{cat.name}' toifasida eng arzon taklif {min_p:,.0f} so'm, o'rtacha bozor narxi esa {avg_p:,.0f} so'mni tashkil qilmoqda. "
+        f"Do'konlar o'rtasidagi narx farqi {spread_amt:,.0f} so'm ({spread_pct}%). "
+        f"Xarid qilishdan oldin takliflarni taqqoslash orqali sezilarli mablag' tejash imkoniyati mavjud."
     )
 
-    verdict = "BUY_NOW" if spread_pct > 12 else ("FAIR_PRICE" if spread_pct >= 5 else "WAIT")
+    verdict = "BUY_NOW" if spread_pct > 15 else ("FAIR_PRICE" if spread_pct >= 5 else "WAIT")
     recommendation = (
-        f"Ushbu toifada ulgurji va B2B xaridlar uchun qulay narx spredi mavjud. Eng arzon benchmark narxidan foydalanib, "
-        f"to'g'ridan-to'g'ri birinchi qo'l do'konlar orqali xarid qilish tavsiya etiladi."
+        f"Ushbu toifadagi mahsulotlarni birinchi qo'l rasmiy do'konlardan taqqoslab xarid qilish tavsiya etiladi."
     )
 
     return {

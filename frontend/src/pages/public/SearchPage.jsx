@@ -605,76 +605,46 @@ export const SearchPage = () => {
                   >
                     <div>
                       {/* Product Image Box */}
-                      <div className="h-28 sm:h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800 relative">
+                      <div className="h-32 sm:h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-xl sm:rounded-2xl mb-2.5 sm:mb-3 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800 relative">
                         {primaryImg ? (
                           <img
                             src={primaryImg}
                             alt={p.name}
-                            className="h-full w-full object-contain p-1.5 sm:p-3 group-hover:scale-105 transition-transform duration-200"
+                            className="h-full w-full object-contain p-2 sm:p-3 group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
                           <SolarIcon name="Box" size={32} className="text-slate-300 dark:text-slate-600" />
                         )}
-                        <span className="hidden sm:block absolute top-2.5 left-2.5 px-2 py-0.5 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-bold rounded-md uppercase tracking-wider">
-                          O'zbekiston / Bozor
-                        </span>
                       </div>
 
                       {/* Title & Brand */}
-                      <div className="text-[10px] sm:text-[11px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider mb-0.5 sm:mb-1 truncate">
+                      <div className="text-[10px] sm:text-[11px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider mb-1 truncate">
                         {p.brand_name || 'Bozor Taklifi'}
                       </div>
                       <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors mb-2 leading-snug min-h-[32px] sm:min-h-[40px]">
                         {p.name}
                       </h4>
 
-                      {/* Stacked Seller Avatars & Offers Count */}
-                      <div className="flex items-center justify-between mb-2 sm:mb-3 bg-slate-50/70 dark:bg-slate-800/50 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-slate-100 dark:border-slate-800 text-[10px] sm:text-[11px]">
-                        <div className="flex items-center gap-1 sm:gap-2 truncate">
-                          <span className="font-bold text-slate-700 dark:text-slate-300 truncate">
-                            {p.sellers_count || 1} do'kon
-                          </span>
-                        </div>
-                        <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 shrink-0">
-                          {(p.sellers_count || 1) > 1 ? "Raqobatli" : "Yagona"}
-                        </span>
+                      {/* Store Count */}
+                      <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-2.5">
+                        <SolarIcon name="Shop" size={13} className="text-orange-500 shrink-0" />
+                        <span>{p.sellers_count || 1} ta do'kon taklifi</span>
                       </div>
                     </div>
 
-                    {/* Bottom Pricing & Action Row */}
-                    <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800 flex items-end justify-between gap-1 sm:gap-3">
-                      <div className="truncate">
-                        <div className="text-[9px] sm:text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider truncate">
-                          {(p.sellers_count || 1) > 1 ? "Boshlang'ich:" : "Narx:"}
+                    {/* Bottom Pricing & Action */}
+                    <div className="pt-2 sm:pt-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                          {(p.sellers_count || 1) > 1 ? "Boshlang'ich narx" : "Narxi"}
                         </div>
-                        <div className="text-xs sm:text-lg font-black text-slate-900 dark:text-white font-numeric truncate">
+                        <div className="text-sm sm:text-base font-black text-slate-900 dark:text-white font-numeric truncate">
                           {formatPrice(p.min_price || p.price)}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 shrink-0">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setComparisonProductId(p.id);
-                          }}
-                          className="px-2 py-1 sm:px-2.5 sm:py-1.5 bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-600 text-orange-700 dark:text-orange-300 hover:text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center gap-1 border border-orange-200 dark:border-orange-800/60 hover:border-transparent cursor-pointer shadow-2xs active:scale-95"
-                          title="Barcha do'konlar narxlarini solishtirish"
-                        >
-                          <SolarIcon name="Shop" size={13} />
-                          <span className="hidden sm:inline">{p.sellers_count || 1} do'kon</span>
-                        </button>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/product/${p.slug || p.id}`);
-                          }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
-                          title="To'liq tahlil"
-                        >
-                          <SolarIcon name="ArrowRight" size={13} />
-                        </button>
+                      <div className="w-8 h-8 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 group-hover:bg-orange-600 group-hover:text-white flex items-center justify-center transition-colors shrink-0 shadow-2xs">
+                        <SolarIcon name="ArrowRight" size={14} />
                       </div>
                     </div>
                   </div>

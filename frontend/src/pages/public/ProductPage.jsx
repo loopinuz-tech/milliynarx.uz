@@ -247,6 +247,14 @@ export const ProductPage = () => {
   const rangeSpan = rangeMax - rangeMin || 1;
   const currentPosPct = isSingleSeller ? 100 : Math.min(100, Math.max(0, Math.round(((product.price - rangeMin) / rangeSpan) * 100)));
 
+  // Historical + Current market price bounds (Min, Avg, Max)
+  const historyPrices = price_history && price_history.length > 0 ? price_history.map(p => p.price) : [product.price];
+  const marketMinPrice = Math.min(minSellerPrice, ...historyPrices);
+  const marketMaxPrice = Math.max(maxSellerPrice, ...historyPrices);
+  const marketAvgPrice = allSellersSorted.length > 1 
+    ? Math.round(avgSellerPrice) 
+    : Math.round(historyPrices.reduce((sum, p) => sum + p, 0) / historyPrices.length);
+
   // Calculate genuine historical price change if price_history has recorded entries
   let realPriceChange = null;
   if (price_history && price_history.length > 1) {
@@ -266,7 +274,7 @@ export const ProductPage = () => {
 
   return (
     <div className="w-full max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 space-y-6">
-      {/* 1. TOP BREADCRUMB & PLATFORM IDENTITY ROW */}
+      {/* 1. TOP BREADCRUMB & ACTIONS */}
       <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400 border-b border-slate-200/80 dark:border-slate-800/80 pb-4">
         <div className="flex items-center gap-2 truncate">
           <span onClick={() => navigate('/')} className="hover:text-slate-900 dark:hover:text-white cursor-pointer font-medium">Bosh sahifa</span>
@@ -276,148 +284,66 @@ export const ProductPage = () => {
           <span className="text-slate-900 dark:text-slate-200 font-bold truncate max-w-sm">{product.name}</span>
         </div>
 
-        {/* Real-time Market Intelligence Status Tag */}
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-slate-900 dark:bg-slate-800 text-white text-[11px] font-semibold rounded-xl shadow-2xs border border-slate-800 dark:border-slate-700">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>Milliy Narx Terminali &bull; Real Bozor Ma'lumotlari</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleAddToCompare()}
+            className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+          >
+            <SolarIcon name="Compare" size={15} />
+            <span>Taqqoslash</span>
+          </button>
+          <button
+            onClick={handleToggleFavorite}
+            className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer ${
+              isFavorited 
+                ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400' 
+                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200'
+            }`}
+          >
+            <SolarIcon name="Heart" size={15} />
+            <span>{isFavorited ? 'Saqlangan' : 'Saqlash'}</span>
+          </button>
+        </div>
+      </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleAddToCompare()}
-              className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
-            >
-              <SolarIcon name="Compare" size={15} />
-              <span>Taqqoslash</span>
-            </button>
-            <button
-              onClick={handleToggleFavorite}
-              className={`px-3 py-1.5 border rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer ${
-                isFavorited 
-                  ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400' 
-                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-700 dark:text-slate-200'
-              }`}
-            >
-              <SolarIcon name="Heart" size={15} />
-              <span>{isFavorited ? 'Saqlangan' : 'Monitoringga olish'}</span>
-            </button>
+      {/* 2. THREE CORE MARKET PRICES (ENG KAM, O'RTACHA, ENG YUQORI) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Metric 1: Eng kam narx */}
+        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-2xs">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+            Eng kam narx
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 font-numeric tracking-tight">
+            {formatPrice(marketMinPrice)}
+          </div>
+        </div>
+
+        {/* Metric 2: O'rtacha narx */}
+        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-2xs">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+            O'rtacha narx
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-numeric tracking-tight">
+            {formatPrice(marketAvgPrice)}
+          </div>
+        </div>
+
+        {/* Metric 3: Eng yuqori narx */}
+        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-2xs">
+          <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
+            Eng yuqori narx
+          </div>
+          <div className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-numeric tracking-tight">
+            {formatPrice(marketMaxPrice)}
           </div>
         </div>
       </div>
 
-      {/* 2. HIGH-DENSITY MARKET INTELLIGENCE KPI STRIP (4 REAL METRICS) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-        {/* Metric 1: Spot Quote */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-1.5">
-            <span>Spot Kotirovka</span>
-            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-bold text-[10px] bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              FAOL
-            </span>
-          </div>
-          <div className="text-2xl font-black text-slate-900 dark:text-white font-numeric tracking-tight">
-            {formatPrice(product.price)}
-          </div>
-          <div className="mt-1 flex items-center justify-between text-[11px]">
-            <span className={`font-semibold ${isBestOffer ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400'}`}>
-              {isBestOffer ? "Eng arzon benchmark" : `+${formatPrice(product.price - minSellerPrice)}`}
-            </span>
-            {realPriceChange ? (
-              <span className={`font-numeric font-semibold ${realPriceChange.isDrop ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                {realPriceChange.pct} dinamika
-              </span>
-            ) : (
-              <span className="text-slate-400 dark:text-slate-500 font-mono text-[10px]">
-                Barqaror narx
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Metric 2: Market Corridor & Spread */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-1.5">
-            <span>Bozor Koridori</span>
-            <span className="text-orange-600 dark:text-orange-400 font-mono text-[10px] bg-orange-50 dark:bg-orange-950/60 px-1.5 py-0.5 rounded font-bold">
-              SPRED: {spread > 0 ? `${spreadPct}%` : '0.0%'}
-            </span>
-          </div>
-          <div className="text-base font-bold text-slate-900 dark:text-white font-numeric truncate">
-            {isSingleSeller ? formatPrice(product.price) : `${formatPrice(minSellerPrice)} — ${formatPrice(maxSellerPrice)}`}
-          </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <span>Arbitraj holati:</span>
-            <span className="font-bold text-slate-700 dark:text-slate-300 font-numeric">
-              {spread > 0 ? formatPrice(spread) : "0 so'm (Monolit)"}
-            </span>
-          </div>
-        </div>
-
-        {/* Metric 3: Market Liquidity & Depth */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-1.5">
-            <span>Bozor Chuqurligi</span>
-            <span className="text-indigo-600 dark:text-indigo-400 font-mono text-[10px] bg-indigo-50 dark:bg-indigo-950/60 px-1.5 py-0.5 rounded font-bold">
-              {allSellersSorted.length} TA DILER
-            </span>
-          </div>
-          <div className="text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-1.5">
-            <span>{product.seller_name || "Rasmiy Do'kon"}</span>
-            <span className="text-emerald-500">★ {product.seller_rating || 5.0}</span>
-          </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-            <span>Hudud:</span>
-            <span className="font-semibold text-slate-700 dark:text-slate-300">{product.location || 'Toshkent'}</span>
-          </div>
-        </div>
-
-        {/* Metric 4: Codexa AI Signal */}
-        <div className="bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-2xs">
-          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider mb-1.5">
-            <span className="flex items-center gap-1">
-              <img src="/aiimg.png" alt="AI" className="w-3.5 h-3.5 object-contain" />
-              AI Algoritmik Signal
-            </span>
-            <span className="text-[10px] font-bold text-orange-600 dark:text-orange-400 font-mono">CODEXA AI</span>
-          </div>
-          <div className="text-sm font-black tracking-tight">
-            {aiLoading ? (
-              <span className="text-slate-400 animate-pulse text-xs">Hisoblanmoqda...</span>
-            ) : aiResult?.verdict === 'BUY_NOW' ? (
-              <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                <SolarIcon name="CheckCircle" size={14} /> XARID UCHUN MAQBUL
-              </span>
-            ) : aiResult?.verdict === 'WAIT' ? (
-              <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                <SolarIcon name="Clock" size={14} /> NARX TUSHISHINI KUTISH
-              </span>
-            ) : (
-              <span className="text-blue-600 dark:text-blue-400 flex items-center gap-1">
-                <SolarIcon name="Shield" size={14} /> BOZOR MUVOZANATIDA
-              </span>
-            )}
-          </div>
-          <div className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 truncate">
-            {aiResult?.recommendation || "Bozor o'rtacha muvozanatli narxiga to'liq mos"}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. TWO-COLUMN FINANCIAL MARKET TERMINAL CONSOLE */}
+      {/* 3. TWO-COLUMN PRODUCT CONSOLE */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-xs transition-colors">
         
-        {/* Left Column (5 cols): Technical Asset Profile & Verification Passport */}
-        <div className="lg:col-span-5 flex flex-col space-y-4">
-          <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500 pb-2 border-b border-slate-100 dark:border-slate-800">
-            <span>[KOD: {product.sku || product.model || 'B2B-TECH'}]</span>
-            <span className="text-emerald-600 dark:text-emerald-400 font-semibold font-sans flex items-center gap-1">
-              <SolarIcon name="CheckCircle" size={12} /> TASDIQLANGAN KATALOG
-            </span>
-          </div>
-
-          {/* Compact Technical Viewport */}
+        {/* Left Column (5 cols): Product Visual Gallery */}
+        <div className="lg:col-span-5 flex flex-col space-y-3">
           <div className="w-full h-72 sm:h-80 bg-slate-50/70 dark:bg-[#0E1524] rounded-2xl flex items-center justify-center overflow-hidden border border-slate-200/80 dark:border-slate-800 relative group">
             {images.length > 0 ? (
               <img
@@ -427,24 +353,6 @@ export const ProductPage = () => {
               />
             ) : (
               <SolarIcon name="Box" size={56} className="text-slate-300 dark:text-slate-700" />
-            )}
-
-            {/* Technical Viewport Watermark Badges */}
-            <div className="absolute top-3 left-3 flex flex-col gap-1">
-              <span className="px-2 py-0.5 bg-slate-900/90 dark:bg-slate-800/90 text-white text-[10px] font-mono font-bold rounded backdrop-blur-xs">
-                {product.condition === 'NEW' ? 'YANGI MAHSULOT' : product.condition}
-              </span>
-              {product.model && (
-                <span className="px-2 py-0.5 bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-300 text-[10px] font-mono rounded border border-slate-200 dark:border-slate-700">
-                  MODEL: {product.model}
-                </span>
-              )}
-            </div>
-
-            {product.sku && (
-              <div className="absolute bottom-3 right-3 text-[10px] font-mono text-slate-500 dark:text-slate-400 bg-white/90 dark:bg-slate-900/90 px-2 py-0.5 rounded border border-slate-200/60 dark:border-slate-800">
-                SKU: {product.sku}
-              </div>
             )}
           </div>
 
@@ -466,280 +374,98 @@ export const ProductPage = () => {
               ))}
             </div>
           )}
-
-          {/* Institutional Asset Data Sheet (Specs Table) */}
-          <div className="rounded-xl border border-slate-200/80 dark:border-slate-800 overflow-hidden text-xs">
-            <div className="bg-slate-50 dark:bg-[#151D2C] px-3.5 py-2 font-bold text-slate-700 dark:text-slate-300 text-[11px] uppercase tracking-wider border-b border-slate-200/80 dark:border-slate-800 flex items-center justify-between">
-              <span>Rasmiy Xarakteristikalar</span>
-              <span className="font-mono text-slate-400 dark:text-slate-500 font-normal">KATALOG</span>
-            </div>
-            <div className="divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-[#111827]">
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">Model kodi:</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{product.model || '-'}</span>
-              </div>
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">SKU / Kod:</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{product.sku || '-'}</span>
-              </div>
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">Brend / Ishlab chiqaruvchi:</span>
-                <span className="font-semibold text-slate-900 dark:text-white">{product.brand_name || 'Bozor Texnikasi'}</span>
-              </div>
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">Kategoriya sektori:</span>
-                <span className="font-medium text-slate-700 dark:text-slate-300">{product.category_name}</span>
-              </div>
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">Rasmiy Kafolat:</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">{product.warranty || 'Mavjud emas'}</span>
-              </div>
-              <div className="px-3.5 py-2 flex items-center justify-between">
-                <span className="text-slate-400 dark:text-slate-400">Logistika va yetkazish:</span>
-                <span className="font-medium text-slate-800 dark:text-slate-200">{product.delivery || 'Kelishiladi'}</span>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Right Column (7 cols): Market Intelligence & Quotation Console */}
-        <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+        {/* Right Column (7 cols): Clean Product Info & Pricing */}
+        <div className="lg:col-span-7 flex flex-col justify-between space-y-5">
           <div className="space-y-4">
             {/* Header Identity */}
-            <div>
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider bg-orange-50 dark:bg-orange-950/60 border border-orange-200 dark:border-orange-800/80 px-2.5 py-0.5 rounded-md font-mono">
-                  {product.brand_name || 'BOZOR KOTIROVKASI'}
-                </span>
-                <Badge status={product.availability} size="xs" />
-                <span className="text-xs text-slate-400 font-mono">
-                  {product.category_name}
-                </span>
-                <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500 ml-auto hidden sm:inline">
-                  OXIRGI YANGILANISH: {formatDate(product.updated_at || product.created_at)}
-                </span>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
+              {product.name}
+            </h1>
+
+            {/* Price & Seller Information Table */}
+            <div className="space-y-3">
+              <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-numeric tracking-tight">
+                {formatPrice(product.price)}
               </div>
 
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug">
-                {product.name}
-              </h1>
-            </div>
-
-            {/* Visual Trading Range Corridor (Visual Price Gauge) */}
-            {isSingleSeller ? (
-              <div className="p-4 sm:p-5 bg-slate-50/80 dark:bg-[#151D2C] border border-slate-200/90 dark:border-slate-800 rounded-2xl space-y-2.5">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <SolarIcon name="Shield" size={14} className="text-emerald-600 dark:text-emerald-400" />
-                    Bozor Kotirovkasi Holati
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
-                    100% BARQAROR BENCHMARK
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                  <span>Yagona diler narxi: <strong className="text-slate-900 dark:text-white font-numeric text-sm">{formatPrice(product.price)}</strong></span>
-                  <span>Bozor spredi: <strong className="text-emerald-600 dark:text-emerald-400 font-numeric">0 so'm (Tafovutsiz)</strong></span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                  Ushbu mahsulot bo'yicha bozorda 1 ta rasmiy diler taklifi mavjud. Narx sun'iy koridorsiz, to'g'ridan-to'g'ri dilerning rasmiy kotirovkasiga to'liq mos keladi.
-                </p>
-              </div>
-            ) : (
-              <div className="p-4 sm:p-5 bg-slate-50/80 dark:bg-[#151D2C] border border-slate-200/90 dark:border-slate-800 rounded-2xl space-y-3">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                    <SolarIcon name="Chart" size={14} className="text-orange-600 dark:text-orange-400" />
-                    Bozor Narx Shkalasi va Koridori (Price Corridor)
-                  </span>
-                  <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-                    DIAPAZON: {formatPrice(minSellerPrice)} &mdash; {formatPrice(maxSellerPrice)}
-                  </span>
-                </div>
-
-                {/* Graphical Range Bar */}
-                <div className="relative pt-4 pb-2">
-                  <div className="w-full h-3.5 bg-slate-200/90 dark:bg-slate-700/70 rounded-full relative overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 rounded-full opacity-80"
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-
-                  {/* Spot Needle Pinpoint */}
-                  <div 
-                    className="absolute top-1 transform -translate-x-1/2 flex flex-col items-center transition-all duration-500 pointer-events-none"
-                    style={{ left: `${Math.min(95, Math.max(5, currentPosPct))}%` }}
-                  >
-                    <span className="px-2 py-0.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-[10px] font-black font-numeric rounded-md shadow-md whitespace-nowrap">
-                      Joriy: {formatPrice(product.price)}
-                    </span>
-                    <div className="w-2 h-2 bg-slate-900 dark:bg-white rotate-45 -mt-1" />
-                  </div>
-                </div>
-
-                {/* Range Limits Footer */}
-                <div className="flex items-center justify-between text-[11px] font-numeric text-slate-500 dark:text-slate-400 pt-1">
-                  <div className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                    <span>Bozor Minimumi: <strong className="text-slate-800 dark:text-slate-200">{formatPrice(minSellerPrice)}</strong></span>
-                  </div>
-                  <div className="hidden sm:flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-amber-500" />
-                    <span>O'rtacha konsensus: <strong className="text-slate-800 dark:text-slate-200">{formatPrice(avgSellerPrice)}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" />
-                    <span>Maksimum: <strong className="text-slate-800 dark:text-slate-200">{formatPrice(maxSellerPrice)}</strong></span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Dealer Quotation & Arbitrage Summary Box */}
-            <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-50 via-white to-orange-50/20 dark:from-[#151D2C] dark:via-[#131C2E] dark:to-[#1A1813] border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-2xs">
-              <div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1.5">
-                  <span>Joriy Diler Kotirovkasi:</span>
-                  {isBestOffer && (
-                    <span className="px-1.5 py-0.2 bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 rounded text-[9px] font-bold">
-                      ENG ARZON (BENCHMARK)
-                    </span>
-                  )}
-                </div>
-                <div className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white font-numeric tracking-tight mt-0.5">
-                  {formatPrice(product.price)}
-                </div>
-                {realPriceChange ? (
-                  <div className="text-xs font-numeric mt-0.5 flex items-center gap-2">
-                    <span className="text-slate-400 dark:text-slate-500 line-through">{formatPrice(realPriceChange.earliest)}</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded text-[10px]">
-                      {realPriceChange.pct} narx dinamikasi
-                    </span>
-                  </div>
-                ) : (
-                  <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
-                    Rasmiy dilerning to'g'ridan-to'g'ri kotirovkasi
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col items-end text-right">
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-bold">Market-Meyker:</div>
-                <div className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-1.5 mt-0.5">
-                  <span>{product.seller_name || "Rasmiy Diler"}</span>
-                  <span className="p-0.5 bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 rounded">
-                    <SolarIcon name="CheckCircle" size={13} />
-                  </span>
-                </div>
-                <div className="text-[11px] text-slate-400 dark:text-slate-400 font-mono mt-0.5">
-                  ★ {product.seller_rating || 5.0} &bull; {product.location || 'Toshkent'}
-                </div>
-                <div className="text-[10px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
-                  Logistika: {product.delivery || '1 kunda'} &bull; Kafolat: {product.warranty || '12 oy'}
-                </div>
+              {/* Specifications / Merchant Table */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden bg-white dark:bg-[#111827]">
+                <table className="w-full text-xs text-left border-collapse">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    <tr>
+                      <td className="py-2.5 px-3.5 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/70 dark:bg-[#151D2C] w-28 sm:w-32">
+                        Sotuvchi
+                      </td>
+                      <td className="py-2.5 px-3.5 font-semibold text-slate-900 dark:text-white">
+                        {product.seller_name || "Rasmiy Diler"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3.5 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/70 dark:bg-[#151D2C]">
+                        Joylashuv
+                      </td>
+                      <td className="py-2.5 px-3.5 font-semibold text-slate-800 dark:text-slate-200">
+                        {product.location || "Toshkent viloyati"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3.5 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/70 dark:bg-[#151D2C]">
+                        Yetkazish
+                      </td>
+                      <td className="py-2.5 px-3.5 font-semibold text-slate-800 dark:text-slate-200">
+                        {product.delivery || '1 kunda yetkazib berish'}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2.5 px-3.5 font-medium text-slate-500 dark:text-slate-400 bg-slate-50/70 dark:bg-[#151D2C]">
+                        Kafolat
+                      </td>
+                      <td className="py-2.5 px-3.5 font-semibold text-slate-800 dark:text-slate-200">
+                        {product.warranty || '12 oy rasmiy kafolat'}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            {/* Codexa AI Market Intelligence & Arbitrage Verdict Box */}
-            <div id="ai-section" className="p-4 sm:p-5 bg-gradient-to-r from-orange-50/80 via-amber-50/30 to-white dark:from-[#1A140E] dark:via-[#131A28] dark:to-[#101726] border border-orange-200 dark:border-orange-900/60 rounded-2xl shadow-2xs space-y-3 transition-colors">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-orange-200/70 dark:border-orange-900/40 pb-2.5">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-orange-600 text-white p-0.5 flex items-center justify-center shadow-2xs">
-                    <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-extrabold text-slate-900 dark:text-slate-100 text-xs sm:text-sm">
-                      Codexa AI Bozor Xulosasi
-                    </span>
-                    <span className="text-[9px] bg-orange-600 text-white px-1.5 py-0.2 rounded-full font-bold">
-                      Codexa
-                    </span>
-                  </div>
-                </div>
-
-                {/* AI Verdict Badge */}
-                {aiLoading ? (
-                  <span className="px-2.5 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-800 dark:text-orange-300 text-[11px] font-bold animate-pulse">
-                    Tahlil hisoblanmoqda...
-                  </span>
-                ) : aiResult?.verdict === 'BUY_NOW' ? (
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-[11px] font-bold flex items-center gap-1 shadow-2xs">
-                    <SolarIcon name="CheckCircle" size={13} className="text-emerald-600 dark:text-emerald-400" />
-                    <span>Eng maqbul fursat (Xarid uchun qulay)</span>
-                  </span>
-                ) : aiResult?.verdict === 'WAIT' ? (
-                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-[11px] font-bold flex items-center gap-1 shadow-2xs">
-                    <SolarIcon name="Clock" size={13} className="text-amber-600 dark:text-amber-400" />
-                    <span>Narx pasayishini kutish tavsiya</span>
-                  </span>
-                ) : (
-                  <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-800 dark:text-blue-300 text-[11px] font-bold flex items-center gap-1 shadow-2xs">
-                    <SolarIcon name="Shield" size={13} className="text-blue-600 dark:text-blue-400" />
-                    <span>Bozor muvozanatli narxi</span>
-                  </span>
-                )}
+            {/* Concise 1-Line Codexa AI Summary */}
+            <div id="ai-section" className="p-3.5 bg-orange-50/40 dark:bg-orange-950/20 border border-orange-200/60 dark:border-orange-900/40 rounded-xl flex flex-wrap items-center justify-between gap-3 text-xs transition-colors">
+              <div className="flex items-center gap-2">
+                <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain shrink-0" />
+                <span className="font-medium text-slate-700 dark:text-slate-300">
+                  {cleanAiSummary(aiResult?.analysis_text) || "Codexa AI: Mahsulot narxi barqaror muvozanatda turibdi, xarid uchun maqbul."}
+                </span>
               </div>
-
-              {/* AI Analysis Text */}
-              {aiLoading ? (
-                <div className="space-y-2 py-1 animate-pulse">
-                  <div className="h-3 bg-slate-200 dark:bg-slate-700/80 rounded-full w-full"></div>
-                  <div className="h-3 bg-slate-200 dark:bg-slate-700/80 rounded-full w-5/6"></div>
-                  <div className="h-3 bg-slate-200 dark:bg-slate-700/80 rounded-full w-3/5"></div>
-                </div>
-              ) : (
-                <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                  {cleanAiSummary(aiResult?.analysis_text) || (
-                    isSingleSeller
-                      ? `Mahsulot bozorning muvozanatli narxida (${formatPrice(product.price)}) barqaror turibdi. Hozirda xarid qilish maqsadga muvofiq.`
-                      : isBestOffer
-                      ? `Joriy taklif (${formatPrice(product.price)}) bozordagi eng arzon narx hisoblanadi. Xarid qilish uchun eng qulay fursat.`
-                      : `Mahsulot bozorning o'rtacha muvozanatli narxida (${formatPrice(product.price)}) taklif etilmoqda. Xarid uchun qulay fursat.`
-                  )}
-                </p>
-              )}
-
-              {/* Recommendation chip + AI consultation link */}
-              <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-                {aiResult?.recommendation ? (
-                  <div className="flex-1 min-w-[200px] p-2 bg-white/90 dark:bg-[#141C2E] rounded-lg border border-orange-200/80 dark:border-orange-900/50 text-[11px] text-orange-950 dark:text-orange-200 font-medium flex items-center gap-1.5">
-                    <SolarIcon name="Stars" size={14} className="text-orange-600 dark:text-orange-400 shrink-0" />
-                    <span className="truncate"><strong>Tavsiya:</strong> {aiResult.recommendation}</span>
-                  </div>
-                ) : (
-                  <div className="text-[11px] text-slate-400 dark:text-slate-500 font-mono">
-                    Mustaqil tahlil: Real bozor kotirovkalari asosida
-                  </div>
-                )}
-
-                <button
-                  onClick={handleAskAiAboutProduct}
-                  className="text-[11px] font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 flex items-center gap-1 ml-auto cursor-pointer transition-colors py-1 px-2.5 rounded-lg bg-white/80 dark:bg-slate-800 border border-orange-200 dark:border-orange-800/60 hover:bg-orange-50 dark:hover:bg-orange-950/50 shadow-2xs"
-                >
-                  <img src="/aiimg.png" alt="AI" className="w-3.5 h-3.5 object-contain" />
-                  <span>AI bilan batafsil suhbat</span>
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleAskAiAboutProduct}
+                className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 flex items-center gap-1 ml-auto cursor-pointer"
+              >
+                <span>AI bilan suhbat</span>
+                <SolarIcon name="ArrowRight" size={12} />
+              </button>
             </div>
           </div>
 
-          {/* Action Row: Professional Trading Terminal Command Bar */}
-          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
+          {/* Action Buttons */}
+          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center gap-3">
             <button
               onClick={() => setShowAlertModal(true)}
-              className="px-4 py-2.5 bg-slate-900 dark:bg-slate-800 hover:bg-black dark:hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition-colors shadow-xs cursor-pointer border border-transparent dark:border-slate-700"
+              className="px-4 py-2.5 bg-slate-900 dark:bg-slate-800 hover:bg-black dark:hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
             >
               <SolarIcon name="Bell" size={16} />
-              <span>Narx monitoringi o'rnatish</span>
+              <span>Narx monitoringi</span>
             </button>
 
             <button
               onClick={handleAskAiAboutProduct}
-              className="px-4 py-2.5 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition-all shadow-xs cursor-pointer"
+              className="px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white text-xs font-semibold rounded-xl flex items-center gap-2 transition-all cursor-pointer shadow-xs"
             >
-              <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain rounded-full shadow-2xs" />
-              <span>Codexa AI Maslahatchi</span>
+              <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain rounded-full" />
+              <span>AI Maslahatchi</span>
             </button>
 
             <button
@@ -747,284 +473,127 @@ export const ProductPage = () => {
                 const el = document.getElementById('sellers-section');
                 if (el) el.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center gap-2 transition-colors cursor-pointer border border-transparent dark:border-slate-700"
+              className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
             >
               <SolarIcon name="Shop" size={16} />
-              <span>Barcha dilerlar ({allSellersSorted.length} ta)</span>
+              <span>Barcha do'konlar ({allSellersSorted.length})</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 4. INTERACTIVE SELLER PRICE COMPARISON TABLE-GRAPH (CHART + MATRIX) */}
-      <div id="sellers-section" className="w-full bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-7 shadow-xs space-y-5 transition-colors">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-800 pb-4">
-          <div>
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
-              <SolarIcon name="Chart" size={20} className="text-orange-600 shrink-0" />
-              <span>Sotuvchilar Narxlari Solishtirma Grafigi (Table-Graph)</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300">
-                {allSellersSorted.length} ta do'kon
-              </span>
+      {/* 4. SELLER OFFERS */}
+      <div id="sellers-section" className="w-full bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-5 shadow-xs space-y-2 transition-colors">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="flex items-center gap-2">
+            <SolarIcon name="Shop" size={18} className="text-orange-600 shrink-0" />
+            <h2 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
+              Sotuvchilar takliflari
             </h2>
-            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Bozordagi barcha sotuvchilar takliflari, spred grafigi va narx taqsimoti tahlili
-            </p>
+            <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-orange-50 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/60">
+              {allSellersSorted.length}
+            </span>
           </div>
 
-          {/* Benchmark indicators pill row */}
-          <div className="flex flex-wrap items-center gap-2 text-[11px] sm:text-xs font-numeric">
-            <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300 rounded-xl font-bold flex items-center gap-1.5 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-              <span className="whitespace-nowrap">Eng arzon: {formatPrice(minSellerPrice)}</span>
+          {!isSingleSeller && (
+            <div className="text-xs font-numeric text-slate-500 dark:text-slate-400">
+              Eng arzon: <strong className="text-emerald-600 dark:text-emerald-400 font-bold">{formatPrice(minSellerPrice)}</strong>
             </div>
-            <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80 text-amber-800 dark:text-amber-300 rounded-xl font-bold flex items-center gap-1.5 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-              <span className="whitespace-nowrap">O'rtacha: {formatPrice(avgSellerPrice)}</span>
-            </div>
-            {maxSellerPrice > minSellerPrice && (
-              <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-xl font-bold flex items-center gap-1.5 shadow-2xs">
-                <span className="w-2 h-2 rounded-full bg-slate-500 shrink-0" />
-                <span className="whitespace-nowrap">Maksimum: {formatPrice(maxSellerPrice)}</span>
-              </div>
-            )}
-          </div>
+          )}
         </div>
 
-        {/* Desktop & Tablet View: Fully Responsive Table Graph */}
-        <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-          <table className="w-full border-collapse text-left text-xs">
-            <thead className="bg-slate-50/90 dark:bg-[#151D2C] border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-              <tr>
-                <th className="py-3 px-3.5 w-10 text-center">#</th>
-                <th className="py-3 px-3.5 min-w-[200px] lg:min-w-[240px]">Sotuvchi va Do'kon</th>
-                <th className="py-3 px-3.5 w-36 lg:w-44 whitespace-nowrap">Taklif Narxi</th>
-                <th className="py-3 px-3.5 w-48 sm:w-56 lg:w-64 max-w-[260px]">Taqqoslama Narx Grafigi</th>
-                <th className="py-3 px-3.5 w-36 hidden lg:table-cell">Kafolat & Yetkazish</th>
-                <th className="py-3 px-3.5 w-24 sm:w-28 text-right whitespace-nowrap">Harakat</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 text-slate-700 dark:text-slate-300">
-              {allSellersSorted.map((seller, idx) => {
-                const isLowest = seller.price === minSellerPrice;
-                const diffFromMin = seller.price - minSellerPrice;
-                const diffPct = minSellerPrice > 0 ? (diffFromMin / minSellerPrice) * 100 : 0;
-                const barWidth = maxSellerPrice > 0 
-                  ? Math.max(15, Math.min(100, Math.round((seller.price / maxSellerPrice) * 100))) 
-                  : 50;
-
-                return (
-                  <tr 
-                    key={seller.product_id || idx} 
-                    className={`hover:bg-slate-50/70 dark:hover:bg-slate-800/50 transition-colors ${
-                      seller.is_current ? 'bg-orange-50/20 dark:bg-orange-950/20' : ''
-                    }`}
-                  >
-                    <td className="py-3.5 px-3.5 text-center font-bold text-slate-400 font-numeric">
-                      {idx + 1}
-                    </td>
-
-                    <td className="py-3.5 px-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-slate-700 dark:text-slate-200 text-xs shrink-0 border border-slate-200 dark:border-slate-700">
-                          {seller.seller_name.charAt(0)}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 flex-wrap">
-                            <span className="truncate">{seller.seller_name}</span>
-                            {seller.is_current && (
-                              <span className="px-1.5 py-0.2 bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 rounded text-[9px] font-bold shrink-0">
-                                Ko'rilmoqda
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-2 flex-wrap">
-                            <span className="text-amber-500 font-bold">★ {seller.seller_rating || 5.0}</span>
-                            <span>&bull;</span>
-                            <span>{seller.location || 'Toshkent'}</span>
-                            <span className="lg:hidden text-slate-400 dark:text-slate-500">
-                              &bull; {seller.warranty || '12 oy'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="py-3.5 px-3.5 whitespace-nowrap">
-                      <div className="font-black text-sm text-slate-900 dark:text-white font-numeric">
-                        {formatPrice(seller.price)}
-                      </div>
-                      <div className="mt-0.5">
-                        {isLowest ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300">
-                            <SolarIcon name="CheckCircle" size={11} className="text-emerald-600 dark:text-emerald-400" />
-                            Benchmark (Eng arzon)
-                          </span>
-                        ) : (
-                          <span className="text-[10px] text-rose-600 dark:text-rose-400 font-semibold font-numeric">
-                            +{formatPrice(diffFromMin)} (+{diffPct.toFixed(1)}%)
-                          </span>
-                        )}
-                      </div>
-                    </td>
-
-                    {/* Table-Graph Graphic Bar Column - Strictly Contained & Responsive */}
-                    <td className="py-3.5 px-3.5 w-48 sm:w-56 lg:w-64 max-w-[260px]">
-                      <div className="space-y-1.5 max-w-[240px]">
-                        <div className="flex items-center justify-between text-[11px] font-numeric">
-                          <span className="text-slate-400 dark:text-slate-500">Nisbiy narx:</span>
-                          <span className="font-bold text-slate-700 dark:text-slate-300 text-[10px] sm:text-[11px]">
-                            {isSingleSeller 
-                              ? "100% (Yagona taklif)" 
-                              : isLowest 
-                                ? "100% (Eng qulay)" 
-                                : `+${diffPct.toFixed(0)}% farq`}
-                          </span>
-                        </div>
-                        <div className="w-full h-2.5 bg-slate-100 dark:bg-[#1E293B] rounded-full overflow-hidden flex relative">
-                          <div 
-                            style={{ width: `${isSingleSeller ? 100 : barWidth}%` }}
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              isLowest || isSingleSeller
-                                ? 'bg-gradient-to-r from-emerald-500 to-teal-400' 
-                                : seller.price <= avgSellerPrice 
-                                  ? 'bg-gradient-to-r from-orange-500 to-amber-400' 
-                                  : 'bg-gradient-to-r from-rose-500 to-amber-500'
-                            }`}
-                          />
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="py-3.5 px-3.5 text-xs text-slate-600 dark:text-slate-400 hidden lg:table-cell whitespace-nowrap">
-                      <div className="font-medium text-slate-800 dark:text-slate-200">{seller.warranty || '12 oy'}</div>
-                      <div className="text-[11px] text-slate-400">{seller.delivery || '1 kunda'}</div>
-                    </td>
-
-                    <td className="py-3.5 px-3.5 text-right whitespace-nowrap">
-                      <div className="flex items-center justify-end gap-1.5">
-                        {!seller.is_current && (
-                          <button
-                            onClick={() => navigate(`/product/${seller.product_slug || seller.slug || seller.product_id}`)}
-                            className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-lg transition cursor-pointer"
-                          >
-                            O'tish
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleAddToCompare(seller.product_id)}
-                          className="px-2.5 py-1 bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-600 text-orange-700 dark:text-orange-300 hover:text-white border border-orange-200 dark:border-orange-800 text-xs font-semibold rounded-lg transition cursor-pointer"
-                        >
-                          Taqqos
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile View: High-Performance Seller Cards */}
-        <div className="block md:hidden space-y-3">
+        {/* Unified Clean Sellers List */}
+        <div className="divide-y divide-slate-100 dark:divide-slate-800/80">
           {allSellersSorted.map((seller, idx) => {
             const isLowest = seller.price === minSellerPrice;
             const diffFromMin = seller.price - minSellerPrice;
             const diffPct = minSellerPrice > 0 ? (diffFromMin / minSellerPrice) * 100 : 0;
-            const barWidth = maxSellerPrice > 0 
-              ? Math.max(15, Math.min(100, Math.round((seller.price / maxSellerPrice) * 100))) 
-              : 50;
 
             return (
-              <div 
+              <div
                 key={seller.product_id || idx}
-                className={`p-3.5 sm:p-4 rounded-2xl border transition-all space-y-3 ${
+                className={`flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 py-3.5 px-3 rounded-2xl transition-colors ${
                   seller.is_current 
-                    ? 'bg-orange-50/40 dark:bg-orange-950/20 border-orange-300 dark:border-orange-800 ring-1 ring-orange-200 dark:ring-orange-900/50' 
-                    : 'bg-slate-50/60 dark:bg-[#151D2C] border-slate-200/90 dark:border-slate-800 shadow-2xs'
+                    ? 'bg-orange-50/40 dark:bg-orange-950/20 border border-orange-200/70 dark:border-orange-800/50' 
+                    : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/40'
                 }`}
               >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center font-numeric shrink-0">
-                      {idx + 1}
+                {/* 1. Store info */}
+                <div className="flex items-center gap-3 min-w-0 md:w-5/12">
+                  <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-200/80 dark:border-orange-800/60 flex items-center justify-center font-bold text-sm shrink-0 shadow-2xs">
+                    {seller.seller_name.charAt(0)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-slate-900 dark:text-white text-sm truncate">
+                        {seller.seller_name}
+                      </span>
+                      {seller.is_current && (
+                        <span className="px-1.5 py-0.5 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-300 rounded text-[10px] font-bold shrink-0">
+                          Ko'rilmoqda
+                        </span>
+                      )}
                     </div>
-                    <div className="min-w-0">
-                      <div className="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-1.5 flex-wrap">
-                        <span className="truncate">{seller.seller_name}</span>
-                        {seller.is_current && (
-                          <span className="px-1.5 py-0.2 bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-300 rounded text-[9px] font-bold shrink-0">
-                            Ko'rilmoqda
+                    <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-1">
+                      <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/60 px-1.5 py-0.5 rounded text-[11px]">
+                        ★ {seller.seller_rating || 5.0}
+                      </span>
+                      <span>&bull;</span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {seller.location || 'Toshkent shahri'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Kafolat va Yetkazish shartlari (Dedicated clean block) */}
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 pl-13 md:pl-0 md:w-4/12">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200/70 dark:border-emerald-800/60">
+                    <SolarIcon name="Shield" size={13} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>{seller.warranty || '12 oy rasmiy kafolat'}</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700/60">
+                    <SolarIcon name="Clock" size={13} className="text-slate-500 dark:text-slate-400 shrink-0" />
+                    <span>{seller.delivery || '1 kunda yetkazib berish'}</span>
+                  </div>
+                </div>
+
+                {/* 3. Price & Action */}
+                <div className="flex items-center justify-between md:justify-end gap-3.5 shrink-0 pl-13 md:pl-0 md:w-3/12">
+                  <div className="text-left md:text-right">
+                    <div className="font-black text-base text-slate-900 dark:text-white font-numeric">
+                      {formatPrice(seller.price)}
+                    </div>
+                    {!isSingleSeller && (
+                      <div className="text-[11px]">
+                        {isLowest ? (
+                          <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                            Eng arzon taklif
+                          </span>
+                        ) : (
+                          <span className="text-rose-600 dark:text-rose-400 font-semibold font-numeric">
+                            +{formatPrice(diffFromMin)} (+{diffPct.toFixed(0)}%)
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        {seller.location || 'Toshkent'} &bull; <span className="text-amber-500 font-bold">★ {seller.seller_rating || 5.0}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="text-right shrink-0">
-                    <div className="font-black text-sm text-slate-900 dark:text-white font-numeric">
-                      {formatPrice(seller.price)}
-                    </div>
-                    {isLowest ? (
-                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
-                        Eng arzon
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 font-numeric">
-                        +{formatPrice(diffFromMin)} (+{diffPct.toFixed(0)}%)
-                      </span>
                     )}
                   </div>
-                </div>
 
-                {/* Mobile Visual Bar */}
-                <div className="space-y-1 bg-white/70 dark:bg-[#0E1524] p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800/60">
-                  <div className="flex items-center justify-between text-[10px] font-numeric text-slate-500 dark:text-slate-400">
-                    <span>Nisbiy narx:</span>
-                    <span className="font-bold text-slate-700 dark:text-slate-300">
-                      {isSingleSeller 
-                        ? "100% (Yagona taklif)" 
-                        : isLowest 
-                          ? "100% (Eng qulay)" 
-                          : `+${diffPct.toFixed(0)}% farq`}
-                    </span>
-                  </div>
-                  <div className="w-full h-2 bg-slate-200/80 dark:bg-[#1E293B] rounded-full overflow-hidden flex">
-                    <div 
-                      style={{ width: `${isSingleSeller ? 100 : barWidth}%` }}
-                      className={`h-full rounded-full ${
-                        isLowest || isSingleSeller
-                          ? 'bg-gradient-to-r from-emerald-500 to-teal-400' 
-                          : seller.price <= avgSellerPrice 
-                            ? 'bg-gradient-to-r from-orange-500 to-amber-400' 
-                            : 'bg-gradient-to-r from-rose-500 to-amber-500'
-                      }`}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200/60 dark:border-slate-800">
-                  <span className="text-[10px] truncate max-w-[180px]">
-                    {seller.warranty || '12 oy'} &bull; {seller.delivery || 'Yetkazish'}
-                  </span>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1.5">
                     {!seller.is_current && (
                       <button
                         onClick={() => navigate(`/product/${seller.product_slug || seller.slug || seller.product_id}`)}
-                        className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold rounded-lg"
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold rounded-xl transition cursor-pointer"
                       >
                         O'tish
                       </button>
                     )}
                     <button
                       onClick={() => handleAddToCompare(seller.product_id)}
-                      className="px-2.5 py-1 bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800 text-xs font-bold rounded-lg"
+                      className="px-3 py-1.5 bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-600 text-orange-700 dark:text-orange-300 hover:text-white border border-orange-200 dark:border-orange-800 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center gap-1"
                     >
-                      Taqqoslash
+                      <SolarIcon name="Scale" size={13} />
+                      <span>Taqqos</span>
                     </button>
                   </div>
                 </div>
@@ -1034,22 +603,8 @@ export const ProductPage = () => {
         </div>
       </div>
 
-      {/* 6. HISTORICAL PRICE TREND CHART */}
-      <div className="w-full bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xs space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-          <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <SolarIcon name="History" size={20} className="text-orange-600" />
-              <span>Narxlar Dinamikasi va O'zgarishlar Grafigi</span>
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Bozordagi haqiqiy narx o'zgarishlari xronologiyasi
-            </p>
-          </div>
-          <Badge status="ACTIVE" text="Real Vaqt Kuzatuv" size="xs" />
-        </div>
-        <PriceChart data={price_history} height={320} />
-      </div>
+      {/* 6. HISTORICAL PRICE TREND CHART (MAGNETIC INTERACTION & MULTI-TIMEFRAMES) */}
+      <PriceChart data={price_history} height={360} />
 
       {/* 7. DETAILED SPECIFICATIONS MATRIX */}
       {product.specifications && Object.keys(product.specifications).length > 0 && (

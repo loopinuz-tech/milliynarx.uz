@@ -158,7 +158,7 @@ export const SellersComparisonDrawer = ({ productId, onClose }) => {
                       </div>
                       {s.is_lowest ? (
                         <span className="inline-block text-[10px] bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 font-bold px-2 py-0.5 rounded-md mt-0.5 border border-emerald-200 dark:border-emerald-700/50">
-                          Eng arzon taklif (Benchmark)
+                          Eng arzon taklif
                         </span>
                       ) : (
                         <span className="inline-block text-[10px] text-rose-600 dark:text-rose-400 font-semibold font-numeric mt-0.5">

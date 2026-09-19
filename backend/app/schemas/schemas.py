@@ -43,6 +43,12 @@ class UserOut(BaseModel):
     class Config:
         from_attributes = True
 
+class AdminUserUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    role: Optional[str] = None # BUYER, SELLER, ADMIN
+    is_active: Optional[bool] = None
+
 # Seller schemas
 class SellerProfileOut(BaseModel):
     id: str

@@ -198,7 +198,7 @@ export const ComparePage = () => {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 space-y-4 sm:space-y-6 pb-24 md:pb-8">
+      <div className="w-full px-3 sm:px-6 lg:px-8 xl:px-12 space-y-4 sm:space-y-6 pb-24 md:pb-8">
         {/* Top Header Bar */}
         <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3.5 sm:p-6 shadow-2xs">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
@@ -596,7 +596,7 @@ export const ComparePage = () => {
                     {products.map(p => {
                       const isLowest = p.id === lowestPriceId;
                       return (
-                        <th key={p.id} className={`p-2.5 sm:p-4 min-w-[170px] sm:min-w-[220px] max-w-[240px] sm:max-w-[280px] align-top relative ${isLowest ? 'bg-emerald-50/20 dark:bg-emerald-950/20' : ''}`}>
+                        <th key={p.id} className={`p-3 sm:p-5 min-w-[180px] sm:min-w-[240px] align-top relative ${isLowest ? 'bg-emerald-50/20 dark:bg-emerald-950/20' : ''}`}>
                           <div className="flex items-center justify-between mb-2">
                             {isLowest ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">

@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 frontend/node_modules/
+admin/node_modules/
 .pnp
 .pnp.js
 
@@ -50,6 +51,9 @@ frontend/.env.local
 frontend/dist/
 frontend/dist-ssr/
 frontend/build/
+admin/dist/
+admin/dist-ssr/
+admin/build/
 
 # Logs
 logs

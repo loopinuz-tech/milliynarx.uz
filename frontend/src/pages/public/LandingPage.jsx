@@ -107,31 +107,6 @@ export const LandingPage = () => {
               Real sotuvchilar takliflarini bir joyda solishtiring va xarid qilishdan oldin bozorni tahlil qiling. Hech qanday soxta chegirma va sun'iy narxlarsiz.
             </p>
 
-            {isAuthenticated && (
-              <div className="mb-6 p-4 bg-orange-50/90 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <StarsIcon size={18} />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">
-                      Shaxsiy Bozor Terminalingiz Faol
-                    </div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                      Bozor tahlili, so'rovlar kvotasi va kuzatuvdagi tovarlar statistikasi
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => navigate('/dashboard')}
-                  className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-xs transition active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                >
-                  <span>Dashboardga o'tish</span>
-                  <AltArrowRightIcon size={14} />
-                </button>
-              </div>
-            )}
 
             {/* Master Search Input with Google-Style Autocomplete */}
             <div className="w-full max-w-2xl">
@@ -224,64 +199,91 @@ export const LandingPage = () => {
             </p>
           </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs hover:border-orange-400 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                <ShieldIcon size={24} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6">
+            {/* Card 1 */}
+            <div className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xs hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md transition-all flex flex-col justify-between group">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800/60 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <ShieldIcon size={24} />
+                  </div>
+                  <span className="px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-xs font-bold rounded-lg border border-emerald-200/60 dark:border-emerald-800/60 flex items-center gap-1">
+                    <CheckCircleIcon size={13} />
+                    <span>Haqiqiy</span>
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-orange-600 transition-colors">
+                  100% Real Narxlar
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Sun'iy chegirmalarsiz, faqat do'konlarning haqiqiy amaldagi takliflari.
+                </p>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
-                100% Real Ma'lumot
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Platformada nol soxta mahsulot va nol soxta do'konlar. Barcha narxlar haqiqiy sotuvchilar tomonidan kiritiladi va moderator tomonidan tasdiqlanadi.
-              </p>
-            </div>
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-              <CheckCircleIcon size={14} />
-              <span>Zero Fake Data kafolati</span>
-            </div>
-          </div>
 
-          {/* Card 2 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs hover:border-orange-400 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                <ChartIcon size={24} />
+              <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-medium">Do'kon tekshiruvi:</span>
+                <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  100% Tasdiqlangan
+                </span>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
-                Shaffof Narxlar Tarixi
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Har bir narx o'zgarishi o'zgarmas bazada saqlanadi. Qachon va qancha arzonlashganini interaktiv grafik orqali tekshiring va aldanmang.
-              </p>
             </div>
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-orange-600">
-              <ClockCircleIcon size={14} />
-              <span>O'zgarmas narxlar jurnali</span>
-            </div>
-          </div>
 
-          {/* Card 3 */}
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs hover:border-orange-400 hover:shadow-md transition-all flex flex-col justify-between group">
-            <div>
-              <div className="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 border border-orange-100 flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
-                <StarsIcon size={24} />
+            {/* Card 2 */}
+            <div className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xs hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md transition-all flex flex-col justify-between group">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/60 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <ChartIcon size={24} />
+                  </div>
+                  <span className="px-2.5 py-1 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-lg border border-amber-200/60 dark:border-amber-800/60 flex items-center gap-1">
+                    <ClockCircleIcon size={13} />
+                    <span>Shaffof</span>
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-orange-600 transition-colors">
+                  Shaffof Narx Tarixi
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Har bir tovarning o'tgan oylardagi haqiqiy arzonlashish va oshish dinamikasi.
+                </p>
               </div>
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-2 group-hover:text-orange-600 transition-colors">
-                Xolis AI Xulosasi
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Sun'iy intellekt raqamlarni to'qimaydi. U bazadagi minimal, maksimal va o'rtacha narxlarni tahlil qilib, xarid uchun qulay vaqtni baholaydi.
-              </p>
+
+              <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-medium">Bozor jurnali:</span>
+                <span className="font-bold text-orange-600 dark:text-orange-400 flex items-center gap-1">
+                  Doimiy monitoring
+                </span>
+              </div>
             </div>
-            <div className="pt-4 mt-4 border-t border-slate-100 flex items-center gap-1.5 text-xs font-semibold text-amber-600">
-              <CheckCircleIcon size={14} />
-              <span>Bozor algoritmi &bull; Xolis baho</span>
+
+            {/* Card 3 */}
+            <div className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-2xl p-6 sm:p-7 shadow-2xs hover:border-orange-400 dark:hover:border-orange-500 hover:shadow-md transition-all flex flex-col justify-between group">
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/60 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800/60 flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <StarsIcon size={24} />
+                  </div>
+                  <span className="px-2.5 py-1 bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-400 text-xs font-bold rounded-lg border border-orange-200/60 dark:border-orange-800/60 flex items-center gap-1">
+                    <StarsIcon size={13} />
+                    <span>Xolis</span>
+                  </span>
+                </div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1.5 group-hover:text-orange-600 transition-colors">
+                  Xolis AI Xulosasi
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+                  Eng maqbul narx va qulay xarid vaqtini mustaqil algoritmlar orqali aniqlash.
+                </p>
+              </div>
+
+              <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+                <span className="text-slate-400 font-medium">Tahlil uslubi:</span>
+                <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  100% Xolis baho
+                </span>
+              </div>
             </div>
           </div>
-        </div>
       </section>
 
 

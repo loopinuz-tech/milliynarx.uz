@@ -102,7 +102,6 @@ export const Header = () => {
 
   // Contextual sub-navs
   const isSellerArea = location.pathname.startsWith('/seller');
-  const isAdminArea = location.pathname.startsWith('/admin');
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname.startsWith('/onboarding');
 
   const sellerSubNav = [
@@ -111,16 +110,6 @@ export const Header = () => {
     { to: '/seller/products/new', label: '+ Yangi mahsulot' },
     { to: '/seller/price-history', label: 'Narx tarixi' },
     { to: '/seller/store', label: 'Do\'kon profili' },
-  ];
-
-  const adminSubNav = [
-    { to: '/admin', label: 'Monitoring Terminali', exact: true },
-    { to: '/admin/sellers', label: 'Sotuvchilar' },
-    { to: '/admin/products', label: 'Mahsulotlar moderatsiyasi' },
-    { to: '/admin/users', label: 'Foydalanuvchilar' },
-    { to: '/admin/categories', label: 'Katalog daraxti' },
-    { to: '/admin/data-sources', label: 'Manbalar' },
-    { to: '/admin/audit-logs', label: 'Audit jurnali' },
   ];
 
   return (
@@ -373,11 +362,11 @@ export const Header = () => {
                         {isAdmin && (
                           <button
                             type="button"
-                            onClick={() => { setShowUserMenu(false); navigate('/admin'); }}
+                            onClick={() => { setShowUserMenu(false); window.location.href = 'http://localhost:5174'; }}
                             className="w-full flex items-center gap-2.5 px-4 py-2 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-slate-800/80 text-left font-semibold transition-colors cursor-pointer font-mono"
                           >
                             <SolarIcon name="Shield" size={16} />
-                            <span>Administrator terminali</span>
+                            <span>Administrator terminali &rarr;</span>
                           </button>
                         )}
                       </div>
@@ -528,19 +517,19 @@ export const Header = () => {
             )}
 
             {isAdmin && (
-              <NavLink 
-                to="/admin"
+              <a 
+                href="http://localhost:5174"
                 className="text-[11px] font-semibold text-red-700 dark:text-red-300 bg-red-100 dark:bg-red-950/60 hover:bg-red-200 dark:hover:bg-red-900/60 border border-transparent dark:border-red-800/50 px-2.5 py-1 rounded-md transition-colors flex items-center gap-1 font-mono"
               >
                 <SolarIcon name="Shield" size={13} />
-                <span>ROOT Terminal</span>
-              </NavLink>
+                <span>ROOT Terminal (5174)</span>
+              </a>
             )}
           </div>
         </nav>
       )}
 
-      {/* Contextual Sub-Nav Bar for Seller & Admin (when deep inside these panels) */}
+      {/* Contextual Sub-Nav Bar for Seller */}
       {isSellerArea && (
         <div className="w-full bg-slate-900 text-slate-300 border-b border-slate-800 px-4 sm:px-8 py-2 flex items-center justify-start sm:justify-between overflow-x-auto no-scrollbar gap-4">
           <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium shrink-0">
@@ -566,35 +555,6 @@ export const Header = () => {
           </div>
           <div className="text-[11px] font-mono text-slate-400 shrink-0 hidden md:block">
             Do'kon statusi: <span className="text-emerald-400 font-bold">{user?.seller_status || 'AKTIV'}</span>
-          </div>
-        </div>
-      )}
-
-      {isAdminArea && (
-        <div className="w-full bg-slate-950 text-slate-300 border-b border-slate-800 px-4 sm:px-8 py-2 flex items-center justify-start sm:justify-between overflow-x-auto no-scrollbar gap-4">
-          <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium shrink-0">
-            <span className="text-red-400 font-bold flex items-center gap-1.5 uppercase tracking-wider text-[11px] shrink-0">
-              <SolarIcon name="Shield" size={15} />
-              Admin:
-            </span>
-            <div className="flex items-center gap-1 shrink-0">
-              {adminSubNav.map(item => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.exact}
-                  className={({ isActive }) => `
-                    px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap
-                    ${isActive ? 'bg-orange-600 text-white font-bold shadow-xs' : 'hover:bg-slate-800 hover:text-white text-slate-300'}
-                  `}
-                >
-                  {item.label}
-                </NavLink>
-              ))}
-            </div>
-          </div>
-          <div className="text-[11px] font-mono text-red-400 bg-red-950/80 border border-red-800 px-2 py-0.5 rounded font-bold shrink-0 hidden md:block">
-            ROOT ACCESS
           </div>
         </div>
       )}

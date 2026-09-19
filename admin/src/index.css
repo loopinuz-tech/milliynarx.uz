@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ========================================================================= */
+/* GLOBAL BASE & THEME ROOTS                                                 */
+/* ========================================================================= */
+html, body, #root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Light mode defaults */
+html:not(.dark), 
+html:not(.dark) body, 
+html:not(.dark) #root {
+  background-color: #F8FAFC;
+  color: #0F172A;
+}
+
+/* Dark mode base */
+html.dark, 
+html.dark body, 
+html.dark #root {
+  color-scheme: dark;
+  background-color: #090D16;
+  color: #F8FAFC;
+}
+
+/* Full width layout helper */
+.terminal-layout {
+  display: flex;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ========================================================================= */
+/* DARK MODE TEXT COLOR & CONTRAST                                           */
+/* ========================================================================= */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-900 {
+  color: #F8FAFC !important;
+}
+
+html.dark .text-slate-800 {
+  color: #F1F5F9 !important;
+}
+
+html.dark .text-slate-700 {
+  color: #E2E8F0 !important;
+}
+
+html.dark .text-slate-600 {
+  color: #94A3B8 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* ========================================================================= */
+/* DARK MODE BACKGROUNDS & BORDERS                                           */
+/* ========================================================================= */
+html.dark .bg-white {
+  background-color: #0F172A !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #0B1120 !important;
+}
+
+html.dark .bg-slate-100 {
+  background-color: #151F32 !important;
+}
+
+html.dark .bg-slate-200 {
+  background-color: #1E293B !important;
+}
+
+/* Badge colors in dark mode */
+html.dark .bg-orange-50 {
+  background-color: rgba(234, 88, 12, 0.15) !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: rgba(217, 119, 6, 0.15) !important;
+}
+
+html.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+html.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+html.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.15) !important;
+}
+
+html.dark .bg-red-50 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+html.dark .border-emerald-200 {
+  border-color: rgba(5, 150, 105, 0.4) !important;
+}
+
+html.dark .border-orange-200,
+html.dark .border-orange-100 {
+  border-color: rgba(234, 88, 12, 0.3) !important;
+}
+
+html.dark .border-amber-200 {
+  border-color: rgba(217, 119, 6, 0.3) !important;
+}
+
+html.dark .border-rose-200 {
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+html.dark .text-emerald-800,
+html.dark .text-emerald-700 {
+  color: #34D399 !important;
+}
+
+html.dark .text-orange-950,
+html.dark .text-orange-900,
+html.dark .text-orange-700 {
+  color: #FB923C !important;
+}
+
+html.dark .text-amber-950,
+html.dark .text-amber-900,
+html.dark .text-amber-800,
+html.dark .text-amber-700 {
+  color: #FBBF24 !important;
+}
+
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-slate-300 {
+  border-color: #1E293B !important;
+}
+
+/* Table styling in dark mode */
+html.dark table {
+  background-color: #0F172A;
+}
+
+html.dark table th {
+  background-color: #0B1120 !important;
+  color: #94A3B8 !important;
+  border-color: #1E293B !important;
+}
+
+html.dark table td {
+  border-color: #1E293B !important;
+  color: #E2E8F0;
+}
+
+html.dark table tbody tr {
+  background-color: transparent !important;
+}
+
+html.dark table tbody tr:hover,
+html.dark table tbody tr:hover td {
+  background-color: #151F32 !important;
+}
+
+/* Form inputs & controls in dark mode */
+html.dark input:not([type="checkbox"]):not([type="radio"]),
+html.dark select,
+html.dark textarea {
+  background-color: #0D1424 !important;
+  border-color: #27354A !important;
+  color: #F8FAFC !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
+html.dark select option {
+  background-color: #0D1424 !important;
+  color: #F8FAFC !important;
+}
+
+/* Modals & Dialogs in dark mode */
+html.dark .fixed > div.bg-white,
+html.dark [role="dialog"] {
+  background-color: #0F172A !important;
+  border-color: #1E293B !important;
+}
+
+/* Light mode table & input enhancements */
+html:not(.dark) table th {
+  background-color: #F8FAFC;
+  color: #475569;
+  border-color: #E2E8F0;
+}
+
+html:not(.dark) table td {
+  border-color: #E2E8F0;
+}
+
+html:not(.dark) table tr:hover td {
+  background-color: #F1F5F9;
+}
+
+/* ========================================================================= */
+/* SCROLLBAR & TYPOGRAPHY                                                    */
+/* ========================================================================= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #090D16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.font-numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Touch & Mobile UX */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  overscroll-behavior-y: contain;
+  touch-action: manipulation;
+}

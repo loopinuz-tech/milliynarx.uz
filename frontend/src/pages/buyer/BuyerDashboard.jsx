@@ -33,8 +33,6 @@ export const BuyerDashboard = () => {
   // Time Period State: '7d' | '30d' | '90d'
   const [period, setPeriod] = useState('7d');
 
-  // Interactive AI quick ask input
-  const [aiQuery, setAiQuery] = useState('');
 
   useEffect(() => {
     async function loadDashboardData() {
@@ -88,17 +86,6 @@ export const BuyerDashboard = () => {
     loadDashboardData();
   }, [isAuthenticated, userRole]);
 
-  const handleQuickAiAsk = (prompt) => {
-    setAiQuery(prompt);
-    navigate(`/ai-advisor?q=${encodeURIComponent(prompt)}`);
-  };
-
-  const handleAiSubmit = (e) => {
-    e.preventDefault();
-    if (aiQuery.trim()) {
-      navigate(`/ai-advisor?q=${encodeURIComponent(aiQuery.trim())}`);
-    }
-  };
 
   const currentPlan = (user?.plan || 'STARTER').toUpperCase();
   const aiDailyLimit = currentPlan === 'ENTERPRISE' ? 'Cheksiz' : (currentPlan === 'PRO' ? 100 : 5);
@@ -189,7 +176,7 @@ export const BuyerDashboard = () => {
           yFormatter: (val) => `${(val / 1000000).toFixed(1)}M so'm`
         },
         graph2: {
-          title: "Do'kon Narxlari vs Bozor Raqobatchilari Benchmarki",
+          title: "Do'kon Narxlari vs Bozor Raqobatchilari Taqqoslovi",
           subtitle: "Sizning mahsulotlaringiz narxi bozor o'rtacha ko'rsatkichiga nisbatan real solishtiruvi",
           data: g2Data,
           series: [
@@ -271,7 +258,7 @@ export const BuyerDashboard = () => {
             </div>
             <div>
               <h1 className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-                Xush kelibsiz, {user?.full_name || user?.email?.split('@')[0] || 'Tadbirkor'}! 👋
+                Xush kelibsiz, {user?.full_name || user?.email?.split('@')[0] || 'Tadbirkor'}!
               </h1>
               <p className="text-[11px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1 sm:line-clamp-none">
                 Bozor narxlari monitoringi, sun'iy intellekt tahlili va shaxsiy terminalingiz
@@ -594,60 +581,6 @@ export const BuyerDashboard = () => {
         </div>
       </div>
 
-      {/* 4. AI INTERACTIVE TERMINAL QUICK QUERY BAR */}
-      <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-white shadow-lg relative overflow-hidden">
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-
-        <div className="relative z-10 max-w-4xl space-y-3 sm:space-y-4">
-          <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-orange-100 uppercase tracking-wider">
-            <SolarIcon name="Sparkles" size={15} />
-            <span>Sun'iy Intellekt Bozor Tahlili</span>
-          </div>
-
-          <h2 className="text-base sm:text-xl md:text-2xl font-black tracking-tight leading-snug">
-            Bugun qaysi tovar narxini bilmoqchisiz yoki qaysi bozorda arzonroq?
-          </h2>
-
-          {/* Quick query chips (Swipeable Rail on Mobile) */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 text-xs -mx-1 px-1">
-            {[
-              "iPhone 15 Pro Malikada qancha?",
-              "Sement Abu Saxiyda eng arzon narx",
-              "Kungaboqar yog'i ulgurji narxi",
-              "Ertaga narx oshishi kutilayotgan tovarlar"
-            ].map((chip, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleQuickAiAsk(chip)}
-                className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-xs border border-white/20 text-white text-[11px] font-semibold transition cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-
-          {/* Search Box */}
-          <form onSubmit={handleAiSubmit} className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={aiQuery}
-                onChange={(e) => setAiQuery(e.target.value)}
-                placeholder="Mahsulot nomi yoki bozor haqida savolingizni yozing..."
-                className="w-full pl-4 pr-10 py-3 rounded-2xl bg-white text-slate-900 placeholder:text-slate-400 text-xs sm:text-sm font-medium focus:outline-none shadow-md"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full sm:w-auto justify-center px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition cursor-pointer active:scale-95 shrink-0 flex items-center gap-2"
-            >
-              <span>Tahlil qilish</span>
-              <SolarIcon name="AltArrowRight" size={16} />
-            </button>
-          </form>
-        </div>
-      </div>
 
       {/* 5. MAIN CONTENT SPLIT: LIVE MARKET DEALS & POPULAR PRODUCTS */}
       <div className="space-y-6">
@@ -685,38 +618,38 @@ export const BuyerDashboard = () => {
                 <div
                   key={product.id}
                   onClick={() => navigate(`/product/${product.id}`)}
-                  className="group bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-500/40 rounded-3xl p-3 sm:p-4 shadow-xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden"
+                  className="group bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-500/40 rounded-2xl sm:rounded-3xl p-3 sm:p-3.5 shadow-2xs hover:shadow-md transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden active:scale-[0.98]"
                 >
-                  {/* Image & Badges */}
-                  <div className="relative aspect-square w-full rounded-2xl bg-slate-50 dark:bg-slate-800/40 mb-3 overflow-hidden flex items-center justify-center p-2">
+                  {/* Image (Unobstructed & Clean) */}
+                  <div className="relative aspect-square w-full rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/40 mb-2.5 overflow-hidden flex items-center justify-center p-2.5">
                     <img
                       src={mainImg}
                       alt={product.name}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                     />
-                    {product.category_name && (
-                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded-lg bg-white/90 dark:bg-slate-900/90 backdrop-blur-xs text-[10px] font-bold text-slate-700 dark:text-slate-300 shadow-xs">
-                        {product.category_name}
-                      </span>
-                    )}
                   </div>
 
                   {/* Info */}
-                  <div className="space-y-1.5 flex-1 flex flex-col justify-between">
+                  <div className="space-y-1 flex-1 flex flex-col justify-between">
                     <div>
-                      <div className="text-[11px] text-slate-400 font-medium truncate">
-                        {product.market_name || 'Toshkent Bozorlari'}
+                      <div className="text-[10px] sm:text-[11px] font-semibold text-orange-600 dark:text-orange-400 truncate">
+                        {product.category_name || product.market_name || 'Bozor Taklifi'}
                       </div>
-                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-orange-600 transition-colors">
+                      <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-orange-600 transition-colors leading-snug min-h-[32px] mt-0.5">
                         {product.name}
                       </h3>
                     </div>
 
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
-                      <div className="text-[10px] text-slate-400">Eng arzon narx:</div>
-                      <div className="text-sm sm:text-base font-black text-orange-600 dark:text-orange-400 font-mono">
-                        {formatPrice(minPrice)}
+                    <div className="pt-2 mt-auto border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                      <div>
+                        <div className="text-[10px] text-slate-400">Narxi</div>
+                        <div className="text-xs sm:text-sm font-black text-slate-900 dark:text-white font-numeric">
+                          {formatPrice(minPrice)}
+                        </div>
                       </div>
+                      <span className="w-6 h-6 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 group-hover:bg-orange-600 group-hover:text-white flex items-center justify-center transition-colors">
+                        <SolarIcon name="ArrowRight" size={12} />
+                      </span>
                     </div>
                   </div>
                 </div>
