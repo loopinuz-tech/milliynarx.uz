@@ -71,7 +71,7 @@ export const AppRouter = () => {
         <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
 
         {/* Seller Routes */}
-        <Route path="onboarding" element={<ProtectedRoute requiredRole="SELLER"><OnboardingPage /></ProtectedRoute>} />
+        <Route path="onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />
         <Route path="seller" element={<ProtectedRoute requiredRole="SELLER"><SellerDashboard /></ProtectedRoute>} />
         <Route path="seller/products" element={<ProtectedRoute requiredRole="SELLER"><SellerProducts /></ProtectedRoute>} />
         <Route path="seller/products/new" element={<ProtectedRoute requiredRole="SELLER"><AddProduct /></ProtectedRoute>} />

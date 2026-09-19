@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../../api/client';
 import { uploadService } from '../../api/services';
+import { useAuth } from '../../contexts/AuthContext';
 import SolarIcon from '../../components/common/SolarIcon';
 import PlanBillingModal from '../../components/common/PlanBillingModal';
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
+  const { loginWithToken, refreshUser } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -87,7 +89,7 @@ export const OnboardingPage = () => {
     setSaving(true);
     setError('');
     try {
-      await apiClient.post('/seller/onboarding', {
+      const res = await apiClient.post('/seller/onboarding', {
         store_name: storeName,
         logo_url: logoUrl,
         description,
@@ -101,6 +103,11 @@ export const OnboardingPage = () => {
         payment_methods: selectedPayments,
         plan: selectedPlan
       });
+      if (res.data?.access_token && res.data?.user) {
+        loginWithToken(res.data.access_token, res.data.user);
+      } else {
+        await refreshUser();
+      }
       navigate('/seller');
     } catch (err) {
       setError(err.response?.data?.detail || "Ma'lumotlarni saqlashda xatolik yuz berdi.");

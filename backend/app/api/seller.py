@@ -10,6 +10,7 @@ from backend.app.db.models import (
     PriceAlert, Notification, AnalyticsEvent, Favorite, Subscription, Payment
 )
 from backend.app.api.auth import get_current_user, require_role
+from backend.app.core.security import create_access_token
 from backend.app.schemas.schemas import ProductOut, ProductCreate, ProductUpdate, PriceHistoryOut, SellerProfileUpdate
 from backend.app.core.slug import generate_unique_slug
 
@@ -556,34 +557,68 @@ class PlanUpgradeIn(BaseModel):
 
 @router.get("/onboarding-status")
 def get_onboarding_status(
-    seller: Seller = Depends(get_current_seller),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    seller = db.query(Seller).filter(Seller.user_id == current_user.id).first()
+    if not seller:
+        user_name = current_user.profile.full_name if current_user.profile and current_user.profile.full_name else current_user.email.split("@")[0]
+        return {
+            "onboarding_completed": False,
+            "store_name": f"{user_name} Do'koni",
+            "plan": "STARTER",
+            "product_limit": 99999,
+            "logo_url": None,
+            "market_name": "Abu Saxiy savdo markazi",
+            "monthly_turnover": "50_200_mln",
+            "payment_methods": ["click", "payme", "cash", "terminal"]
+        }
     profile = seller.profile
     return {
         "onboarding_completed": bool(seller.onboarding_completed),
         "store_name": seller.store_name,
         "plan": seller.plan or "STARTER",
-        "product_limit": seller.product_limit or 20,
+        "product_limit": seller.product_limit or 99999,
         "logo_url": profile.logo_url if profile else None,
         "market_name": seller.market_name,
         "monthly_turnover": seller.monthly_turnover,
-        "payment_methods": (seller.payment_methods or "").split(",") if seller.payment_methods else ["click", "payme", "cash"]
+        "payment_methods": (seller.payment_methods or "").split(",") if seller.payment_methods else ["click", "payme", "cash", "terminal"]
     }
 
 @router.post("/onboarding")
 def complete_seller_onboarding(
     onboarding_in: SellerOnboardingIn,
-    seller: Seller = Depends(get_current_seller),
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Save multi-step seller onboarding info, logo, location, payment methods and selected plan"""
-    if onboarding_in.store_name:
-        seller.store_name = onboarding_in.store_name.strip()
-    if onboarding_in.business_reg_number is not None:
-        seller.business_reg_number = onboarding_in.business_reg_number.strip()
-    if onboarding_in.tax_id is not None:
-        seller.tax_id = onboarding_in.tax_id.strip()
+    """Save multi-step seller onboarding info, logo, location, payment methods and selected plan. Creates seller record if applicant is a buyer."""
+    seller = db.query(Seller).filter(Seller.user_id == current_user.id).first()
+    if not seller:
+        default_name = (current_user.profile.full_name if current_user.profile and current_user.profile.full_name else current_user.email.split("@")[0]) + " Do'koni"
+        raw_name = (onboarding_in.store_name or default_name).strip()
+        slug = generate_unique_slug(db, Seller, raw_name)
+        seller = Seller(
+            user_id=current_user.id,
+            store_name=raw_name,
+            slug=slug,
+            business_reg_number=onboarding_in.business_reg_number,
+            tax_id=onboarding_in.tax_id,
+            status="APPROVED",
+            rating=0.0,
+            rating_count=0,
+            is_verified=False
+        )
+        db.add(seller)
+        db.flush()
+        current_user.role = "SELLER"
+    else:
+        if onboarding_in.store_name:
+            seller.store_name = onboarding_in.store_name.strip()
+        if onboarding_in.business_reg_number is not None:
+            seller.business_reg_number = onboarding_in.business_reg_number.strip()
+        if onboarding_in.tax_id is not None:
+            seller.tax_id = onboarding_in.tax_id.strip()
+
     if onboarding_in.market_name is not None:
         seller.market_name = onboarding_in.market_name.strip()
     if onboarding_in.monthly_turnover is not None:
@@ -629,12 +664,25 @@ def complete_seller_onboarding(
         profile.website = onboarding_in.telegram_channel
         
     profile.updated_at = datetime.utcnow()
+    current_user.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(seller)
+    db.refresh(current_user)
+
+    new_token = create_access_token(subject=current_user.id, role=current_user.role)
     
     return {
         "success": True,
-        "message": "Do'kon onboarding jarayoni muvaffaqiyatli yakunlandi!",
+        "message": "Do'kon muvaffaqiyatli yaratildi va onboarding yakunlandi!",
+        "access_token": new_token,
+        "user": {
+            "id": current_user.id,
+            "email": current_user.email,
+            "role": current_user.role,
+            "is_active": current_user.is_active,
+            "store_name": seller.store_name,
+            "seller_status": seller.status
+        },
         "seller": {
             "id": seller.id,
             "store_name": seller.store_name,

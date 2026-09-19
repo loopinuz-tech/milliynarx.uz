@@ -1,23 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { uploadService } from '../../api/services';
 import SolarIcon from '../../components/common/SolarIcon';
 import TelegramAuthModal from '../../components/auth/TelegramAuthModal';
 import GoogleLoginButton from '../../components/auth/GoogleLoginButton';
 
 export const RegisterPage = () => {
-  const [role, setRole] = useState('BUYER'); // 'BUYER' or 'SELLER'
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  // Seller fields
-  const [storeName, setStoreName] = useState('');
-  const [businessReg, setBusinessReg] = useState('');
-  const [taxId, setTaxId] = useState('');
-  const [location, setLocation] = useState('Toshkent');
-  const [logoUrl, setLogoUrl] = useState('');
-  const [uploadingLogo, setUploadingLogo] = useState(false);
 
   const [telegramModalOpen, setTelegramModalOpen] = useState(false);
   const [error, setError] = useState('');
@@ -25,28 +16,16 @@ export const RegisterPage = () => {
   
   const { register, loginWithToken } = useAuth();
   const navigate = useNavigate();
-
-  const handleLogoUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    try {
-      setUploadingLogo(true);
-      setError('');
-      const res = await uploadService.uploadFile(file);
-      if (res?.url) {
-        setLogoUrl(res.url);
-      }
-    } catch (err) {
-      console.error("Logo upload failed", err);
-      setError("Logotipni yuklashda xatolik yuz berdi. JPG, PNG yoki WEBP formatdagi rasm tanlang.");
-    } finally {
-      setUploadingLogo(false);
-    }
-  };
+  const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get('redirect');
 
   const handleAuthRedirect = (user) => {
-    if (user?.role === 'SELLER' || role === 'SELLER') {
-      navigate('/onboarding');
+    if (redirectUrl) {
+      navigate(redirectUrl);
+    } else if (user?.role === 'ADMIN') {
+      navigate('/admin');
+    } else if (user?.role === 'SELLER') {
+      navigate('/seller');
     } else {
       navigate('/dashboard');
     }
@@ -59,14 +38,9 @@ export const RegisterPage = () => {
     try {
       const payload = {
         email,
-        phone,
+        phone: phone || undefined,
         password,
-        role,
-        store_name: role === 'SELLER' ? storeName : undefined,
-        business_reg_number: role === 'SELLER' ? businessReg : undefined,
-        tax_id: role === 'SELLER' ? taxId : undefined,
-        location: role === 'SELLER' ? location : undefined,
-        logo_url: role === 'SELLER' ? logoUrl : undefined
+        role: 'BUYER'
       };
       const user = await register(payload);
       handleAuthRedirect(user);
@@ -79,16 +53,13 @@ export const RegisterPage = () => {
 
   const handleTelegramSuccess = (token, user) => {
     setTelegramModalOpen(false);
-    const effectiveUser = (role === 'SELLER' && user?.role !== 'SELLER')
-      ? { ...user, role: 'SELLER' }
-      : user;
-    loginWithToken(token, effectiveUser);
-    handleAuthRedirect(effectiveUser);
+    loginWithToken(token, user);
+    handleAuthRedirect(user);
   };
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-3 sm:p-6 py-6 sm:py-10">
-      <div className="w-full max-w-lg sm:max-w-xl bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xs">
+      <div className="w-full max-w-lg bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xs">
         {/* Header Brand Logo */}
         <div className="flex flex-col items-center justify-center mb-6 text-center">
           <Link to="/" className="inline-flex items-center justify-center group" title="Bosh sahifa">
@@ -100,40 +71,12 @@ export const RegisterPage = () => {
           Ro'yxatdan o'tish
         </h2>
         <p className="text-xs sm:text-sm text-center text-slate-500 dark:text-slate-400 mb-6">
-          Hisobingiz turini tanlang va platformaga qo'shiling
+          Milliy bozor tahlili va monitoring platformasiga xush kelibsiz
         </p>
 
-        {/* Role Picker */}
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-2xl mb-6 text-xs sm:text-sm">
-          <button
-            type="button"
-            onClick={() => setRole('BUYER')}
-            className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              role === 'BUYER' 
-                ? 'bg-white dark:bg-[#151D2C] text-orange-700 dark:text-orange-400 shadow-2xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-            }`}
-          >
-            <SolarIcon name="User" size={18} />
-            <span>Xaridor</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole('SELLER')}
-            className={`py-2.5 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-              role === 'SELLER' 
-                ? 'bg-white dark:bg-[#151D2C] text-orange-700 dark:text-orange-400 shadow-2xs' 
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-            }`}
-          >
-            <SolarIcon name="Store" size={18} />
-            <span>Sotuvchi (Do'kon)</span>
-          </button>
-        </div>
-
-        {/* SOCIAL AUTH BUTTONS: Telegram (Active) & Google/Apple/Microsoft (Soon) */}
+        {/* SOCIAL AUTH BUTTONS: Telegram & Google */}
         <div className="space-y-3 mb-6">
-          {/* Telegram Register Button (ACTIVE & FUNCTIONAL) */}
+          {/* Telegram Register Button */}
           <button
             type="button"
             onClick={() => setTelegramModalOpen(true)}
@@ -145,17 +88,14 @@ export const RegisterPage = () => {
             <span>Telegram bot orqali ro'yxatdan o'tish</span>
           </button>
 
-          {/* Google One Tap & Sign-In (ACTIVE & FUNCTIONAL) */}
+          {/* Google Sign-In */}
           <GoogleLoginButton
             onSuccess={(token, user) => {
-              const effectiveUser = (role === 'SELLER' && user?.role !== 'SELLER')
-                ? { ...user, role: 'SELLER' }
-                : user;
-              loginWithToken(token, effectiveUser);
-              handleAuthRedirect(effectiveUser);
+              loginWithToken(token, user);
+              handleAuthRedirect(user);
             }}
             onError={(msg) => setError(msg)}
-            role={role}
+            role="BUYER"
             mode="register"
           />
 
@@ -192,6 +132,13 @@ export const RegisterPage = () => {
               <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full shrink-0">Soon</span>
             </div>
           </div>
+        </div>
+
+        <div className="relative flex items-center justify-center mb-6">
+          <div className="border-t border-slate-200 dark:border-slate-800 w-full" />
+          <span className="bg-white dark:bg-[#0B0F19] px-3 text-[11px] font-medium text-slate-400 uppercase tracking-wider absolute">
+            yoki elektron pochta bilan
+          </span>
         </div>
 
         {error && (
@@ -240,116 +187,28 @@ export const RegisterPage = () => {
             />
           </div>
 
-          {/* Conditional Seller Registration Fields */}
-          {role === 'SELLER' && (
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-3.5">
-              <div className="flex items-center gap-1.5 text-orange-800 dark:text-orange-400 font-bold text-xs mb-1">
-                <SolarIcon name="Store" size={15} />
-                <span>Do'kon rekvizitlari va logotipi</span>
-              </div>
-
-              {/* Store Logo Upload Field */}
-              <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1.5">
-                  Do'kon logotipi (Brend)
-                </label>
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border-2 border-dashed border-slate-200 dark:border-slate-700 overflow-hidden flex items-center justify-center shrink-0 relative">
-                    {logoUrl ? (
-                      <img src={logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
-                    ) : (
-                      <SolarIcon name="Camera" size={20} className="text-slate-400" />
-                    )}
-                    {uploadingLogo && (
-                      <div className="absolute inset-0 bg-slate-900/40 flex items-center justify-center">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-700 hover:border-orange-300 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 cursor-pointer transition">
-                      <SolarIcon name="Upload" size={14} />
-                      <span>{logoUrl ? "Logotipni o'zgartirish" : "Logo yuklash"}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleLogoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                    <p className="text-[10px] text-slate-400 mt-1">PNG, JPG yoki WEBP tavsiya etiladi</p>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Do'kon yoki brend nomi *</label>
-                <input
-                  type="text"
-                  required
-                  value={storeName}
-                  onChange={(e) => setStoreName(e.target.value)}
-                  placeholder="Masalan: Artel Rasmiy Do'koni"
-                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-[#151D2C] border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:bg-white dark:focus:bg-[#1C2538] focus:border-orange-500 transition-colors"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">INN / STIR</label>
-                  <input
-                    type="text"
-                    value={taxId}
-                    onChange={(e) => setTaxId(e.target.value)}
-                    placeholder="9 xonali INN"
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151D2C] border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:bg-white dark:focus:bg-[#1C2538] focus:border-orange-500 font-mono transition-colors"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Joylashuv (Shahar)</label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Toshkent"
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-[#151D2C] border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white text-xs focus:outline-none focus:bg-white dark:focus:bg-[#1C2538] focus:border-orange-500 transition-colors"
-                  />
-                </div>
-              </div>
-
-              <div className="p-3 bg-orange-50/80 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 rounded-xl text-[11px] text-orange-900 dark:text-orange-200 leading-relaxed flex items-start gap-2">
-                <SolarIcon name="Stars" size={16} className="text-orange-600 dark:text-orange-400 shrink-0 mt-0.5" />
-                <span>
-                  Ro'yxatdan o'tgach, to'g'ridan-to'g'ri <strong>Onboarding</strong> sahifasiga o'tasiz va do'koningiz savdo nuqtasi hamda tarif rejasini tanlaysiz.
-                </span>
-              </div>
-            </div>
-          )}
-
           <button
             type="submit"
             disabled={submitting}
             className="w-full py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-sm shadow-orange-600/20 transition-all text-xs sm:text-sm disabled:opacity-50 mt-4 cursor-pointer active:scale-98"
           >
-            {submitting ? 'Yaratilmoqda...' : (role === 'SELLER' ? "Sotuvchi bo'lib ro'yxatdan o'tish" : "Ro'yxatdan o'tish")}
+            {submitting ? 'Yaratilmoqda...' : "Ro'yxatdan o'tish"}
           </button>
         </form>
 
         <div className="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center text-xs text-slate-500 dark:text-slate-400">
           Akkauntingiz bormi?{' '}
-          <Link to="/login" className="text-orange-600 dark:text-orange-400 hover:underline font-bold">
+          <Link to={redirectUrl ? `/login?redirect=${encodeURIComponent(redirectUrl)}` : "/login"} className="text-orange-600 hover:text-orange-700 font-bold hover:underline">
             Tizimga kirish
           </Link>
         </div>
       </div>
 
-      {/* Telegram Auth Modal for Register */}
       <TelegramAuthModal
         isOpen={telegramModalOpen}
         onClose={() => setTelegramModalOpen(false)}
         onSuccess={handleTelegramSuccess}
-        role={role}
+        role="BUYER"
       />
     </div>
   );
