@@ -195,7 +195,7 @@ export const SearchPage = () => {
     || categories.find(c => c.id === selectedCategory || c.slug === selectedCategory);
 
   return (
-    <div className="w-full max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <div className="w-full max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-24 md:pb-12">
       
       {/* 1. TOP POPULAR CATEGORIES / BRANDS BAR (IMAGE 1 G2G STYLE) */}
       <section className="space-y-3">
@@ -500,7 +500,7 @@ export const SearchPage = () => {
           </div>
 
           {/* Results Summary and View Toggle */}
-          <div className="flex items-center justify-between px-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-1">
             <div className="text-xs sm:text-sm text-slate-600">
               Topilgan takliflar: <strong className="text-slate-900 font-numeric">{products.length}</strong> ta
               {selectedCategory && activeCatObject && (
@@ -646,107 +646,121 @@ export const SearchPage = () => {
             </div>
           ) : (
             /* Table Matrix View */
-            <div className="bg-white border border-slate-200 rounded-3xl overflow-x-auto shadow-2xs">
-              <table className="w-full text-left border-collapse min-w-[760px]">
-                <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <th className="py-3.5 px-4">Mahsulot</th>
-                    <th className="py-3.5 px-3">Toifa & Model</th>
-                    <th className="py-3.5 px-3">Sotuvchi Do'kon</th>
-                    <th className="py-3.5 px-3">Bozor</th>
-                    <th className="py-3.5 px-4 text-right">Narx</th>
-                    <th className="py-3.5 px-4 text-right">Harakat</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
-                  {products.map((p) => {
-                    const primaryImg = p.images?.find(i => i.is_primary)?.image_url || p.images?.[0]?.image_url;
-                    return (
-                      <tr 
-                        key={p.id}
-                        onClick={() => navigate(`/product/${p.slug || p.id}`)}
-                        className="hover:bg-orange-50/30 transition-colors cursor-pointer group"
-                      >
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                              {primaryImg ? (
-                                <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                              ) : (
-                                <SolarIcon name="Box" size={20} className="text-slate-400" />
-                              )}
-                            </div>
-                            <div className="truncate max-w-xs sm:max-w-sm">
-                              <span className="font-bold text-slate-900 group-hover:text-orange-600 transition-colors">
-                                {p.name}
-                              </span>
-                              {p.sku && (
-                                <div className="text-[10px] text-slate-400 font-mono">
-                                  SKU: {p.sku}
+            <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xs">
+              {/* Mobile swipe hint banner */}
+              <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-100/90 text-[11px] text-slate-600 border-b border-slate-200">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <SolarIcon name="AltArrowLeft" size={13} className="text-orange-600 animate-pulse" />
+                  <span>Jadvalni surib ko'ring</span>
+                  <SolarIcon name="AltArrowRight" size={13} className="text-orange-600 animate-pulse" />
+                </span>
+                <span className="font-bold text-slate-500 font-numeric">{products.length} ta taklif</span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse min-w-[540px] sm:min-w-[760px]">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-3 sm:px-4">Mahsulot</th>
+                      <th className="py-3 px-3 hidden sm:table-cell">Toifa & Model</th>
+                      <th className="py-3 px-3">Sotuvchi Do'kon</th>
+                      <th className="py-3 px-3 hidden md:table-cell">Bozor</th>
+                      <th className="py-3 px-3 sm:px-4 text-right">Narx</th>
+                      <th className="py-3 px-3 sm:px-4 text-right">Harakat</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
+                    {products.map((p) => {
+                      const primaryImg = p.images?.find(i => i.is_primary)?.image_url || p.images?.[0]?.image_url;
+                      return (
+                        <tr 
+                          key={p.id}
+                          onClick={() => navigate(`/product/${p.slug || p.id}`)}
+                          className="hover:bg-orange-50/30 transition-colors cursor-pointer group"
+                        >
+                          <td className="py-3 px-3 sm:px-4">
+                            <div className="flex items-center gap-2.5 sm:gap-3">
+                              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
+                                {primaryImg ? (
+                                  <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
+                                ) : (
+                                  <SolarIcon name="Box" size={20} className="text-slate-400" />
+                                )}
+                              </div>
+                              <div className="truncate max-w-[140px] sm:max-w-xs md:max-w-sm">
+                                <span className="font-bold text-slate-900 group-hover:text-orange-600 transition-colors text-xs">
+                                  {p.name}
+                                </span>
+                                <div className="text-[10px] text-slate-400 font-mono sm:hidden">
+                                  {p.category_name || p.brand_name}
                                 </div>
-                              )}
+                                {p.sku && (
+                                  <div className="text-[10px] text-slate-400 font-mono hidden sm:block">
+                                    SKU: {p.sku}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </td>
+                          </td>
 
-                        <td className="py-3.5 px-3">
-                          <div className="font-bold text-slate-800">{p.category_name || '-'}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">{p.model || '-'}</div>
-                        </td>
+                          <td className="py-3 px-3 hidden sm:table-cell">
+                            <div className="font-bold text-slate-800">{p.category_name || '-'}</div>
+                            <div className="text-[10px] text-slate-400 font-mono">{p.model || '-'}</div>
+                          </td>
 
-                        <td className="py-3.5 px-3">
-                          <div className="font-semibold text-slate-900">
-                            {(p.sellers_count || 1) > 1 ? `${p.sellers_count} ta raqobatdosh do'kon` : (p.seller_name || "Bozor do'koni")}
-                          </div>
-                          <div className="text-[10px] text-orange-600 font-bold">
-                            {(p.sellers_count || 1) > 1 ? "Eng arzon taklif asosida" : "Tasdiqlangan treyder"}
-                          </div>
-                        </td>
-
-                        <td className="py-3.5 px-3 text-slate-600 font-medium">
-                          {p.location || 'Toshkent'}
-                        </td>
-
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="font-black text-slate-900 text-sm font-numeric">
-                            {formatPrice(p.min_price || p.price)}
-                          </div>
-                          {p.max_price && p.max_price > (p.min_price || p.price) && (
-                            <div className="text-[10px] text-slate-400 font-numeric">
-                              maks: {formatPrice(p.max_price)}
+                          <td className="py-3 px-3">
+                            <div className="font-semibold text-slate-900 text-xs truncate max-w-[120px] sm:max-w-none">
+                              {(p.sellers_count || 1) > 1 ? `${p.sellers_count} ta do'kon` : (p.seller_name || "Bozor do'koni")}
                             </div>
-                          )}
-                        </td>
+                            <div className="text-[10px] text-orange-600 font-bold truncate">
+                              {(p.sellers_count || 1) > 1 ? "Eng arzon taklif" : "Tasdiqlangan"}
+                            </div>
+                          </td>
 
-                        <td className="py-3.5 px-4 text-right">
-                          <div className="flex items-center justify-end gap-1.5">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setComparisonProductId(p.id);
-                              }}
-                              className="px-2.5 py-1.5 bg-orange-50 hover:bg-orange-600 text-orange-700 hover:text-white rounded-lg text-xs font-bold transition flex items-center gap-1"
-                              title="Barcha do'konlar narxlarini ko'rish"
-                            >
-                              <SolarIcon name="Shop" size={13} />
-                              <span>{p.sellers_count || 1} do'kon</span>
-                            </button>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/product/${p.slug || p.id}`);
-                              }}
-                              className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition"
-                            >
-                              Tahlil
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          <td className="py-3 px-3 text-slate-600 font-medium hidden md:table-cell">
+                            {p.location || 'Toshkent'}
+                          </td>
+
+                          <td className="py-3 px-3 sm:px-4 text-right">
+                            <div className="font-black text-slate-900 text-xs sm:text-sm font-numeric whitespace-nowrap">
+                              {formatPrice(p.min_price || p.price)}
+                            </div>
+                            {p.max_price && p.max_price > (p.min_price || p.price) && (
+                              <div className="text-[9px] sm:text-[10px] text-slate-400 font-numeric whitespace-nowrap">
+                                maks: {formatPrice(p.max_price)}
+                              </div>
+                            )}
+                          </td>
+
+                          <td className="py-3 px-3 sm:px-4 text-right">
+                            <div className="flex items-center justify-end gap-1 sm:gap-1.5">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setComparisonProductId(p.id);
+                                }}
+                                className="px-2 py-1 sm:px-2.5 sm:py-1.5 bg-orange-50 hover:bg-orange-600 text-orange-700 hover:text-white rounded-lg text-[11px] sm:text-xs font-bold transition flex items-center gap-1 shrink-0"
+                                title="Barcha do'konlar narxlarini ko'rish"
+                              >
+                                <SolarIcon name="Shop" size={13} />
+                                <span className="hidden sm:inline">{p.sellers_count || 1} do'kon</span>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/product/${p.slug || p.id}`);
+                                }}
+                                className="px-2 py-1 sm:px-2.5 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] sm:text-xs font-bold transition shrink-0"
+                              >
+                                Batafsil
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </div>

@@ -23,6 +23,38 @@ def generate_smart_title(query: str) -> str:
     title = " ".join(words[:4]).strip()
     return title[:36].capitalize()
 
+def clean_concise_summary(text: str) -> str:
+    if not text:
+        return ""
+    # Strip markdown bold headers or generic robotic intros
+    cleaned = re.sub(
+        r"^(?:\*\*[^\*]+\*\*:?\s*|Tahlil shuni ko['’`]?rsatadiki,?\s*|Bozor tahlili shuni ko['’`]?rsatadiki,?\s*|Tahlil natijalariga ko['’`]?ra,?\s*|Tahlil natijasiga ko['’`]?ra,?\s*|Xulosa qilib aytganda,?\s*|Xulosa:\s*|Tahlil:\s*)",
+        "",
+        text.strip(),
+        flags=re.IGNORECASE
+    ).strip()
+    
+    # Strip markdown bold or asterisk formatting
+    cleaned = cleaned.replace("**", "").replace("*", "").strip()
+    
+    # Extract clean sentences with terminal punctuation
+    sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', cleaned) if s.strip()]
+    if len(sentences) >= 2:
+        cleaned = " ".join(sentences[:2]).strip()
+    elif len(sentences) == 1:
+        cleaned = sentences[0].strip()
+    else:
+        cleaned = cleaned.strip()
+        
+    # Clean any dangling punctuation like commas or semicolons at the end
+    cleaned = re.sub(r'[,;\-–—\s]+$', '', cleaned)
+    if cleaned and cleaned[-1] not in '.!?':
+        cleaned += '.'
+        
+    if cleaned and not cleaned[0].isupper():
+        cleaned = cleaned[0].upper() + cleaned[1:]
+    return cleaned
+
 from backend.app.db.session import get_db
 from backend.app.db.models import Product, PriceHistory, AIAnalysis, Seller, Brand, Category
 from backend.app.core.config import settings
@@ -143,19 +175,17 @@ def analyze_market_product(
     if api_url and api_key:
         try:
             prompt = (
-                f"Siz 'Codexa' jamoasi tomonidan yaratilgan Milliy Narx Bozor-Analitika tizimining mustaqil tahlilchisisiz. "
-                f"Ushbu tizim online do'kon emas, balki bozor narxlari, talab-taklif va sotuvchilar spredini tahlil qiluvchi axborot platformasidir. "
-                f"Faqat quyidagi haqiqiy ma'lumotlarga tayangan holda o'zbek tilida qisqa va lo'nda tahliliy xulosa bering (3-4 jumla). "
-                f"Bozordagi narx spredi, eng arzon do'kon va xarid qilish uchun eng maqbul fursatni tushuntiring:\n\n"
-                f"Mahsulot nomi: {product.name}\n"
-                f"Joriy taklif narxi: {product.price:,.0f} so'm\n"
-                f"Bozordagi eng arzon narx: {min_p:,.0f} so'm\n"
-                f"Bozordagi eng yuqori narx: {max_p:,.0f} so'm\n"
-                f"Bozor o'rtacha narxi: {avg_p:,.0f} so'm\n"
-                f"Mustaqil sotuvchilar soni: {metrics['sellers_count']}\n"
-                f"O'rtacha narxdan farqi: {diff_pct:+.1f}%\n"
-                f"Kuzatilgan narx o'zgarishlari soni: {len(history)}\n\n"
-                f"Tahlil:"
+                f"Siz 'Codexa' tizimining mustaqil moliyaviy bozor tahlilchisisiz. "
+                f"Quyidagi ma'lumotlar asosida O'zbek tilida FAQAT 1-2 TA QISQA VA ANIQ JUMLA (jami 20-25 ta so'z) bilan xulosa yozing. "
+                f"QAT'IY TALABLAR:\n"
+                f"1. Hech qanday 'Tahlil shuni ko'rsatadiki...', 'Xulosa qilib aytganda...' kabi ortiqcha kirish so'zlarini ISHLATMANG.\n"
+                f"2. To'g'ridan-to'g'ri narxning holati va xaridor uchun xulosa/tavsiyani lo'nda ayting. Uzun matn qat'iyan taqiqlanadi.\n\n"
+                f"Mahsulot: {product.name}\n"
+                f"Joriy narx: {product.price:,.0f} so'm\n"
+                f"Bozor o'rtachasi: {avg_p:,.0f} so'm ({diff_pct:+.1f}%)\n"
+                f"Sotuvchilar soni: {metrics['sellers_count']}\n"
+                f"Min: {min_p:,.0f} so'm, Max: {max_p:,.0f} so'm\n\n"
+                f"Aniq va qisqa xulosa (1-2 jumla):"
             )
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -165,10 +195,11 @@ def analyze_market_product(
             payload = {
                 "model": model_name,
                 "messages": [
-                    {"role": "system", "content": "Siz Codexa jamoasi tomonidan ishlab chiqilgan Milliy Narx Bozor-Analitika tizimi tahlilchisisiz. Bu onlayn do'kon emas. Haqiqiy bozor raqamlaridan kelib chiqib professional xulosa bering."},
+                    {"role": "system", "content": "Siz qisqa va aniq ma'lumot beruvchi moliyaviy tahlilchisisiz. Javobingiz maksimal 1-2 ta qisqa jumladan iborat bo'lishi shart. Hech qanday kirish so'zlarsiz, to'g'ridan-to'g'ri lo'nda xulosa bering."},
                     {"role": "user", "content": prompt}
                 ],
-                "temperature": 0.2
+                "temperature": 0.2,
+                "max_tokens": 160
             }
             resp = requests.post(api_url, headers=headers, json=payload, timeout=20)
             
@@ -188,7 +219,8 @@ def analyze_market_product(
                 
             if resp.status_code == 200:
                 data = resp.json()
-                analysis_text = data["choices"][0]["message"]["content"].strip()
+                raw_text = data["choices"][0]["message"]["content"].strip()
+                analysis_text = clean_concise_summary(raw_text)
                 tokens = data.get("usage", {}).get("total_tokens", 0)
                 used_model_display = "DeepSeek V4 Flash"
         except Exception as e:
@@ -196,27 +228,23 @@ def analyze_market_product(
             
     # Deterministic fallback based on pure mathematics if external LLM fails
     if not analysis_text:
-        position_desc = ""
-        if diff_pct < -4:
-            position_desc = f"bozor o'rtacha narxidan {abs(diff_pct):.1f}% arzonroq bo'lib, xaridorlar uchun juda qulay narx hisoblanadi"
-        elif diff_pct > 5:
-            position_desc = f"bozor o'rtacha narxidan {diff_pct:.1f}% yuqoriroq narxda taklif qilinmoqda"
+        if diff_pct <= -4.0:
+            analysis_text = (
+                f"Joriy taklif ({product.price:,.0f} so'm) bozor o'rtacha narxidan {abs(diff_pct):.1f}% arzon bo'lib, xarid uchun ayni paytdagi eng manfaatli imkoniyatdir."
+            )
+        elif diff_pct >= 6.0:
+            analysis_text = (
+                f"Taklif bozor o'rtachasidan {diff_pct:.1f}% yuqoriroq darajada shakllangan. Xarid qilishdan oldin narx pasayishini kutish tavsiya etiladi."
+            )
         else:
-            position_desc = "bozorning o'rtacha muvozanatli narx darajasiga to'liq mos keladi"
-            
-        history_desc = ""
-        if len(history) >= 2:
-            first_price = history[-1].price
-            price_trend = ((product.price - first_price) / first_price) * 100 if first_price > 0 else 0
-            if abs(price_trend) > 0.5:
-                direction = "pasayish" if price_trend < 0 else "o'sish"
-                history_desc = f" Oxirgi kuzatuv davrida narxda {abs(price_trend):.1f}% lik {direction} dinamikasi qayd etilgan."
-        
-        analysis_text = (
-            f"Bozor tahlili natijalariga ko'ra, '{product.name}' mahsuloti hozirda {product.price:,.0f} so'm qiymatida baholangan. "
-            f"Ushbu ko'rsatkich {metrics['sellers_count']} ta mustaqil sotuvchi takliflari orasida {position_desc} turibdi."
-            f"{history_desc} Bozordagi eng past taklif {min_p:,.0f} so'm, eng yuqorisi esa {max_p:,.0f} so'mni tashkil etadi."
-        )
+            if metrics['sellers_count'] <= 1:
+                analysis_text = (
+                    f"Mahsulot bozorning muvozanatli narxida ({product.price:,.0f} so'm) barqaror turibdi. Hozirda xarid qilish maqsadga muvofiq."
+                )
+            else:
+                analysis_text = (
+                    f"Taklif {metrics['sellers_count']} ta sotuvchi o'rtasidagi muvozanatli narxga to'liq mos keladi. Bozor barqaror, xarid uchun qulay fursat."
+                )
 
     # Save to ai_analyses
     try:

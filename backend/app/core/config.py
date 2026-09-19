@@ -40,6 +40,14 @@ class Settings(BaseSettings):
         "http://localhost:8000",
         "https://milliynarx.eduxa.uz",
         "http://milliynarx.eduxa.uz",
+        "https://milliynarx.uz",
+        "http://milliynarx.uz",
+        "https://milliynarx.vercel.app",
+        "http://milliynarx.vercel.app",
+        "https://milliynarx-uz-topaz.vercel.app",
+        "http://milliynarx-uz-topaz.vercel.app",
+        "https://milliy-narx.uz",
+        "http://milliy-narx.uz"
     ]
     
     # Storage for Contabo VPS
@@ -49,6 +57,10 @@ class Settings(BaseSettings):
     # Telegram Bot
     TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "8802850363:AAHLKqMDEMZ_QSmYXPuop_-gwT-W5NW1D80")
     TELEGRAM_BOT_USERNAME: str = os.getenv("TELEGRAM_BOT_USERNAME", "milliynarxbot")
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID: str = os.getenv("GOOGLE_CLIENT_ID", "")
+    GOOGLE_CLIENT_SECRET: str = os.getenv("GOOGLE_CLIENT_SECRET", "")
     
     class Config:
         case_sensitive = True

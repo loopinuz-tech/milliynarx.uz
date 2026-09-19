@@ -10,6 +10,9 @@ import ComparePage from '../pages/public/ComparePage';
 import LoginPage from '../pages/public/LoginPage';
 import RegisterPage from '../pages/public/RegisterPage';
 import AiAdvisorPage from '../pages/public/AiAdvisorPage';
+import TermsPage from '../pages/public/TermsPage';
+import PrivacyPage from '../pages/public/PrivacyPage';
+import PolicyPage from '../pages/public/PolicyPage';
 
 // Buyer Pages
 import BuyerDashboard from '../pages/buyer/BuyerDashboard';
@@ -50,6 +53,16 @@ export const AppRouter = () => {
         <Route path="ai-maslahatchi" element={<Navigate to="/ai-advisor" replace />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+
+        {/* Legal, Privacy & Platform Policies */}
+        <Route path="terms" element={<TermsPage />} />
+        <Route path="terms-of-service" element={<Navigate to="/terms" replace />} />
+        <Route path="privacy" element={<PrivacyPage />} />
+        <Route path="privasy" element={<Navigate to="/privacy" replace />} />
+        <Route path="privacy-policy" element={<Navigate to="/privacy" replace />} />
+        <Route path="policy" element={<PolicyPage />} />
+        <Route path="policsy" element={<Navigate to="/policy" replace />} />
+        <Route path="policies" element={<Navigate to="/policy" replace />} />
 
         {/* Buyer & User Dashboard Routes */}
         <Route path="dashboard" element={<ProtectedRoute><BuyerDashboard /></ProtectedRoute>} />

@@ -238,7 +238,7 @@ export const AdminDashboard = () => {
       {((metrics?.pending_sellers ?? 0) > 0 || (metrics?.pending_products ?? 0) > 0) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {(metrics?.pending_sellers ?? 0) > 0 && (
-            <div className="p-4 sm:p-5 bg-amber-50/90 border border-amber-300 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
+            <div className="p-4 sm:p-5 bg-amber-50/90 border border-amber-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                   <SolarIcon name="Store" size={20} />
@@ -254,7 +254,7 @@ export const AdminDashboard = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/sellers')}
-                className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+                className="w-full sm:w-auto px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 text-center justify-center"
               >
                 Tasdiqlash &rarr;
               </button>
@@ -262,7 +262,7 @@ export const AdminDashboard = () => {
           )}
 
           {(metrics?.pending_products ?? 0) > 0 && (
-            <div className="p-4 sm:p-5 bg-orange-50/90 border border-orange-300 rounded-2xl flex items-center justify-between gap-3 shadow-xs">
+            <div className="p-4 sm:p-5 bg-orange-50/90 border border-orange-300 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-orange-100 text-orange-700 flex items-center justify-center shrink-0">
                   <SolarIcon name="Box" size={20} />
@@ -278,7 +278,7 @@ export const AdminDashboard = () => {
               </div>
               <button
                 onClick={() => navigate('/admin/products')}
-                className="px-3.5 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+                className="w-full sm:w-auto px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95 shrink-0 text-center justify-center"
               >
                 Tekshirish &rarr;
               </button>

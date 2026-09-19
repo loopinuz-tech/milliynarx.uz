@@ -101,7 +101,7 @@ export const AdminSellers = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
+    <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-5 sm:space-y-6 pb-24 md:pb-12">
       {/* Page Header & Filter Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
@@ -252,8 +252,17 @@ export const AdminSellers = () => {
         />
       ) : (
         <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-2xs">
+          {/* Mobile swipe hint banner */}
+          <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-100/90 text-[11px] text-slate-600 border-b border-slate-200">
+            <span className="flex items-center gap-1.5 font-medium">
+              <SolarIcon name="AltArrowLeft" size={13} className="text-orange-600 animate-pulse" />
+              <span>Jadvalni surib ko'ring</span>
+              <SolarIcon name="AltArrowRight" size={13} className="text-orange-600 animate-pulse" />
+            </span>
+            <span className="font-bold text-slate-500 font-numeric">{filteredSellers.length} ta do'kon</span>
+          </div>
           <div className="overflow-x-auto scrollbar-thin">
-            <table className="w-full text-left border-collapse min-w-[780px] text-xs">
+            <table className="w-full text-left border-collapse min-w-[720px] text-xs">
               <thead>
                 <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold uppercase text-[10px] tracking-wider">
                   <th className="py-3.5 px-4">Do'kon nomi</th>

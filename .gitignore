@@ -42,6 +42,8 @@ milliy_narx.db
 .env
 .env.local
 .env.*.local
+frontend/.env
+frontend/.env.local
 !.env.example
 
 # Frontend build

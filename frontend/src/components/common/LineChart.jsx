@@ -79,10 +79,10 @@ export const LineChart = ({
     return d;
   };
 
-  const handleMouseMove = (e) => {
+  const handlePointerMove = (e) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    const clientX = e.clientX - rect.left;
+    const clientX = (e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX) - rect.left;
     const relativeX = (clientX / rect.width) * width;
 
     if (relativeX < paddingLeft || relativeX > width - paddingRight) {
@@ -131,8 +131,11 @@ export const LineChart = ({
       {/* SVG Canvas */}
       <div 
         ref={containerRef}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handlePointerMove}
         onMouseLeave={handleMouseLeave}
+        onTouchStart={handlePointerMove}
+        onTouchMove={handlePointerMove}
+        onTouchEnd={handleMouseLeave}
         className="w-full relative select-none cursor-crosshair overflow-hidden rounded-2xl bg-white dark:bg-[#0E1524] border border-slate-100 dark:border-slate-800/60 p-2 sm:p-4"
         style={{ minHeight: `${height}px` }}
       >
@@ -264,7 +267,7 @@ export const LineChart = ({
           <div 
             className="absolute z-20 pointer-events-none transform -translate-x-1/2 bg-slate-900/90 dark:bg-[#151D2C]/95 text-white border border-slate-700/80 rounded-xl px-3 py-2 text-[11px] shadow-xl backdrop-blur-md space-y-1 transition-all"
             style={{
-              left: `${(getX(hoverIndex) / width) * 100}%`,
+              left: `${Math.max(16, Math.min(84, (getX(hoverIndex) / width) * 100))}%`,
               top: '12px'
             }}
           >

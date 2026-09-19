@@ -176,6 +176,9 @@ class Product(Base):
     inventory = relationship("Inventory", back_populates="product", uselist=False, cascade="all, delete-orphan")
     favorites = relationship("Favorite", back_populates="product", cascade="all, delete-orphan")
     price_alerts = relationship("PriceAlert", back_populates="product", cascade="all, delete-orphan")
+    ai_analyses = relationship("AIAnalysis", cascade="all, delete-orphan")
+    search_results = relationship("SearchResult", cascade="all, delete-orphan")
+    analytics_events = relationship("AnalyticsEvent", cascade="all, delete-orphan")
 
 class ProductImage(Base):
     __tablename__ = "product_images"

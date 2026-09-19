@@ -145,19 +145,26 @@ export const Footer = () => {
       {/* Bottom Sub-Footer: Copyright & Legal */}
       <div className="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#070B12] py-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="font-bold text-slate-800 dark:text-slate-200 tracking-tight">MILLIY NARX</span>
             <span>&bull;</span>
             <span className="font-numeric">&copy; {new Date().getFullYear()} Barcha huquqlar himoyalangan.</span>
           </div>
 
-          <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span className="flex items-center gap-1.5 text-slate-600 font-medium">
-              <SolarIcon name="Shield" size={13} className="text-emerald-600" />
-              <span>O'zbekiston Respublikasi Bozor Standartlari</span>
-            </span>
-            <span>|</span>
-            <span className="text-slate-500 font-medium">Xorazm, O'zbekiston</span>
+          <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 flex-wrap justify-center">
+            <NavLink to="/terms" className="hover:text-orange-600 transition-colors font-medium">
+              Foydalanish shartlari
+            </NavLink>
+            <span>&bull;</span>
+            <NavLink to="/privacy" className="hover:text-orange-600 transition-colors font-medium">
+              Maxfiylik siyosati
+            </NavLink>
+            <span>&bull;</span>
+            <NavLink to="/policy" className="hover:text-orange-600 transition-colors font-medium">
+              Xavfsizlik & Cookie
+            </NavLink>
+            <span className="hidden sm:inline">&bull;</span>
+            <span className="hidden sm:inline text-slate-400 font-mono">Xorazm, O'zbekiston</span>
           </div>
         </div>
       </div>

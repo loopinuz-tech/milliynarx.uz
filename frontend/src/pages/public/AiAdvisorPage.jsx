@@ -493,7 +493,7 @@ export const AiAdvisorPage = () => {
 
                   {/* Bubble Container */}
                   <div
-                    className={`rounded-2xl p-4 text-xs sm:text-sm leading-relaxed transition-all ${
+                    className={`rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed transition-all min-w-0 overflow-hidden ${
                       m.role === 'user'
                         ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-br-xs shadow-sm font-medium whitespace-pre-wrap'
                         : 'bg-white border border-slate-200/90 text-slate-800 rounded-tl-xs shadow-2xs w-full'
@@ -665,16 +665,16 @@ export const AiAdvisorPage = () => {
             </form>
 
             {/* Micro Helper Bar */}
-            <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-              <span className="flex items-center gap-1.5">
-                <img src="/aiimg.png" alt="AI" className="w-3.5 h-3.5 object-contain" />
-                <span>Milliy Narx &bull; Sun'iy Intellekt Maslahatchisi</span>
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 px-1 gap-2">
+              <span className="flex items-center gap-1.5 truncate">
+                <img src="/aiimg.png" alt="AI" className="w-3.5 h-3.5 object-contain shrink-0" />
+                <span className="truncate">Milliy Narx &bull; AI Maslahatchi</span>
               </span>
-              <span className="text-slate-400 hidden sm:inline-block">
+              <span className="text-slate-400 hidden sm:inline-block shrink-0">
                 <span className="font-mono bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-[10px] text-slate-600 mr-1">Enter</span>
                 yuborish
               </span>
-              <span className="text-emerald-600 font-medium">100% Real bozor ma'lumotlari</span>
+              <span className="text-emerald-600 font-medium whitespace-nowrap shrink-0">100% Real bozor</span>
             </div>
           </div>
         </div>
@@ -685,7 +685,7 @@ export const AiAdvisorPage = () => {
       {/* ========================================================================= */}
       {selectedQuickProduct && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative space-y-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative space-y-4 max-h-[90dvh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -701,7 +701,7 @@ export const AiAdvisorPage = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <div className="w-32 h-32 sm:w-36 sm:h-36 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex items-center justify-center shrink-0 overflow-hidden">
                 {selectedQuickProduct.image_url ? (
                   <img 
                     src={selectedQuickProduct.image_url} 
@@ -712,7 +712,7 @@ export const AiAdvisorPage = () => {
                   <SolarIcon name="Box" size={40} className="text-slate-300" />
                 )}
               </div>
-              <div className="space-y-1.5 flex-1 min-w-0 text-left">
+              <div className="space-y-1.5 flex-1 min-w-0 text-left w-full sm:w-auto">
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
                   {selectedQuickProduct.name}
                 </h3>
@@ -726,7 +726,7 @@ export const AiAdvisorPage = () => {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2.5">
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
               <button
                 type="button"
                 onClick={() => {
@@ -734,7 +734,7 @@ export const AiAdvisorPage = () => {
                   setSelectedQuickProduct(null);
                   handleSendMessage(`${prod.name} mahsulotining narxi ${prod.price?.toLocaleString()} so'm ekan. Ushbu mahsulot haqida xarid tahlili va bozor maslahati bering.`);
                 }}
-                className="flex-1 py-2.5 px-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+                className="w-full sm:flex-1 py-2.5 px-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-95"
               >
                 <SolarIcon name="Sparkles" size={14} />
                 <span>AI bilan tahlil qilish</span>
@@ -745,7 +745,7 @@ export const AiAdvisorPage = () => {
                 onClick={() => {
                   navigate(`/product/${selectedQuickProduct.slug || selectedQuickProduct.id}`);
                 }}
-                className="py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
+                className="w-full sm:flex-1 py-2.5 px-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-95"
               >
                 <span>Batafsil ko'rish</span>
                 <SolarIcon name="ArrowRight" size={14} />

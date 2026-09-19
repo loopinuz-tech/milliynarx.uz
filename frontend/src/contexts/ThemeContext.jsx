@@ -7,17 +7,22 @@ const ThemeContext = createContext({
   setTheme: () => {},
 });
 
+const THEME_STORAGE_KEY = 'milliynarx_theme_preference';
+
 export const ThemeProvider = ({ children }) => {
   const [theme, setThemeState] = useState(() => {
-    // Check localStorage first
-    const saved = localStorage.getItem('milliynarx_theme');
-    if (saved === 'dark' || saved === 'light') {
-      return saved;
+    try {
+      // Faqat foydalanuvchi o'zi qo'lda tanlagan bo'lsa olinadi
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === 'dark' || saved === 'light') {
+        return saved;
+      }
+      // Eski avtomatik saqlanib qolgan dark qiymatni tozalaymiz
+      localStorage.removeItem('milliynarx_theme');
+    } catch (e) {
+      console.error(e);
     }
-    // Check system preference
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
+    // 1-kirganda sayt har doim LIGHT mode rejimda bo'lishi kerak
     return 'light';
   });
 
@@ -28,20 +33,29 @@ export const ThemeProvider = ({ children }) => {
     if (isDark) {
       root.classList.add('dark');
       root.setAttribute('data-theme', 'dark');
-      localStorage.setItem('milliynarx_theme', 'dark');
     } else {
       root.classList.remove('dark');
       root.setAttribute('data-theme', 'light');
-      localStorage.setItem('milliynarx_theme', 'light');
     }
   }, [isDark]);
 
   const toggleTheme = () => {
-    setThemeState(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setThemeState(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, next);
+        localStorage.setItem('milliynarx_theme', next);
+      } catch (e) {}
+      return next;
+    });
   };
 
   const setTheme = (newTheme) => {
     if (newTheme === 'dark' || newTheme === 'light') {
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, newTheme);
+        localStorage.setItem('milliynarx_theme', newTheme);
+      } catch (e) {}
       setThemeState(newTheme);
     }
   };

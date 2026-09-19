@@ -239,13 +239,13 @@ export const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 {!isTgConnected && (
                   <a
                     href="https://t.me/milliynarxbot"
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-[#229ED9] hover:bg-[#1e8bc0] text-white text-xs font-bold transition active:scale-95 text-center shadow-xs"
+                    className="w-full sm:w-auto px-3.5 py-2.5 rounded-xl bg-[#229ED9] hover:bg-[#1e8bc0] text-white text-xs font-bold transition active:scale-95 text-center shadow-xs"
                   >
                     Botni ulash
                   </a>
@@ -253,7 +253,7 @@ export const ProfilePage = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/alerts')}
-                  className="w-full sm:w-auto px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-750 transition active:scale-95 text-center"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-750 transition active:scale-95 text-center"
                 >
                   Ogohlantirishlar
                 </button>
@@ -437,20 +437,20 @@ export const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                 {currentPlan === 'STARTER' ? (
                   <>
                     <button
                       type="button"
                       onClick={() => handleOpenBilling('ENTERPRISE')}
-                      className="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-98 cursor-pointer"
+                      className="w-full sm:w-auto justify-center px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-98 cursor-pointer text-center"
                     >
                       Enterprise (890k)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleOpenBilling('PRO')}
-                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-md shadow-orange-600/20 transition-all active:scale-98 cursor-pointer flex items-center gap-1.5"
+                      className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-extrabold text-xs shadow-md shadow-orange-600/20 transition-all active:scale-98 cursor-pointer flex items-center gap-1.5 text-center"
                     >
                       <SolarIcon name="Crown" size={16} />
                       <span>Pro ga oshirish (290 000 so'm)</span>
@@ -461,28 +461,24 @@ export const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={() => handleOpenBilling('PRO')}
-                      className="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-98 cursor-pointer"
+                      className="w-full sm:w-auto justify-center px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs transition active:scale-98 cursor-pointer text-center"
                     >
                       Obunani uzaytirish
                     </button>
                     <button
                       type="button"
                       onClick={() => handleOpenBilling('ENTERPRISE')}
-                      className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-98 cursor-pointer flex items-center gap-1.5"
+                      className="w-full sm:w-auto justify-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-98 cursor-pointer flex items-center gap-1.5 text-center"
                     >
                       <SolarIcon name="Crown" size={16} />
                       <span>Enterprise ga o'tish (890 000 so'm)</span>
                     </button>
                   </>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleOpenBilling('ENTERPRISE')}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-xs shadow-md shadow-purple-600/20 transition-all active:scale-98 cursor-pointer flex items-center gap-1.5"
-                  >
+                  <div className="w-full sm:w-auto px-4 py-2 bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 text-center">
                     <SolarIcon name="Crown" size={16} />
-                    <span>Obunani uzaytirish / B2B Shartnoma</span>
-                  </button>
+                    <span>Maksimal Enterprise Tarifi</span>
+                  </div>
                 )}
               </div>
             </div>

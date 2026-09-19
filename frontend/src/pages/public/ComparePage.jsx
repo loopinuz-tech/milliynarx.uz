@@ -189,16 +189,16 @@ export const ComparePage = () => {
   const currentIds = idsParam ? idsParam.split(',').filter(Boolean) : [];
 
   return (
-    <div className="min-h-screen bg-slate-50/50 py-6 sm:py-8">
+    <div className="min-h-screen bg-slate-50/50 py-4 sm:py-8 pb-24 md:pb-12">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-xl shadow-xl border border-slate-700 flex items-center gap-2 animate-bounce">
+        <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 bg-slate-900 text-white text-xs sm:text-sm font-medium rounded-xl shadow-xl border border-slate-700 flex items-center gap-2 animate-bounce">
           <SolarIcon name="CheckCircle" size={18} className="text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-5 sm:space-y-6">
         {/* Top Header Bar */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 sm:p-6 shadow-2xs">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -222,13 +222,13 @@ export const ComparePage = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto">
               {products.length > 0 && (
                 <>
                   {/* AI Advisor Compare Button */}
                   <button
                     onClick={handleAiCompare}
-                    className="flex items-center gap-2 px-3.5 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow transition-all"
+                    className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 px-3.5 py-2 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold text-xs rounded-xl shadow-sm hover:shadow transition-all"
                     title="Sun'iy intellektdan taqqoslash bo'yicha chuqur tahlil va tavsiya olish"
                   >
                     <img src="/aiimg.png" alt="AI" className="w-4 h-4 rounded-full object-cover shadow-2xs" />
@@ -238,7 +238,7 @@ export const ComparePage = () => {
                   {/* Share Link */}
                   <button
                     onClick={handleShareLink}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-xl transition"
                     title="Havolani nusxalash"
                   >
                     <SolarIcon name="Document" size={16} />
@@ -248,7 +248,7 @@ export const ComparePage = () => {
                   {/* Clear All */}
                   <button
                     onClick={handleClearAll}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-medium rounded-xl transition"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-medium rounded-xl transition"
                     title="Taqqoslashni tozalash"
                   >
                     <SolarIcon name="CloseCircle" size={16} />
@@ -261,7 +261,7 @@ export const ComparePage = () => {
               {products.length < 5 && (
                 <button
                   onClick={() => setIsSearchOpen(true)}
-                  className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-sm transition"
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-sm transition"
                 >
                   <SolarIcon name="AddCircle" size={16} />
                   <span>Mahsulot qo'shish</span>
@@ -272,22 +272,22 @@ export const ComparePage = () => {
 
           {/* Filter Toolbar (when 2+ products) */}
           {products.length >= 2 && (
-            <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-3">
-                <span className="text-slate-500 font-medium">Ko'rsatish filtri:</span>
+            <div className="mt-4 sm:mt-5 pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                <span className="text-slate-500 font-medium text-[11px] sm:text-xs">Ko'rsatish:</span>
                 <button
                   onClick={() => setShowOnlyDiffs(false)}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition ${
+                  className={`flex-1 sm:flex-none text-center px-3 py-1.5 rounded-lg font-medium text-[11px] sm:text-xs transition ${
                     !showOnlyDiffs
                       ? 'bg-slate-900 text-white shadow-2xs'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
-                  Barcha parametrlar ({specKeys.length})
+                  Barchasi ({specKeys.length})
                 </button>
                 <button
                   onClick={() => setShowOnlyDiffs(true)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition ${
+                  className={`flex-1 sm:flex-none text-center flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-[11px] sm:text-xs transition ${
                     showOnlyDiffs
                       ? 'bg-orange-600 text-white shadow-2xs'
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -299,7 +299,7 @@ export const ComparePage = () => {
               </div>
 
               <div className="text-slate-400 text-[11px] flex items-center gap-1.5">
-                <SolarIcon name="ShieldCheck" size={14} className="text-emerald-500" />
+                <SolarIcon name="ShieldCheck" size={14} className="text-emerald-500 shrink-0" />
                 <span>Yashil hoshiya eng arzon narxni bildiradi</span>
               </div>
             </div>
@@ -427,9 +427,9 @@ export const ComparePage = () => {
         {/* 1 PRODUCT SELECTED: Prompt for 2nd product */}
         {!loading && !error && products.length === 1 && (
           <div className="space-y-6">
-            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 flex items-center justify-between gap-4">
+            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
               <div className="flex items-center gap-3">
-                <span className="p-2 bg-amber-100 text-amber-700 rounded-xl">
+                <span className="p-2 bg-amber-100 text-amber-700 rounded-xl shrink-0">
                   <SolarIcon name="CheckCircle" size={20} />
                 </span>
                 <div>
@@ -443,7 +443,7 @@ export const ComparePage = () => {
               </div>
               <button
                 onClick={() => setIsSearchOpen(true)}
-                className="shrink-0 px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center gap-1.5"
+                className="w-full sm:w-auto shrink-0 px-3.5 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-xl shadow-xs transition flex items-center justify-center gap-1.5"
               >
                 <SolarIcon name="AddCircle" size={16} />
                 <span>2-mahsulotni tanlash</span>
@@ -453,29 +453,42 @@ export const ComparePage = () => {
             {/* Comparison preview grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Product 1 card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 relative shadow-2xs">
-                <button
-                  onClick={() => handleRemoveProduct(products[0].id)}
-                  className="absolute top-3 right-3 p-1 text-slate-400 hover:text-rose-500 transition"
-                  title="Olib tashlash"
-                >
-                  <SolarIcon name="CloseCircle" size={18} />
-                </button>
-                <div className="h-40 bg-slate-50 rounded-xl flex items-center justify-center p-3 mb-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs relative">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800">
+                    1-tanlangan mahsulot
+                  </span>
+                  <button
+                    onClick={() => handleRemoveProduct(products[0].id)}
+                    className="text-slate-400 hover:text-rose-500 p-1"
+                    title="Olib tashlash"
+                  >
+                    <SolarIcon name="CloseCircle" size={18} />
+                  </button>
+                </div>
+
+                <div className="h-40 bg-slate-50 rounded-xl flex items-center justify-center p-3 mb-4">
                   {products[0].image ? (
                     <img src={products[0].image} alt={products[0].name} className="h-full max-w-full object-contain" />
                   ) : (
-                    <SolarIcon name="Box" size={36} className="text-slate-300" />
+                    <SolarIcon name="Box" size={40} className="text-slate-300" />
                   )}
                 </div>
-                <div className="text-xs text-slate-400 font-mono mb-1">{products[0].brand || '-'} &bull; {products[0].model || '-'}</div>
-                <h3 className="font-bold text-sm text-slate-900 line-clamp-2 mb-2">{products[0].name}</h3>
-                <div className="text-base font-extrabold text-slate-900 font-numeric mb-3">{formatPrice(products[0].price)}</div>
 
-                <div className="space-y-1.5 pt-3 border-t border-slate-100 text-xs">
+                <div className="text-xs text-slate-400 font-mono mb-1">
+                  {products[0].brand || '-'} &bull; {products[0].model || '-'}
+                </div>
+                <h3 className="font-bold text-sm text-slate-900 line-clamp-2 mb-2">
+                  {products[0].name}
+                </h3>
+                <div className="text-lg font-extrabold text-orange-600 font-numeric mb-4">
+                  {formatPrice(products[0].price)}
+                </div>
+
+                <div className="space-y-1.5 text-xs pt-3 border-t border-slate-100">
                   <div className="flex justify-between text-slate-600">
                     <span className="text-slate-400">Sotuvchi:</span>
-                    <span className="font-medium">{products[0].seller_name || 'Do\'kon'}</span>
+                    <span className="font-medium">{products[0].seller_name || "Bozor do'koni"}</span>
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span className="text-slate-400">Kafolat:</span>
@@ -514,16 +527,16 @@ export const ComparePage = () => {
                 <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
                   Tezkor qo'shish uchun variantlar
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
                   {recommendedProducts
                     .filter(p => p.id !== products[0].id)
-                    .slice(0, 5)
+                    .slice(0, 6)
                     .map(p => {
                       const primaryImg = p.images?.find(img => img.is_primary)?.image_url || p.images?.[0]?.image_url;
                       return (
                         <div
                           key={p.id}
-                          className="bg-white border border-slate-200 rounded-xl p-3 flex flex-col justify-between hover:shadow-sm transition group"
+                          className="bg-white border border-slate-200 rounded-xl p-2.5 sm:p-3 flex flex-col justify-between hover:shadow-sm transition group"
                         >
                           <div>
                             <div className="h-24 bg-slate-50 rounded-lg flex items-center justify-center p-2 mb-2">
@@ -558,14 +571,24 @@ export const ComparePage = () => {
         {/* 2 TO 5 PRODUCTS: FULL COMPARISON MATRIX */}
         {!loading && !error && products.length >= 2 && (
           <div className="w-full bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+            {/* Mobile swipe hint banner */}
+            <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-100/90 text-[11px] text-slate-600 border-b border-slate-200">
+              <span className="flex items-center gap-1.5 font-medium">
+                <SolarIcon name="AltArrowLeft" size={13} className="text-orange-600 animate-pulse" />
+                <span>Yonma-yon surib taqqoslang</span>
+                <SolarIcon name="AltArrowRight" size={13} className="text-orange-600 animate-pulse" />
+              </span>
+              <span className="font-bold text-slate-500 font-numeric">{products.length} ta mahsulot</span>
+            </div>
+
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left min-w-[760px]">
+              <table className="w-full border-collapse text-left min-w-[560px] sm:min-w-[760px]">
                 <thead>
                   {/* Row: Product cards header */}
                   <tr className="border-b border-slate-200 bg-slate-50/40">
-                    <th className="p-4 w-52 sm:w-60 align-top text-xs font-bold text-slate-500 uppercase tracking-wider sticky left-0 bg-slate-50 z-10 border-r border-slate-200 shadow-[2px_0_5px_rgba(0,0,0,0.02)]">
+                    <th className="p-2.5 sm:p-4 w-32 sm:w-56 align-top text-[11px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider sticky left-0 bg-slate-50 z-10 border-r border-slate-200 shadow-[2px_0_5px_rgba(0,0,0,0.02)]">
                       <div>Parametrlar</div>
-                      <div className="text-[11px] font-normal text-slate-400 lowercase mt-0.5">
+                      <div className="text-[10px] sm:text-[11px] font-normal text-slate-400 lowercase mt-0.5">
                         {products.length} ta mahsulot
                       </div>
                     </th>
@@ -573,7 +596,7 @@ export const ComparePage = () => {
                     {products.map(p => {
                       const isLowest = p.id === lowestPriceId;
                       return (
-                        <th key={p.id} className={`p-4 min-w-[220px] max-w-[280px] align-top relative ${isLowest ? 'bg-emerald-50/20' : ''}`}>
+                        <th key={p.id} className={`p-2.5 sm:p-4 min-w-[170px] sm:min-w-[220px] max-w-[240px] sm:max-w-[280px] align-top relative ${isLowest ? 'bg-emerald-50/20' : ''}`}>
                           <div className="flex items-center justify-between mb-2">
                             {isLowest ? (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -592,7 +615,7 @@ export const ComparePage = () => {
                             </button>
                           </div>
 
-                          <div className="h-32 bg-white rounded-xl border border-slate-200/80 flex items-center justify-center p-2 mb-3 shadow-2xs">
+                          <div className="h-24 sm:h-32 bg-white rounded-xl border border-slate-200/80 flex items-center justify-center p-1.5 sm:p-2 mb-2 sm:mb-3 shadow-2xs">
                             {p.image ? (
                               <img src={p.image} alt={p.name} className="h-full max-w-full object-contain" />
                             ) : (
@@ -600,7 +623,7 @@ export const ComparePage = () => {
                             )}
                           </div>
 
-                          <div className="text-[11px] text-slate-400 font-mono mb-0.5">
+                          <div className="text-[10px] sm:text-[11px] text-slate-400 font-mono mb-0.5">
                             {p.brand || '-'} &bull; {p.model || '-'}
                           </div>
                           <div
@@ -613,7 +636,7 @@ export const ComparePage = () => {
 
                           <button
                             onClick={() => navigate(`/product/${p.slug || p.id}`)}
-                            className="w-full py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition text-center flex items-center justify-center gap-1"
+                            className="w-full py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] sm:text-xs font-medium rounded-lg transition text-center flex items-center justify-center gap-1"
                           >
                             <span>Batafsil ko'rish</span>
                             <SolarIcon name="ArrowRight" size={12} />
@@ -624,10 +647,10 @@ export const ComparePage = () => {
 
                     {/* Add More Slot Column */}
                     {products.length < 5 && (
-                      <th className="p-4 w-44 align-middle text-center bg-slate-50/20 border-l border-slate-100">
+                      <th className="p-2.5 sm:p-4 w-36 sm:w-44 align-middle text-center bg-slate-50/20 border-l border-slate-100">
                         <button
                           onClick={() => setIsSearchOpen(true)}
-                          className="w-full h-full min-h-[200px] border-2 border-dashed border-slate-300 hover:border-orange-500 rounded-xl p-3 flex flex-col items-center justify-center text-slate-500 hover:text-orange-600 transition group"
+                          className="w-full h-full min-h-[170px] sm:min-h-[200px] border-2 border-dashed border-slate-300 hover:border-orange-500 rounded-xl p-2.5 sm:p-3 flex flex-col items-center justify-center text-slate-500 hover:text-orange-600 transition group"
                         >
                           <div className="p-2 bg-slate-100 group-hover:bg-orange-50 rounded-xl mb-2 transition">
                             <SolarIcon name="AddCircle" size={20} />
@@ -643,7 +666,7 @@ export const ComparePage = () => {
                 <tbody className="divide-y divide-slate-100 text-slate-800">
                   {/* Row: Narx */}
                   <tr className="border-b border-slate-200 bg-slate-50/10">
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Joriy Narx
                     </td>
                     {products.map(p => {
@@ -652,114 +675,114 @@ export const ComparePage = () => {
                       const diffPrice = lowestProd ? p.price - lowestProd.price : 0;
 
                       return (
-                        <td key={p.id} className={`p-4 ${isLowest ? 'bg-emerald-50/30' : ''}`}>
-                          <div className={`text-base sm:text-lg font-extrabold font-numeric ${isLowest ? 'text-emerald-700' : 'text-slate-900'}`}>
+                        <td key={p.id} className={`p-2.5 sm:p-4 ${isLowest ? 'bg-emerald-50/30' : ''}`}>
+                          <div className={`text-sm sm:text-lg font-extrabold font-numeric ${isLowest ? 'text-emerald-700' : 'text-slate-900'}`}>
                             {formatPrice(p.price)}
                           </div>
                           {p.old_price && (
-                            <div className="text-xs text-slate-400 line-through font-numeric mt-0.5">
+                            <div className="text-[10px] sm:text-xs text-slate-400 line-through font-numeric mt-0.5">
                               {formatPrice(p.old_price)}
                             </div>
                           )}
                           {!isLowest && diffPrice > 0 && (
-                            <div className="text-[11px] text-rose-500 font-medium mt-1">
+                            <div className="text-[10px] sm:text-[11px] text-rose-500 font-medium mt-1">
                               +{formatPrice(diffPrice)} qimmatroq
                             </div>
                           )}
                           {isLowest && products.length > 1 && (
-                            <div className="text-[11px] text-emerald-600 font-semibold mt-1">
+                            <div className="text-[10px] sm:text-[11px] text-emerald-600 font-semibold mt-1">
                               Eng ma'qul narx
                             </div>
                           )}
                         </td>
                       );
                     })}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Row: Sotuvchi */}
                   <tr>
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Sotuvchi va Do'kon
                     </td>
                     {products.map(p => (
-                      <td key={p.id} className="p-4 text-xs">
+                      <td key={p.id} className="p-2.5 sm:p-4 text-xs">
                         <div className="font-semibold text-slate-900 flex items-center gap-1.5">
-                          <span>{p.seller_name || "Bozor do'koni"}</span>
-                          <span className="p-0.5 bg-emerald-50 text-emerald-600 rounded">
+                          <span className="truncate">{p.seller_name || "Bozor do'koni"}</span>
+                          <span className="p-0.5 bg-emerald-50 text-emerald-600 rounded shrink-0">
                             <SolarIcon name="CheckCircle" size={12} />
                           </span>
                         </div>
                         {p.seller_rating > 0 && (
-                          <div className="text-[11px] text-amber-600 font-medium mt-0.5">
+                          <div className="text-[10px] sm:text-[11px] text-amber-600 font-medium mt-0.5">
                             ★ {p.seller_rating.toFixed(1)} reyting
                           </div>
                         )}
-                        <div className="text-[11px] text-slate-400 mt-0.5">
+                        <div className="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 truncate">
                           {p.location || 'Toshkent shahri'}
                         </div>
                       </td>
                     ))}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Row: Mavjudlik */}
                   <tr>
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Mavjudlik
                     </td>
                     {products.map(p => (
-                      <td key={p.id} className="p-4">
+                      <td key={p.id} className="p-2.5 sm:p-4">
                         <Badge status={p.availability} size="xs" />
                       </td>
                     ))}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Row: Holati */}
                   <tr>
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Mahsulot holati
                     </td>
                     {products.map(p => (
-                      <td key={p.id} className="p-4 text-xs text-slate-700 font-medium">
+                      <td key={p.id} className="p-2.5 sm:p-4 text-xs text-slate-700 font-medium">
                         {p.condition || 'Yangi'}
                       </td>
                     ))}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Row: Kafolat */}
                   <tr>
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Kafolat muddati
                     </td>
                     {products.map(p => (
-                      <td key={p.id} className="p-4 text-xs font-medium text-slate-800">
+                      <td key={p.id} className="p-2.5 sm:p-4 text-xs font-medium text-slate-800">
                         {p.warranty || 'Mavjud emas'}
                       </td>
                     ))}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Row: Yetkazib berish */}
                   <tr>
-                    <td className="p-4 text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200">
+                    <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-bold text-slate-700 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
                       Yetkazib berish
                     </td>
                     {products.map(p => (
-                      <td key={p.id} className="p-4 text-xs text-slate-700">
+                      <td key={p.id} className="p-2.5 sm:p-4 text-xs text-slate-700">
                         {p.delivery || 'Kelishiladi'}
                       </td>
                     ))}
-                    {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                    {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                   </tr>
 
                   {/* Section Divider: Texnik Xususiyatlar */}
                   <tr className="bg-slate-100/70 border-y border-slate-200">
                     <td
                       colSpan={products.length + (products.length < 5 ? 2 : 1)}
-                      className="p-3 text-xs font-bold text-slate-900 uppercase tracking-wider"
+                      className="p-2.5 sm:p-3 text-[11px] sm:text-xs font-bold text-slate-900 uppercase tracking-wider"
                     >
                       Texnik Xususiyatlar va Parametrlar
                     </td>
@@ -770,7 +793,7 @@ export const ComparePage = () => {
                     <tr>
                       <td
                         colSpan={products.length + (products.length < 5 ? 2 : 1)}
-                        className="p-6 text-center text-xs text-slate-500"
+                        className="p-4 sm:p-6 text-center text-xs text-slate-500"
                       >
                         Ushbu mahsulotlarning barcha texnik parametrlari bir xil.
                       </td>
@@ -786,11 +809,11 @@ export const ComparePage = () => {
                           isDiff ? 'bg-amber-50/20 hover:bg-amber-50/40' : 'hover:bg-slate-50/50'
                         }`}
                       >
-                        <td className="p-4 text-xs font-semibold text-slate-600 sticky left-0 bg-white z-10 border-r border-slate-200">
-                          <div className="flex items-center gap-1.5">
+                        <td className="p-2.5 sm:p-4 text-[11px] sm:text-xs font-semibold text-slate-600 sticky left-0 bg-white z-10 border-r border-slate-200 w-32 sm:w-56">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span>{specKey}</span>
                             {isDiff && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800" title="Mahsulotlar orasida farq bor">
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800" title="Mahsulotlar orasida farq bor">
                                 Farqli
                               </span>
                             )}
@@ -802,7 +825,7 @@ export const ComparePage = () => {
                           return (
                             <td
                               key={p.id}
-                              className={`p-4 text-xs ${
+                              className={`p-2.5 sm:p-4 text-xs ${
                                 isDiff ? 'font-semibold text-slate-900' : 'text-slate-700'
                               }`}
                             >
@@ -811,7 +834,7 @@ export const ComparePage = () => {
                           );
                         })}
 
-                        {products.length < 5 && <td className="p-4 bg-slate-50/10" />}
+                        {products.length < 5 && <td className="p-2.5 sm:p-4 bg-slate-50/10" />}
                       </tr>
                     );
                   })}

@@ -8,6 +8,7 @@ from backend.app.db.models import User, Profile, Seller, SellerProfile
 from backend.app.core.security import verify_password, get_password_hash, create_access_token, decode_access_token
 from backend.app.core.slug import generate_unique_slug
 from backend.app.schemas.schemas import UserRegister, UserLogin, Token, UserOut, UserProfileUpdate, ChangePasswordRequest
+from backend.app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -423,4 +424,159 @@ def login_with_telegram_code(code_in: TelegramCodeLogin, db: Session = Depends(g
             "telegram_connected_at": user.telegram_connected_at
         }
     }
+
+
+# =======================================================
+# GOOGLE OAUTH 2.0 SSO (SINGLE SIGN-ON)
+# =======================================================
+
+class GoogleLoginRequest(BaseModel):
+    credential: str
+    role: Optional[str] = "BUYER"
+
+@router.post("/google", response_model=Token)
+def google_auth_login(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
+    """
+    Authenticate or register user using Google Identity Services ID Token (JWT).
+    Verifies ID token with Google's public tokeninfo endpoint.
+    """
+    token_str = payload.credential.strip()
+    if not token_str:
+        raise HTTPException(status_code=400, detail="Google credential token kiritilmadi")
+
+    # Verify with Google API
+    try:
+        import requests
+        resp = requests.get(
+            f"https://oauth2.googleapis.com/tokeninfo?id_token={token_str}",
+            timeout=10
+        )
+        if resp.status_code != 200:
+            raise HTTPException(
+                status_code=401,
+                detail="Google tokeni haqiqiy emas yoki muddati o'tgan"
+            )
+        google_data = resp.json()
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Google avtorizatsiya serveri bilan aloqa o'rnatib bo'lmadi: {str(e)}"
+        )
+
+    # Validate audience
+    expected_aud = settings.GOOGLE_CLIENT_ID
+    actual_aud = google_data.get("aud")
+    if expected_aud and actual_aud != expected_aud:
+        raise HTTPException(
+            status_code=401,
+            detail="Google Client ID mos kelmadi"
+        )
+
+    email = google_data.get("email")
+    if not email:
+        raise HTTPException(
+            status_code=400,
+            detail="Google hisobidan elektron pochta olinmadi"
+        )
+
+    full_name = google_data.get("name") or email.split("@")[0]
+    picture = google_data.get("picture")
+
+    # Find or register user
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        role = (payload.role or "BUYER").upper()
+        if role not in ["BUYER", "SELLER"]:
+            role = "BUYER"
+
+        user = User(
+            email=email,
+            phone=None,
+            hashed_password=get_password_hash(secrets.token_urlsafe(32)),
+            role=role,
+            is_active=True,
+            is_verified=True
+        )
+        db.add(user)
+        db.flush()
+
+        profile = Profile(
+            user_id=user.id,
+            full_name=full_name,
+            avatar_url=picture
+        )
+        db.add(profile)
+
+        if role == "SELLER":
+            store_name = f"{full_name} Do'koni"
+            slug = generate_unique_slug(db, Seller, store_name)
+            seller = Seller(
+                user_id=user.id,
+                store_name=store_name,
+                slug=slug,
+                status="PENDING",
+                rating=0.0,
+                rating_count=0
+            )
+            db.add(seller)
+            db.flush()
+            seller_prof = SellerProfile(seller_id=seller.id, city="Toshkent")
+            db.add(seller_prof)
+
+        db.commit()
+        db.refresh(user)
+
+    else:
+        # User already exists - upgrade to SELLER if registering as seller
+        if (payload.role or "").upper() == "SELLER" and user.role != "SELLER":
+            user.role = "SELLER"
+            if not user.seller:
+                store_name = f"{full_name} Do'koni"
+                slug = generate_unique_slug(db, Seller, store_name)
+                seller = Seller(
+                    user_id=user.id,
+                    store_name=store_name,
+                    slug=slug,
+                    status="PENDING",
+                    rating=0.0,
+                    rating_count=0
+                )
+                db.add(seller)
+                db.flush()
+                seller_prof = SellerProfile(seller_id=seller.id, city="Toshkent")
+                db.add(seller_prof)
+            db.commit()
+            db.refresh(user)
+
+        # Update profile picture/name if missing
+        if user.profile:
+            if not user.profile.avatar_url and picture:
+                user.profile.avatar_url = picture
+            if not user.profile.full_name and full_name:
+                user.profile.full_name = full_name
+            db.commit()
+            db.refresh(user)
+
+    db.refresh(user)
+    access_token = create_access_token(subject=user.id, role=user.role)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "role": user.role,
+            "is_active": user.is_active,
+            "full_name": user.profile.full_name if user.profile else full_name,
+            "avatar_url": user.profile.avatar_url if user.profile else picture,
+            "store_name": user.seller.store_name if user.seller else None,
+            "seller_status": user.seller.status if user.seller else None,
+            "telegram_chat_id": user.telegram_chat_id,
+            "telegram_username": user.telegram_username,
+            "telegram_connected_at": user.telegram_connected_at
+        }
+    }
+
 

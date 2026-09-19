@@ -25,6 +25,28 @@
     <!-- KaTeX for LaTeX Math Rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+
+    <!-- Google Identity Services (GSI) for Google One Tap & Sign-In -->
+    <script src="https://accounts.google.com/gsi/client?hl=uz" async defer></script>
+
+    <!-- Theme Initialization: First visit is always LIGHT mode -->
+    <script>
+      (function() {
+        try {
+          var pref = localStorage.getItem('milliynarx_theme_preference');
+          if (pref === 'dark') {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.setAttribute('data-theme', 'light');
+            if (!pref) {
+              localStorage.removeItem('milliynarx_theme');
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="bg-[#F8FAFC] text-slate-900 font-sans antialiased overflow-x-hidden min-h-screen">
     <div id="root"></div>

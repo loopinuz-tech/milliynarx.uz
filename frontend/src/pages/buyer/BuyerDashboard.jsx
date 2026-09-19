@@ -248,10 +248,10 @@ export const BuyerDashboard = () => {
 
   return (
     // FULL WIDTH CONTAINER (occupies full screen width with comfortable padding)
-    <div className="w-full px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-6 sm:py-8 space-y-8 pb-24 md:pb-12 transition-colors duration-200">
+    <div className="w-full px-3 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-4 sm:py-8 space-y-6 sm:space-y-8 pb-24 md:pb-12 transition-colors duration-200">
       
       {/* 1. TOP HEADER & GREETING BAR */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-7 shadow-xs relative overflow-hidden">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
@@ -274,10 +274,10 @@ export const BuyerDashboard = () => {
         </div>
 
         {/* Quick Toolbar */}
-        <div className="relative z-10 flex items-center gap-2.5 flex-wrap">
+        <div className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto">
           <Link
             to="/ai-advisor"
-            className="px-4 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-sm shadow-orange-600/20 transition active:scale-98 flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-sm shadow-orange-600/20 transition active:scale-98 flex items-center gap-2"
           >
             <SolarIcon name="Sparkles" size={16} />
             <span>AI Maslahatchi</span>
@@ -285,7 +285,7 @@ export const BuyerDashboard = () => {
 
           <Link
             to="/compare"
-            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
           >
             <SolarIcon name="SortVertical" size={16} />
             <span>Taqqoslash</span>
@@ -294,7 +294,7 @@ export const BuyerDashboard = () => {
           {userRole === 'SELLER' ? (
             <Link
               to="/seller"
-              className="px-4 py-2.5 border border-orange-200 dark:border-orange-800/60 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-orange-200 dark:border-orange-800/60 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
             >
               <SolarIcon name="Store" size={16} />
               <span>Do'kon Paneli</span>
@@ -302,7 +302,7 @@ export const BuyerDashboard = () => {
           ) : userRole === 'ADMIN' ? (
             <Link
               to="/admin"
-              className="px-4 py-2.5 border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2 font-mono"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2 font-mono"
             >
               <SolarIcon name="Shield" size={16} />
               <span>ROOT Terminal</span>
@@ -310,7 +310,7 @@ export const BuyerDashboard = () => {
           ) : (
             <Link
               to="/onboarding"
-              className="px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
             >
               <SolarIcon name="Shop" size={16} />
               <span>Do'kon ochish</span>
@@ -621,7 +621,7 @@ export const BuyerDashboard = () => {
           </div>
 
           {/* Search Box */}
-          <form onSubmit={handleAiSubmit} className="pt-2 flex items-center gap-2">
+          <form onSubmit={handleAiSubmit} className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <div className="relative flex-1">
               <input
                 type="text"
@@ -633,7 +633,7 @@ export const BuyerDashboard = () => {
             </div>
             <button
               type="submit"
-              className="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition cursor-pointer active:scale-95 shrink-0 flex items-center gap-2"
+              className="w-full sm:w-auto justify-center px-5 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs sm:text-sm rounded-2xl shadow-md transition cursor-pointer active:scale-95 shrink-0 flex items-center gap-2"
             >
               <span>Tahlil qilish</span>
               <SolarIcon name="AltArrowRight" size={16} />
