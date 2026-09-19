@@ -16,6 +16,7 @@ from backend.app.api.ai import router as ai_router
 from backend.app.api.data_sources import router as data_sources_router
 from backend.app.api.uploads import router as uploads_router
 from backend.app.api.telegram import router as telegram_router
+from backend.app.api.scraper import router as scraper_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -53,6 +54,7 @@ app.include_router(ai_router, prefix=api_prefix)
 app.include_router(data_sources_router, prefix=api_prefix)
 app.include_router(uploads_router, prefix=api_prefix)
 app.include_router(telegram_router, prefix=api_prefix)
+app.include_router(scraper_router, prefix=api_prefix)
 
 # Ensure tables exist
 Base.metadata.create_all(bind=engine)

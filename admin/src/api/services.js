@@ -111,6 +111,14 @@ export const adminService = {
   getTrends: async () => {
     const res = await apiClient.get('/admin/trends');
     return res.data;
+  },
+  triggerScraperSync: async (itemsPerCategory = 5) => {
+    const res = await apiClient.post(`/scraper/sync-texnomart?items_per_category=${itemsPerCategory}`);
+    return res.data;
+  },
+  getScraperStatus: async () => {
+    const res = await apiClient.get('/scraper/status');
+    return res.data;
   }
 };
 

@@ -297,51 +297,54 @@ export const LandingPage = () => {
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
           
-          {/* Left Column: Flow Explanation, Value Prop, Action Button */}
+          {/* Left Column: Visual Value Prop & Quick Feature Highlights */}
           <div className="lg:col-span-5 space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-500/15 border border-orange-200/80 dark:border-orange-500/30 text-orange-700 dark:text-orange-400 text-xs font-semibold shadow-2xs">
               <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain" />
-              <span>Sun'iy Intellekt &bull; Bozor Tahlili</span>
+              <span>AI Bozor Maslahatchisi</span>
             </div>
 
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-              Sun'iy Intellekt Maslahatchisi bilan{' '}
+              AI Maslahatchi bilan{' '}
               <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">
                 xaridni rejalashtiring
               </span>
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed max-w-xl font-normal">
-              Milliy Narx AI — bozor narxlarining real dinamikasini o‘rganib, xaridorlarga eng tejamkor xarid vaqtini, sotuvchilarga esa raqobatbardosh narx strategiyasini tavsiya qiluvchi O‘zbekistondagi ilk mustaqil sun'iy intellekt xizmati.
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+              Bozordagi real narxlar dinamikasini taqqoslang va mahsulotni ortiqcha to'lovlarsiz, eng qulay vaqtda xarid qiling.
             </p>
 
-            {/* 3 ta Oddiy Qadam (Qanday so'rov yuboriladi va javob olinadi) */}
+            {/* 3 ta ixcham vizual afzallik */}
             <div className="space-y-2.5 pt-1">
-              <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                  1
-                </span>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white">Savol yuboring:</strong> O‘zingiz qiziqqan mahsulot yoki narx haqida istalgan tilda so‘rang.
-                </p>
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
+                  <ChartIcon size={16} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Tezkor narx taqqoslash</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Do'konlar takliflari bir joyda</p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                  2
-                </span>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white">Jonli AI tahlili:</strong> Sun'iy intellekt bozor narxlari tarixi va do‘konlarni bir necha soniyada taqqoslaydi.
-                </p>
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <StarsIcon size={16} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">Qulay xarid vaqti</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Narx tushishi yoki kutish bo'yicha tavsiya</p>
+                </div>
               </div>
 
-              <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
-                  3
-                </span>
-                <p className="text-xs text-slate-600 dark:text-slate-300">
-                  <strong className="text-slate-900 dark:text-white">Aniq tavsiya oling:</strong> Eng arzon taklif, narx tushishi va qulay xarid vaqti bo‘yicha xolis xulosaga ega bo‘ling.
-                </p>
+              <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 transition-colors">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <ShieldIcon size={16} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900 dark:text-white">100% Xolis tahlil</h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Sun'iy aksiyalarsiz faqat real ma'lumot</p>
+                </div>
               </div>
             </div>
 
@@ -349,10 +352,9 @@ export const LandingPage = () => {
               <button
                 type="button"
                 onClick={() => navigate('/ai-advisor')}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-sm active:scale-98 cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-xs hover:shadow-md active:scale-98 cursor-pointer"
               >
-                <img src="/aiimg.png" alt="AI" className="w-4 h-4 object-contain" />
-                <span>AI Maslahatchi bilan suhbatlashish</span>
+                <span>AI Maslahatchiga o'tish</span>
                 <AltArrowRightIcon size={16} />
               </button>
             </div>

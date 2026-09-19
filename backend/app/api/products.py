@@ -26,8 +26,8 @@ def get_products(
     limit: int = Query(20, ge=1, le=100),
     db: Session = Depends(get_db)
 ):
-    # Only return ACTIVE products to public
-    query = db.query(Product).filter(Product.status == "ACTIVE")
+    # Only return ACTIVE or APPROVED products to public
+    query = db.query(Product).filter(Product.status.in_(["ACTIVE", "APPROVED"]))
     
     if category_id:
         cat = db.query(Category).filter(

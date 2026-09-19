@@ -6,25 +6,25 @@ const DEMO_SCENARIOS = [
   {
     id: 'phone',
     icon: 'phone',
-    tabLabel: 'Smartfon narxi',
-    userQuery: 'iPhone 15 Pro 128GB hozir xarid qilish foydalimi yoki narxi tushishini kutaymi?',
+    tabLabel: 'Smartfon',
+    userQuery: 'iPhone 15 Pro 128GB narxi tushishi kutilmoqdami?',
     badge: 'Kutish tavsiya etiladi',
     badgeType: 'warning', // amber
-    summary: 'Oxirgi 30 kunda narx 12,400,000 so‘mdan 11,850,000 so‘mga tushdi (-4.4%). Kelgusi 10-14 kunda yangi yetkazib berish hisobiga yana pasayishi kutilmoqda.',
+    summary: 'Oxirgi 30 kunda narx 4.4% ga pasaydi. Yaqin 10-14 kunda yangi yetkazib berish hisobiga yana arzonlashishi kutilmoqda.',
     metrics: [
       { label: 'Bozor narxi', val: '11,850,000 so‘m', icon: 'tag', color: 'text-amber-600 dark:text-amber-400' },
       { label: 'Kutilayotgan tejam', val: '~350,000 so‘m', icon: 'trend', color: 'text-emerald-600 dark:text-emerald-400' },
-      { label: 'Tavsiya vaqti', val: '10-15 kunda', icon: 'clock', color: 'text-blue-600 dark:text-blue-400' }
+      { label: 'Tavsiya', val: '10-14 kunda', icon: 'clock', color: 'text-blue-600 dark:text-blue-400' }
     ]
   },
   {
     id: 'tv',
     icon: 'tv',
-    tabLabel: 'Smart TV qidiruvi',
-    userQuery: 'Artel 43 Smart TV eng arzon rasmiy narxi qaysi do‘konda?',
+    tabLabel: 'Smart TV',
+    userQuery: 'Artel 43 Smart TV eng arzon rasmiy narxi qayerda?',
     badge: 'Xarid uchun ayni fursat',
     badgeType: 'success', // emerald
-    summary: '6 ta rasmiy do‘kon va bozor narxlari tekshirildi. Eng past narx 2,890,000 so‘m bilan Texnomartda qayd etildi (bozor o‘rtacha narxidan 9% arzon).',
+    summary: '6 ta rasmiy do‘kon ichida eng arzon narx Texnomartda qayd etildi (bozor o‘rtacha narxidan 9% arzon).',
     metrics: [
       { label: 'Eng arzon taklif', val: '2,890,000 so‘m', icon: 'tag', color: 'text-emerald-600 dark:text-emerald-400' },
       { label: 'O‘rtacha narx', val: '3,170,000 so‘m', icon: 'chart', color: 'text-amber-600 dark:text-amber-400' },
@@ -32,17 +32,17 @@ const DEMO_SCENARIOS = [
     ]
   },
   {
-    id: 'seller',
-    icon: 'store',
-    tabLabel: 'Sotuvchi strategiyasi',
-    userQuery: 'Kiyim-kechak do‘konim bor. Yangi mavsum uchun raqobatbardosh narx qanday bo‘ladi?',
-    badge: 'B2B Narx Strategiyasi',
+    id: 'laptop',
+    icon: 'laptop',
+    tabLabel: 'Noutbuk',
+    userQuery: 'MacBook Air M2 uchun eng qulay taklif qaysi do‘konda?',
+    badge: 'Narx barqaror',
     badgeType: 'info', // blue
-    summary: 'Bozor o‘rtacha marjasi 18-22% atrofida. Boshlang‘ich aksiyada raqobatchilardan 3% arzonroq narx belgilash xaridor oqimini 40% ga oshiradi.',
+    summary: '8 ta rasmiy do‘konda narxlar barqaror. Rasmiy kafolat bilan 1 kunda yetkazib berish xizmati mavjud.',
     metrics: [
-      { label: 'Tavsiya marja', val: '19.5%', icon: 'chart', color: 'text-blue-600 dark:text-blue-400' },
-      { label: 'Bozor talabi', val: 'Yuqori (Trend)', icon: 'trend', color: 'text-emerald-600 dark:text-emerald-400' },
-      { label: 'Konversiya o‘sishi', val: '+40%', icon: 'trend', color: 'text-orange-600 dark:text-orange-400' }
+      { label: 'Eng past narx', val: '10,990,000 so‘m', icon: 'tag', color: 'text-blue-600 dark:text-blue-400' },
+      { label: 'Do‘konlar soni', val: '8 ta do‘kon', icon: 'store', color: 'text-emerald-600 dark:text-emerald-400' },
+      { label: 'Yetkazib berish', val: '1 kunda', icon: 'clock', color: 'text-amber-600 dark:text-amber-400' }
     ]
   }
 ];
@@ -147,43 +147,27 @@ export const AiAdvisorDemo = () => {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="w-full max-w-xl bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xl dark:shadow-2xl overflow-hidden select-none transition-colors duration-200"
+      className="w-full max-w-xl bg-white dark:bg-[#090D16] text-slate-800 dark:text-slate-100 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xl dark:shadow-2xl overflow-hidden select-none transition-colors duration-200"
     >
       {/* 1. Terminal Window Header */}
       <div className="bg-slate-50/90 dark:bg-slate-950/85 px-4 py-3 border-b border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-          <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-          <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-          <span className="text-xs font-mono font-semibold text-slate-700 dark:text-slate-300 ml-2">
-            MilliyNarx AI Terminal
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
+          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 ml-2">
+            MilliyNarx AI
           </span>
         </div>
         
-        <div className="flex items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => {
-              setStage('typing_query');
-              setDisplayedQuery('');
-              setDisplayedResponse('');
-            }}
-            title="Qayta ijro etish"
-            className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white px-2 py-0.5 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-800 transition text-[11px] flex items-center gap-1 cursor-pointer"
-          >
-            <SolarIcon name="clock" size={12} />
-            <span className="hidden sm:inline text-[10px] font-mono">Qayta ijro</span>
-          </button>
-
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-mono font-bold">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>ONLAYN TAHLIL</span>
-          </div>
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 text-[11px] font-semibold">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Jonli tahlil</span>
         </div>
       </div>
 
-      {/* 2. Scenario Tabs with Solar Icons (No emoji) */}
-      <div className="bg-slate-100/70 dark:bg-slate-950/50 px-3 py-2 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto scrollbar-none transition-colors">
+      {/* 2. Scenario Tabs with Solar Icons */}
+      <div className="bg-slate-100/60 dark:bg-slate-950/50 px-3 py-2 border-b border-slate-200/80 dark:border-slate-800 flex items-center gap-2 overflow-x-auto scrollbar-none transition-colors">
         {DEMO_SCENARIOS.map((sc, idx) => {
           const isActive = activeTab === idx;
           return (
@@ -197,7 +181,7 @@ export const AiAdvisorDemo = () => {
                   : 'bg-white dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border border-slate-200/70 dark:border-transparent'
               }`}
             >
-              <SolarIcon name={sc.icon} size={15} className={isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'} />
+              <SolarIcon name={sc.icon} size={14} className={isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'} />
               <span>{sc.tabLabel}</span>
             </button>
           );
@@ -205,16 +189,16 @@ export const AiAdvisorDemo = () => {
       </div>
 
       {/* 3. Live Chat Simulation Area */}
-      <div className="p-4 sm:p-5 space-y-4 text-xs font-sans min-h-[300px] flex flex-col justify-center bg-slate-50/40 dark:bg-transparent transition-colors">
+      <div className="p-4 sm:p-5 space-y-4 text-xs font-sans min-h-[280px] flex flex-col justify-center bg-slate-50/40 dark:bg-transparent transition-colors">
         
-        {/* User Prompt (Savol yuborish) with Animated Typing */}
+        {/* User Prompt */}
         <div className="flex items-start gap-3 justify-end">
           <div className="bg-orange-50/90 dark:bg-orange-500/10 border border-orange-200/90 dark:border-orange-500/30 rounded-2xl rounded-tr-xs p-3.5 text-slate-800 dark:text-slate-100 max-w-[88%] shadow-xs transition-all">
-            <div className="text-[10px] font-mono text-orange-600 dark:text-orange-400 font-bold mb-1 flex items-center gap-1.5">
+            <div className="text-[10px] text-orange-600 dark:text-orange-400 font-bold mb-1 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-              <span>Sizning so‘rovingiz:</span>
+              <span>So‘rov:</span>
             </div>
-            <p className="text-xs sm:text-[13px] leading-relaxed font-medium text-slate-800 dark:text-slate-100 min-h-[36px]">
+            <p className="text-xs sm:text-[13px] leading-relaxed font-medium text-slate-800 dark:text-slate-100 min-h-[32px]">
               "{displayedQuery}"
               {stage === 'typing_query' && (
                 <span className="inline-block w-1.5 h-3.5 bg-orange-500 ml-0.5 animate-pulse align-middle" />
@@ -227,7 +211,7 @@ export const AiAdvisorDemo = () => {
           </div>
         </div>
 
-        {/* AI Market Response (Avtomatik javob olish) */}
+        {/* AI Market Response */}
         <div className="flex items-start gap-3 justify-start">
           <div className="w-8 h-8 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-1 flex items-center justify-center shrink-0 shadow-xs dark:shadow-md relative">
             <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain" />
@@ -239,10 +223,9 @@ export const AiAdvisorDemo = () => {
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <SolarIcon name="sparkles" size={13} className="text-orange-500" />
-                <span className="font-bold text-slate-900 dark:text-white text-xs">MilliyNarx AI Maslahatchi</span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Bozor Tahlili</span>
+                <span className="font-bold text-slate-900 dark:text-white text-xs">MilliyNarx AI</span>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold border ${
+              <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
                 current.badgeType === 'success'
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-400 dark:border-emerald-800'
                   : current.badgeType === 'warning'
@@ -253,9 +236,9 @@ export const AiAdvisorDemo = () => {
               </span>
             </div>
 
-            {/* AI Body: Thinking shimmer or Animated Typewriter Response */}
+            {/* AI Body */}
             {stage === 'thinking' ? (
-              <div className="flex items-center gap-2.5 py-3 text-xs font-mono text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-2.5 py-2.5 text-xs text-slate-600 dark:text-slate-300">
                 <div className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-2 h-2 rounded-full bg-orange-500 animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -264,11 +247,11 @@ export const AiAdvisorDemo = () => {
                 <span className="text-[11px] text-orange-600 dark:text-orange-400 font-medium">Bozor tahlili hisoblanmoqda...</span>
               </div>
             ) : stage === 'typing_query' ? (
-              <div className="py-2 text-[11px] text-slate-400 dark:text-slate-500 font-mono italic">
+              <div className="py-2 text-[11px] text-slate-400 dark:text-slate-500 italic">
                 So‘rov kutilmoqda...
               </div>
             ) : (
-              <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal min-h-[44px]">
+              <p className="text-xs sm:text-[13px] text-slate-700 dark:text-slate-200 leading-relaxed font-normal min-h-[38px]">
                 {displayedResponse}
                 {stage === 'typing_response' && (
                   <span className="inline-block w-1.5 h-3.5 bg-orange-500 ml-0.5 animate-pulse align-middle" />
@@ -283,11 +266,11 @@ export const AiAdvisorDemo = () => {
               }`}>
                 {current.metrics.map((m, i) => (
                   <div key={i} className="bg-slate-50/90 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-700/50 rounded-xl p-2 text-center shadow-2xs">
-                    <div className="flex items-center justify-center gap-1 text-[9px] font-mono text-slate-500 dark:text-slate-400 truncate">
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-slate-500 dark:text-slate-400 truncate">
                       <SolarIcon name={m.icon} size={11} className={m.color} />
                       <span className="truncate">{m.label}</span>
                     </div>
-                    <div className="text-[11px] font-bold text-slate-900 dark:text-white font-mono mt-0.5 truncate">
+                    <div className="text-[11px] font-bold text-slate-900 dark:text-white mt-0.5 truncate">
                       {m.val}
                     </div>
                   </div>
@@ -299,17 +282,17 @@ export const AiAdvisorDemo = () => {
 
       </div>
 
-      {/* 4. Interactive Live Prompt Input Bar */}
+      {/* 4. Sleek Interactive Input Bar */}
       <form onSubmit={handleSendCustom} className="p-3 bg-slate-50/90 dark:bg-slate-950/90 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 transition-colors">
         <div className="relative flex-1">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-orange-500">
-            <SolarIcon name="sparkles" size={14} />
+            <SolarIcon name="search" size={14} />
           </div>
           <input
             type="text"
             value={customInput}
             onChange={(e) => setCustomInput(e.target.value)}
-            placeholder={`Masalan: "${current.userQuery.slice(0, 36)}..."`}
+            placeholder="Istalgan mahsulot narxini so'rang..."
             className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/20 rounded-xl pl-8 pr-3 py-2 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none transition-colors shadow-2xs"
           />
         </div>
@@ -317,8 +300,8 @@ export const AiAdvisorDemo = () => {
           type="submit"
           className="px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shrink-0 shadow-xs cursor-pointer active:scale-95"
         >
-          <span>Tahlil</span>
-          <SolarIcon name="arrowright" size={14} />
+          <span>So'rash</span>
+          <SolarIcon name="arrowright" size={13} />
         </button>
       </form>
     </div>
