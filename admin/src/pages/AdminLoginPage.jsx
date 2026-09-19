@@ -149,7 +149,7 @@ export const AdminLoginPage = () => {
           <p className="font-medium">Milliy Narx v1.0 &bull; B2B & B2C Price Intelligence</p>
           <div>
             <a
-              href="http://localhost:5173"
+              href="https://milliynarx.eduxa.uz"
               className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-semibold hover:underline inline-flex items-center gap-1.5 transition-colors"
             >
               <span>&larr; Asosiy xarid platformasiga qaytish</span>

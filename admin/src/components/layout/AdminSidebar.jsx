@@ -104,14 +104,14 @@ export const AdminSidebar = ({ isOpen, onClose }) => {
               Tashqi Havolalar
             </div>
             <a
-              href="http://localhost:5173"
+              href="https://milliynarx.eduxa.uz"
               target="_blank"
               rel="noreferrer"
               className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors border border-dashed border-slate-200 dark:border-slate-800 hover:border-orange-500/40"
             >
               <div className="flex items-center gap-2.5">
                 <SolarIcon name="Dashboard" size={16} />
-                <span>Asosiy Bozor (Port 5173)</span>
+                <span>Asosiy Bozor</span>
               </div>
               <SolarIcon name="ArrowRight" size={14} />
             </a>

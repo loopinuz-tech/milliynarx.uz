@@ -26,6 +26,21 @@ const SPEC_KEY_LABELS = {
   frequency: "Chastota",
 };
 
+const SPEC_VALUE_LABELS = {
+  up: "Oshmoqda ↑",
+  down: "Tushmoqda ↓",
+  unchanged: "O'zgarmagan →",
+  stable: "Barqaror",
+};
+
+function formatSpecValue(key, val) {
+  if (val === undefined || val === null || val === '') return '-';
+  const s = String(val);
+  if (key === 'direction') return SPEC_VALUE_LABELS[s] || s;
+  if (key === 'change_percent') return `${s}%`;
+  return s;
+}
+
 export const ComparePage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -112,7 +127,7 @@ export const ComparePage = () => {
       ).join('\n');
       const message = `Quyidagi ${prods.length} ta mahsulotni qisqacha taqqoslab, har birining afzalligi va kamchiligi, ishlatish sarfi, quvvati, narxi va sifat-narx nisbati bo'yicha tahlil qiling. Javobni o'zbek tilida, 3-5 ta qisqa punkt ko'rinishida bering:\n\n${productList}`;
       const res = await aiService.chat(message);
-      setAiCompareResult(res.response || res.message || res.analysis_text || '');
+      setAiCompareResult(res.reply || res.response || res.message || '');
     } catch (err) {
       setAiCompareResult(null);
     } finally {
@@ -866,7 +881,7 @@ export const ComparePage = () => {
                                 isDiff ? 'font-semibold text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300'
                               }`}
                             >
-                              {val !== undefined && val !== null && val !== '' ? String(val) : '-'}
+                              {formatSpecValue(specKey, val)}
                             </td>
                           );
                         })}

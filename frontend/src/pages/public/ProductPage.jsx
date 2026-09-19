@@ -48,6 +48,20 @@ const SPEC_KEY_LABELS = {
   frequency: "Chastota",
 };
 
+const SPEC_VALUE_LABELS = {
+  up: "Oshmoqda ↑",
+  down: "Tushmoqda ↓",
+  unchanged: "O'zgarmagan →",
+  stable: "Barqaror",
+};
+
+function formatSpecValue(key, val) {
+  if (val === undefined || val === null || val === '') return '-';
+  const s = String(val);
+  if (key === 'direction') return SPEC_VALUE_LABELS[s] || s;
+  if (key === 'change_percent') return `${s}%`;
+  return s;
+}
 
 export const ProductPage = () => {
   const { id } = useParams();
@@ -638,7 +652,7 @@ export const ProductPage = () => {
             {Object.entries(product.specifications).map(([key, val]) => (
               <div key={key} className="flex justify-between py-2.5 border-b border-slate-100">
                 <span className="text-slate-500 font-medium">{SPEC_KEY_LABELS[key] || key}</span>
-                <span className="text-slate-900 font-bold text-right">{String(val)}</span>
+                <span className="text-slate-900 font-bold text-right">{formatSpecValue(key, val)}</span>
               </div>
             ))}
           </div>
