@@ -23,13 +23,11 @@ import { BoxIcon } from '@solar-icons/react/linear/box';
 import { UserIcon } from '@solar-icons/react/linear/user';
 import { ShopIcon } from '@solar-icons/react/linear/shop';
 import { ClockCircleIcon } from '@solar-icons/react/linear/clock-circle';
-import { TagPriceIcon as TagIcon } from '@solar-icons/react/linear/tag-price';
 import { AltArrowRightIcon } from '@solar-icons/react/linear/alt-arrow-right';
 
 export const LandingPage = () => {
   const [query, setQuery] = useState('');
   const [products, setProducts] = useState([]);
-  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
@@ -41,16 +39,6 @@ export const LandingPage = () => {
         // Strictly fetch real active products from database
         const prods = await productService.getProducts({ limit: 8 });
         setProducts(Array.isArray(prods) ? prods : []);
-
-        // Fetch official monetization plans from database
-        try {
-          const planData = await productService.getSubscriptionPlans();
-          if (Array.isArray(planData) && planData.length > 0) {
-            setPlans(planData);
-          }
-        } catch (planErr) {
-          console.error("Failed to load subscription plans:", planErr);
-        }
       } catch (err) {
         console.error("Failed to load products:", err);
       } finally {
@@ -85,16 +73,6 @@ export const LandingPage = () => {
       console.error(err);
     }
   };
-
-  // Map database plans by tier with reliable defaults
-  const planMap = plans.reduce((acc, p) => {
-    acc[p.tier] = p;
-    return acc;
-  }, {});
-
-  const startFeatures = planMap.START?.features || {};
-  const bizFeatures = planMap.BUSINESS?.features || {};
-  const proFeatures = planMap.PRO?.features || {};
 
   return (
     <div className="w-full space-y-16 sm:space-y-20 pb-16">
@@ -168,7 +146,7 @@ export const LandingPage = () => {
                   }
                 }}
                 variant="hero"
-                placeholder="Mahsulot nomini kiriting (masalan: iPhone 15, Artel, Samsung)..."
+                placeholder="Mahsulot nomi, model yoki toifani qidiring..."
                 buttonLabel="Qidirish"
               />
             </div>
@@ -386,7 +364,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* 3.8. PLATFORMS COMPARISON MATRIX (USER'S EXACT COMPARISON TABLE)          */}
+      {/* 3.8. B2B SAVDO SHAKLLARI TAQQOSLOVI                                       */}
       {/* ========================================================================= */}
       <section className="space-y-6">
         <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -398,7 +376,7 @@ export const LandingPage = () => {
             Nima uchun aynan <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 bg-clip-text text-transparent">MilliyNarx</span>?
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            O'zbekistondagi asosiy savdo va tahlil kanallarining real imkoniyatlari solishtiruvi
+            O'zbekistondagi B2B savdo va tahlil kanallarining real imkoniyatlari solishtiruvi
           </p>
         </div>
 
@@ -422,13 +400,13 @@ export const LandingPage = () => {
                     </div>
                   </th>
                   <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
-                    Uzum Market
+                    Klassik Marketpleyslar
                   </th>
                   <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
-                    Telegram
+                    Telegram B2B Guruhlar
                   </th>
                   <th className="py-4 sm:py-5 px-5 text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 w-1/5">
-                    Turon Market
+                    An'anaviy Ulgurji Bozorlar
                   </th>
                 </tr>
               </thead>
@@ -461,9 +439,10 @@ export const LandingPage = () => {
                     </div>
                   </td>
                   <td className="py-4 sm:py-5 px-5">
-                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 shadow-2xs">
+                    <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 shadow-2xs">
                       <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
                       </svg>
                     </div>
                   </td>
@@ -578,178 +557,6 @@ export const LandingPage = () => {
                       </svg>
                     </div>
                   </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* 4. MONETIZATSIYA MODELI (FULL-WIDTH 1-TO-1 DATABASE INTEGRATED)          */}
-      {/* ========================================================================= */}
-      <section className="w-full bg-white dark:bg-[#090D16] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-10 lg:p-14 shadow-2xs">
-        {/* Title and Red Accent Underline */}
-        <div className="mb-8">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-orange-50 dark:bg-orange-950/50 border border-orange-200/80 dark:border-orange-800/60 text-orange-700 dark:text-orange-300 text-xs font-bold mb-3 shadow-2xs">
-            <TagIcon size={14} />
-            <span>B2B SaaS Obuna Modellari</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            Monetizatsiya modeli
-          </h2>
-          <div className="w-20 h-1.5 bg-[#FF6F61] rounded-full mt-3 mb-2"></div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-            Korxona, fabrika, do'kon va distribyutorlar uchun shaffof va ochiq tahliliy xizmat rejalari
-          </p>
-        </div>
-
-        {/* 14-Row Subscription Matrix Table with Complete Grid Borders (Full Width) */}
-        <div className="w-full overflow-hidden">
-          <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#090D16]">
-            <table className="w-full min-w-[620px] text-xs sm:text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/40">
-                  <th className="py-3.5 px-5 text-left border-r border-slate-200 dark:border-slate-800 w-[37%] font-bold text-slate-700 dark:text-slate-300">
-                    Xizmat va imkoniyatlar
-                  </th>
-                  <th className="py-3.5 px-4 text-left border-r border-slate-200 dark:border-slate-800 w-[21%]">
-                    <div className="inline-flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shrink-0"></span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">START</span>
-                    </div>
-                  </th>
-                  <th className="py-3.5 px-4 text-left border-r border-slate-200 dark:border-slate-800 w-[21%]">
-                    <div className="inline-flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] shrink-0"></span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">BUSINESS</span>
-                    </div>
-                  </th>
-                  <th className="py-3.5 px-4 text-left w-[21%]">
-                    <div className="inline-flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#9333EA] shrink-0"></span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white tracking-wider">PRO</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
-                {/* Row 1: Narx */}
-                <tr className="font-bold text-slate-900 dark:text-white bg-slate-100/60 dark:bg-slate-800/50">
-                  <td className="py-3 px-5 border-r border-slate-200 dark:border-slate-800 font-bold">Narx</td>
-                  <td className="py-3 px-4 border-r border-slate-200 dark:border-slate-800 font-bold text-emerald-600 dark:text-emerald-400 text-sm">
-                    {startFeatures.price_usd || "$10/oy"}
-                  </td>
-                  <td className="py-3 px-4 border-r border-slate-200 dark:border-slate-800 font-bold text-blue-600 dark:text-blue-400 text-sm">
-                    {bizFeatures.price_usd || "$30/oy"}
-                  </td>
-                  <td className="py-3 px-4 font-bold text-purple-600 dark:text-purple-400 text-sm">
-                    {proFeatures.price_usd || "$60/oy"}
-                  </td>
-                </tr>
-
-                {/* Row 2: Mahsulotlar katalogi */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Mahsulotlar katalogi</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.catalog || "✓"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.catalog || "✓"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.catalog || "✓"}</td>
-                </tr>
-
-                {/* Row 3: Narxlarni solishtirish */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narxlarni solishtirish</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.comparison || "✓"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.comparison || "✓"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.comparison || "✓"}</td>
-                </tr>
-
-                {/* Row 4: Hududlar bo'yicha narx */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Hududlar bo'yicha narx</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.region_prices || "✓"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.region_prices || "✓"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.region_prices || "✓"}</td>
-                </tr>
-
-                {/* Row 5: Narxlar tarixi */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narxlar tarixi</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.price_history || "30 kun"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.price_history || "1 yil"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.price_history || "Cheksiz"}</td>
-                </tr>
-
-                {/* Row 6: Talab/taklif tahlili */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Talab/taklif tahlili</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.demand_supply || "Basic + AI"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.demand_supply || "Advanced + AI"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.demand_supply || "Professional + AI"}</td>
-                </tr>
-
-                {/* Row 7: Narx o'zgarishi alertlari */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Narx o'zgarishi alertlari</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.price_alerts || "5 ta"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.price_alerts || "30 ta"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.price_alerts || "Cheksiz"}</td>
-                </tr>
-
-                {/* Row 8: Sotuvchi/ta'minotchi qidirish */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Sotuvchi/ta'minotchi qidirish</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.supplier_search || "✓"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.supplier_search || "✓"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.supplier_search || "✓"}</td>
-                </tr>
-
-                {/* Row 9: Bozor hisobotlari */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Bozor hisobotlari</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.market_reports || "—"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.market_reports || "✓"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.market_reports || "✓ + AI"}</td>
-                </tr>
-
-                {/* Row 10: Excel/CSV eksport */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Excel/CSV eksport</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.excel_export || "—"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.excel_export || "✓"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.excel_export || "✓"}</td>
-                </tr>
-
-                {/* Row 11: API */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">API</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{startFeatures.api || "—"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-400">{bizFeatures.api || "—"}</td>
-                  <td className="py-2.5 px-4">{proFeatures.api || "✓"}</td>
-                </tr>
-
-                {/* Row 12: AI Market Assistant */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">AI Market Assistant</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.ai_assistant || "✓"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.ai_assistant || "✓"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.ai_assistant || "✓ Advanced"}</td>
-                </tr>
-
-                {/* Row 13: Bir nechta xodim */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Bir nechta xodim</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-right pr-6">{startFeatures.team_seats || "1"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800 text-right pr-6">{bizFeatures.team_seats || "5"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white text-right pr-6">{proFeatures.team_seats || "15"}</td>
-                </tr>
-
-                {/* Row 14: Qo'llab-quvvatlash */}
-                <tr className="hover:bg-slate-50/40 dark:hover:bg-slate-850/20">
-                  <td className="py-2.5 px-5 border-r border-slate-200 dark:border-slate-800 font-normal">Qo'llab-quvvatlash</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{startFeatures.support || "Standard"}</td>
-                  <td className="py-2.5 px-4 border-r border-slate-200 dark:border-slate-800">{bizFeatures.support || "Priority"}</td>
-                  <td className="py-2.5 px-4 font-bold text-slate-900 dark:text-white">{proFeatures.support || "Dedicated"}</td>
                 </tr>
               </tbody>
             </table>

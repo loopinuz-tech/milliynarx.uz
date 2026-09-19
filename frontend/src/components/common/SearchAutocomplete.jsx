@@ -198,8 +198,8 @@ export const SearchAutocomplete = ({
   }[variant];
 
   const inputPadding = {
-    hero: 'pl-11 pr-24 py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl',
-    header: 'pl-10 pr-24 py-2.5 text-xs sm:text-sm rounded-xl',
+    hero: 'pl-11 pr-[125px] sm:pr-[148px] py-3.5 sm:py-4 text-sm sm:text-base rounded-2xl',
+    header: 'pl-10 pr-[92px] sm:pr-[110px] py-2.5 text-xs sm:text-sm rounded-xl',
     filter: 'pl-10 pr-20 py-2.5 text-sm rounded-xl',
     mobile: 'pl-9 pr-20 py-2 text-xs rounded-xl'
   }[variant];
@@ -242,9 +242,13 @@ export const SearchAutocomplete = ({
           autoComplete="off"
           spellCheck="false"
           className={`
-            w-full bg-slate-50 text-slate-900 placeholder:text-slate-400 border border-slate-200
-            focus:outline-none focus:bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20
-            transition-all shadow-inner
+            w-full bg-slate-50 dark:bg-[#0B0F19] text-slate-900 dark:text-white
+            placeholder:text-slate-400 dark:placeholder:text-slate-500
+            border border-slate-200 dark:border-slate-800
+            focus:outline-none focus:bg-white dark:focus:bg-slate-900
+            focus:border-orange-500 dark:focus:border-orange-500
+            focus:ring-2 focus:ring-orange-500/20
+            transition-all shadow-inner truncate
             ${inputPadding}
             ${inputClassName}
           `}

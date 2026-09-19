@@ -143,7 +143,7 @@ export const Footer = () => {
       </div>
 
       {/* Bottom Sub-Footer: Copyright & Legal */}
-      <div className="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#070B12] py-4 px-4 sm:px-6 lg:px-8">
+      <div className="border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#070B12] py-4 pb-20 md:pb-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-bold text-slate-800 dark:text-slate-200 tracking-tight">MILLIY NARX</span>

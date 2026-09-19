@@ -218,7 +218,7 @@ export const SearchPage = () => {
         </div>
 
         {/* Categories Cards Row - Horizontal touch rail on mobile, grid on tablet/desktop */}
-        <div className="flex sm:grid overflow-x-auto sm:overflow-visible no-scrollbar pb-2 sm:pb-0 gap-2.5 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+        <div className="flex sm:grid overflow-x-auto sm:overflow-visible no-scrollbar pb-2 sm:pb-0 gap-2.5 sm:gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 snap-x snap-mandatory scroll-smooth -mx-1 px-1">
           {categoryStats.map((c) => {
             const isSelected = selectedCategory === c.id || selectedCategory === c.slug;
             const catImg = getCategoryImg(c);
@@ -226,15 +226,15 @@ export const SearchPage = () => {
               <div
                 key={c.id}
                 onClick={() => handleCategorySelect(c.id)}
-                className={`w-32 sm:w-auto shrink-0 relative group rounded-2xl p-2.5 sm:p-3 transition-all duration-200 cursor-pointer overflow-hidden border flex flex-col justify-between select-none ${
+                className={`w-28 sm:w-auto shrink-0 snap-start relative group rounded-2xl p-2 sm:p-3 transition-all duration-200 cursor-pointer overflow-hidden border flex flex-col justify-between select-none active:scale-95 ${
                   isSelected
                     ? 'bg-gradient-to-br from-orange-600 to-amber-600 text-white shadow-md shadow-orange-600/25 border-orange-600 ring-2 ring-orange-400/50 scale-[1.02]'
-                    : 'bg-white hover:bg-orange-50/40 border-slate-200/90 hover:border-orange-300 text-slate-900 shadow-2xs hover:shadow-md'
+                    : 'bg-white dark:bg-[#0B0F19] hover:bg-orange-50/40 dark:hover:bg-slate-800/80 border-slate-200/90 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-500 text-slate-900 dark:text-white shadow-2xs hover:shadow-md'
                 }`}
               >
                 {/* 3D Category Image Badge */}
-                <div className={`w-full h-20 sm:h-28 rounded-xl mb-2 flex items-center justify-center overflow-hidden transition-all duration-300 relative ${
-                  isSelected ? 'bg-black/15' : 'bg-slate-50/80 group-hover:bg-orange-50/60'
+                <div className={`w-full h-16 sm:h-28 rounded-xl mb-1.5 sm:mb-2 flex items-center justify-center overflow-hidden transition-all duration-300 relative ${
+                  isSelected ? 'bg-black/15' : 'bg-slate-50/80 dark:bg-slate-800/60 group-hover:bg-orange-50/60 dark:group-hover:bg-slate-800'
                 }`}>
                   <img
                     src={catImg}
@@ -243,25 +243,25 @@ export const SearchPage = () => {
                     loading="lazy"
                   />
                   {isSelected && (
-                    <span className="absolute top-1.5 right-1.5 p-1 bg-white text-orange-600 rounded-full shadow-md animate-in zoom-in duration-150">
+                    <span className="absolute top-1 right-1 p-0.5 sm:p-1 bg-white text-orange-600 rounded-full shadow-md animate-in zoom-in duration-150">
                       <SolarIcon name="CheckCircle" size={13} />
                     </span>
                   )}
                 </div>
 
                 <div className="relative z-10 px-0.5">
-                  <h3 className={`text-xs sm:text-sm font-extrabold line-clamp-1 leading-snug ${
-                    isSelected ? 'text-white' : 'text-slate-900 group-hover:text-orange-600'
+                  <h3 className={`text-[11px] sm:text-sm font-extrabold line-clamp-1 leading-snug ${
+                    isSelected ? 'text-white' : 'text-slate-900 dark:text-white group-hover:text-orange-600'
                   }`} title={c.name}>
                     {c.name}
                   </h3>
                 </div>
 
-                <div className={`text-[10px] sm:text-[11px] font-semibold mt-1.5 sm:mt-2 pt-1 sm:pt-1.5 border-t font-numeric relative z-10 flex items-center justify-between px-0.5 ${
-                  isSelected ? 'text-white/90 border-white/20' : 'text-slate-500 border-slate-100 group-hover:text-slate-700'
+                <div className={`text-[9px] sm:text-[11px] font-semibold mt-1 sm:mt-2 pt-1 sm:pt-1.5 border-t font-numeric relative z-10 flex items-center justify-between px-0.5 ${
+                  isSelected ? 'text-white/90 border-white/20' : 'text-slate-500 dark:text-slate-400 border-slate-100 dark:border-slate-800 group-hover:text-slate-700'
                 }`}>
-                  <span>{c.products_count} ta mahsulot</span>
-                  <SolarIcon name="ArrowRight" size={12} className={isSelected ? 'text-white/80' : 'text-slate-400 group-hover:text-orange-600 group-hover:translate-x-0.5 transition-transform'} />
+                  <span>{c.products_count} ta</span>
+                  <SolarIcon name="ArrowRight" size={11} className={isSelected ? 'text-white/80' : 'text-slate-400 group-hover:text-orange-600 group-hover:translate-x-0.5 transition-transform'} />
                 </div>
               </div>
             );
@@ -439,8 +439,8 @@ export const SearchPage = () => {
         <div className="lg:col-span-9 space-y-5">
           
           {/* Top Search & Filter Bar */}
-          <div className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-5 shadow-2xs space-y-3">
-            <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-2xs space-y-2.5 sm:space-y-3">
+            <div className="flex flex-col sm:flex-row items-center gap-2.5 sm:gap-3">
               <div className="flex-1 w-full relative">
                 <SearchAutocomplete
                   value={searchTerm}
@@ -460,9 +460,9 @@ export const SearchPage = () => {
                 <button
                   type="button"
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="lg:hidden px-3.5 py-2.5 bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-2xs"
+                  className="lg:hidden px-3 sm:px-3.5 py-2 sm:py-2.5 bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800/60 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer shadow-2xs"
                 >
-                  <FilterIcon size={16} className="text-orange-600" />
+                  <FilterIcon size={16} className="text-orange-600 dark:text-orange-400" />
                   <span>Filtrlar</span>
                   {activeFilterCount > 0 && (
                     <span className="w-4 h-4 rounded-full bg-orange-600 text-white text-[10px] flex items-center justify-center font-bold">
@@ -478,7 +478,7 @@ export const SearchPage = () => {
                       setSortBy(e.target.value);
                       updateSearchFilters({ sort: e.target.value });
                     }}
-                    className="px-2.5 sm:px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:bg-white focus:border-orange-500 transition-all font-medium"
+                    className="px-2.5 sm:px-3 py-2 sm:py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-800 focus:border-orange-500 transition-all font-medium"
                   >
                     <option value="relevant">Tavsiya etilgan</option>
                     <option value="price_asc">Arzondan qimmatga</option>
@@ -489,7 +489,7 @@ export const SearchPage = () => {
                   <button
                     type="button"
                     onClick={() => updateSearchFilters()}
-                    className="px-3 sm:px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm shadow-orange-600/20 active:scale-95 cursor-pointer"
+                    className="px-3 sm:px-4 py-2 sm:py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm shadow-orange-600/20 active:scale-95 cursor-pointer"
                   >
                     <SolarIcon name="Search" size={15} />
                     <span className="hidden sm:inline">Qidirish</span>
@@ -497,6 +497,43 @@ export const SearchPage = () => {
                 </div>
               </div>
             </div>
+
+            {/* Quick Active Filter Chips Row (Mobile Native UX) */}
+            {activeFilterCount > 0 && (
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-xs border-t border-slate-100 dark:border-slate-800 pt-2">
+                {selectedCategory && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-100 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 font-bold text-[11px] shrink-0">
+                    <span>Toifa: {activeCatObject?.name || selectedCategory}</span>
+                    <button type="button" onClick={() => handleCategorySelect('')} className="hover:text-orange-900 dark:hover:text-white cursor-pointer ml-0.5">
+                      <SolarIcon name="Close" size={12} />
+                    </button>
+                  </span>
+                )}
+                {selectedLocation && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-100 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300 font-bold text-[11px] shrink-0">
+                    <span>Bozor: {selectedLocation}</span>
+                    <button type="button" onClick={() => { setSelectedLocation(''); updateSearchFilters({ location: '' }); }} className="hover:text-blue-900 dark:hover:text-white cursor-pointer ml-0.5">
+                      <SolarIcon name="Close" size={12} />
+                    </button>
+                  </span>
+                )}
+                {(minPrice || maxPrice) && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-bold text-[11px] shrink-0">
+                    <span>Narx: {minPrice ? formatPrice(minPrice) : '0'} &mdash; {maxPrice ? formatPrice(maxPrice) : 'max'}</span>
+                    <button type="button" onClick={() => { setMinPrice(''); setMaxPrice(''); updateSearchFilters({ min_price: '', max_price: '' }); }} className="hover:text-emerald-900 dark:hover:text-white cursor-pointer ml-0.5">
+                      <SolarIcon name="Close" size={12} />
+                    </button>
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleResetFilter}
+                  className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 underline shrink-0 px-1 cursor-pointer"
+                >
+                  Hammasini tozalash
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Results Summary and View Toggle */}
@@ -564,19 +601,19 @@ export const SearchPage = () => {
                   <div
                     key={p.id}
                     onClick={() => navigate(`/product/${p.slug || p.id}`)}
-                    className="bg-white border border-slate-200/90 hover:border-orange-300 rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer relative"
+                    className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-500 rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group cursor-pointer relative active:scale-[0.98]"
                   >
                     <div>
                       {/* Product Image Box */}
-                      <div className="h-32 sm:h-44 w-full bg-slate-50/70 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 flex items-center justify-center overflow-hidden border border-slate-100 relative">
+                      <div className="h-28 sm:h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800 relative">
                         {primaryImg ? (
                           <img
                             src={primaryImg}
                             alt={p.name}
-                            className="h-full w-full object-contain p-2 sm:p-3 group-hover:scale-105 transition-transform duration-200"
+                            className="h-full w-full object-contain p-1.5 sm:p-3 group-hover:scale-105 transition-transform duration-200"
                           />
                         ) : (
-                          <SolarIcon name="Box" size={32} className="text-slate-300" />
+                          <SolarIcon name="Box" size={32} className="text-slate-300 dark:text-slate-600" />
                         )}
                         <span className="hidden sm:block absolute top-2.5 left-2.5 px-2 py-0.5 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] font-bold rounded-md uppercase tracking-wider">
                           O'zbekiston / Bozor
@@ -584,33 +621,33 @@ export const SearchPage = () => {
                       </div>
 
                       {/* Title & Brand */}
-                      <div className="text-[10px] sm:text-[11px] text-orange-600 uppercase font-bold tracking-wider mb-0.5 sm:mb-1 truncate">
+                      <div className="text-[10px] sm:text-[11px] text-orange-600 dark:text-orange-400 uppercase font-bold tracking-wider mb-0.5 sm:mb-1 truncate">
                         {p.brand_name || 'Bozor Taklifi'}
                       </div>
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-2 group-hover:text-orange-600 transition-colors mb-2 leading-snug min-h-[32px] sm:min-h-[40px]">
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors mb-2 leading-snug min-h-[32px] sm:min-h-[40px]">
                         {p.name}
                       </h4>
 
                       {/* Stacked Seller Avatars & Offers Count */}
-                      <div className="flex items-center justify-between mb-2 sm:mb-3 bg-slate-50/70 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-slate-100 text-[10px] sm:text-[11px]">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3 bg-slate-50/70 dark:bg-slate-800/50 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-slate-100 dark:border-slate-800 text-[10px] sm:text-[11px]">
                         <div className="flex items-center gap-1 sm:gap-2 truncate">
-                          <span className="font-bold text-slate-700 truncate">
+                          <span className="font-bold text-slate-700 dark:text-slate-300 truncate">
                             {p.sellers_count || 1} do'kon
                           </span>
                         </div>
-                        <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-100 text-orange-700 shrink-0">
+                        <span className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-bold bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 shrink-0">
                           {(p.sellers_count || 1) > 1 ? "Raqobatli" : "Yagona"}
                         </span>
                       </div>
                     </div>
 
                     {/* Bottom Pricing & Action Row */}
-                    <div className="pt-2 sm:pt-3 border-t border-slate-100 flex items-end justify-between gap-1 sm:gap-3">
+                    <div className="pt-2 sm:pt-3 border-t border-slate-100 dark:border-slate-800 flex items-end justify-between gap-1 sm:gap-3">
                       <div className="truncate">
-                        <div className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-wider truncate">
+                        <div className="text-[9px] sm:text-[10px] text-slate-400 dark:text-slate-500 uppercase font-bold tracking-wider truncate">
                           {(p.sellers_count || 1) > 1 ? "Boshlang'ich:" : "Narx:"}
                         </div>
-                        <div className="text-xs sm:text-lg font-black text-slate-900 font-numeric truncate">
+                        <div className="text-xs sm:text-lg font-black text-slate-900 dark:text-white font-numeric truncate">
                           {formatPrice(p.min_price || p.price)}
                         </div>
                       </div>
@@ -621,7 +658,7 @@ export const SearchPage = () => {
                             e.stopPropagation();
                             setComparisonProductId(p.id);
                           }}
-                          className="px-2 py-1 sm:px-2.5 sm:py-1.5 bg-orange-50 hover:bg-orange-600 text-orange-700 hover:text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center gap-1 border border-orange-200 hover:border-transparent cursor-pointer shadow-2xs"
+                          className="px-2 py-1 sm:px-2.5 sm:py-1.5 bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-600 text-orange-700 dark:text-orange-300 hover:text-white rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition flex items-center gap-1 border border-orange-200 dark:border-orange-800/60 hover:border-transparent cursor-pointer shadow-2xs active:scale-95"
                           title="Barcha do'konlar narxlarini solishtirish"
                         >
                           <SolarIcon name="Shop" size={13} />
@@ -633,7 +670,7 @@ export const SearchPage = () => {
                             e.stopPropagation();
                             navigate(`/product/${p.slug || p.id}`);
                           }}
-                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white flex items-center justify-center transition cursor-pointer"
+                          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-900 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 hover:text-white flex items-center justify-center transition cursor-pointer active:scale-95"
                           title="To'liq tahlil"
                         >
                           <SolarIcon name="ArrowRight" size={13} />
@@ -775,19 +812,20 @@ export const SearchPage = () => {
       )}
 
       {/* 6. MOBILE BOTTOM-SHEET FILTER DRAWER */}
+      {/* 6. MOBILE BOTTOM-SHEET FILTER DRAWER (NATIVE PULL-UP SHEET) */}
       {isMobileFilterOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/60 backdrop-blur-xs flex items-end justify-center lg:hidden animate-in fade-in duration-200">
-          <div className="w-full max-h-[88vh] bg-white rounded-t-3xl shadow-2xl flex flex-col animate-in slide-in-from-bottom duration-300 border-t border-slate-200">
+          <div className="w-full max-h-[88vh] bg-white dark:bg-[#0B0F19] rounded-t-3xl shadow-2xl flex flex-col animate-in slide-in-from-bottom duration-300 border-t border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white">
             {/* Sheet Handle */}
-            <div className="w-10 h-1.5 rounded-full bg-slate-300 mx-auto my-2 shrink-0" />
+            <div className="w-10 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto my-2 shrink-0" />
 
             {/* Header */}
-            <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between sticky top-0 bg-white dark:bg-[#0B0F19] z-10">
               <div className="flex items-center gap-2">
-                <FilterIcon size={18} className="text-orange-600" />
-                <h3 className="font-extrabold text-slate-900 text-base">Filtrlar</h3>
+                <FilterIcon size={18} className="text-orange-600 dark:text-orange-400" />
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">Filtrlar</h3>
                 {activeFilterCount > 0 && (
-                  <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-bold">
+                  <span className="px-2 py-0.5 rounded-full bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 text-xs font-bold">
                     {activeFilterCount}
                   </span>
                 )}
@@ -795,15 +833,17 @@ export const SearchPage = () => {
               <div className="flex items-center gap-3">
                 {activeFilterCount > 0 && (
                   <button
+                    type="button"
                     onClick={handleResetFilter}
-                    className="text-xs font-bold text-slate-500 hover:text-orange-600 transition"
+                    className="text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition cursor-pointer"
                   >
                     Tozalash
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => setIsMobileFilterOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl"
+                  className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl cursor-pointer"
                 >
                   <SolarIcon name="CloseCircle" size={22} />
                 </button>
@@ -811,18 +851,20 @@ export const SearchPage = () => {
             </div>
 
             {/* Scrollable Body */}
-            <div className="p-5 space-y-5 overflow-y-auto flex-1">
+            <div className="p-4 sm:p-5 space-y-4 sm:space-y-5 overflow-y-auto flex-1">
               {/* Category Filter */}
               <div className="space-y-2">
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
                   Kategoriyalar
                 </span>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => handleCategorySelect('')}
-                    className={`p-2.5 rounded-xl text-xs font-medium border text-left flex items-center justify-between transition ${
-                      !selectedCategory ? 'bg-orange-50 border-orange-500 text-orange-700 font-bold shadow-2xs' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                    className={`p-2.5 rounded-xl text-xs font-medium border text-left flex items-center justify-between transition cursor-pointer ${
+                      !selectedCategory 
+                        ? 'bg-orange-50 dark:bg-orange-950/60 border-orange-500 text-orange-700 dark:text-orange-300 font-bold shadow-2xs' 
+                        : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
                     }`}
                   >
                     <span>Barcha toifalar</span>
@@ -835,8 +877,10 @@ export const SearchPage = () => {
                         key={c.id}
                         type="button"
                         onClick={() => handleCategorySelect(c.id)}
-                        className={`p-2.5 rounded-xl text-xs font-medium border text-left flex items-center justify-between transition ${
-                          isSelected ? 'bg-orange-50 border-orange-500 text-orange-700 font-bold shadow-2xs' : 'border-slate-200 text-slate-700 hover:bg-slate-50'
+                        className={`p-2.5 rounded-xl text-xs font-medium border text-left flex items-center justify-between transition cursor-pointer ${
+                          isSelected 
+                            ? 'bg-orange-50 dark:bg-orange-950/60 border-orange-500 text-orange-700 dark:text-orange-300 font-bold shadow-2xs' 
+                            : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/80'
                         }`}
                       >
                         <span className="truncate">{c.name}</span>
@@ -848,8 +892,8 @@ export const SearchPage = () => {
               </div>
 
               {/* Trading Hub / Bozor Filter */}
-              <div className="space-y-2 pt-3 border-t border-slate-100">
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+              <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
                   Bozor / Savdo Majmuasi
                 </span>
                 <select
@@ -858,7 +902,7 @@ export const SearchPage = () => {
                     setSelectedLocation(e.target.value);
                     updateSearchFilters({ location: e.target.value });
                   }}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:bg-white focus:border-orange-500 outline-none font-medium"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:bg-white dark:focus:bg-slate-800 focus:border-orange-500 outline-none font-medium"
                 >
                   {tradingHubs.map(h => (
                     <option key={h.value} value={h.value}>{h.name}</option>
@@ -867,8 +911,8 @@ export const SearchPage = () => {
               </div>
 
               {/* Price Range */}
-              <div className="space-y-2 pt-3 border-t border-slate-100">
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+              <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
                   Narx oralig'i (so'm)
                 </span>
                 <div className="flex items-center gap-2">
@@ -877,7 +921,7 @@ export const SearchPage = () => {
                     value={minPrice}
                     onChange={(e) => setMinPrice(e.target.value)}
                     placeholder="Min narx"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-numeric outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-numeric outline-none text-slate-900 dark:text-white"
                   />
                   <span className="text-slate-400">&mdash;</span>
                   <input
@@ -885,15 +929,15 @@ export const SearchPage = () => {
                     value={maxPrice}
                     onChange={(e) => setMaxPrice(e.target.value)}
                     placeholder="Maks narx"
-                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-numeric outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-numeric outline-none text-slate-900 dark:text-white"
                   />
                 </div>
               </div>
 
               {/* Brand Filter */}
               {availableBrands.length > 0 && (
-                <div className="space-y-2 pt-3 border-t border-slate-100">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
+                <div className="space-y-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
                     Brendlar
                   </span>
                   <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
@@ -906,8 +950,10 @@ export const SearchPage = () => {
                           setSearchTerm(newTerm);
                           updateSearchFilters({ q: newTerm });
                         }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${
-                          searchTerm === b ? 'bg-orange-500 text-white border-orange-500' : 'bg-slate-100 border-slate-200 text-slate-700'
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                          searchTerm === b 
+                            ? 'bg-orange-500 text-white border-orange-500' 
+                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
                         }`}
                       >
                         {b}
@@ -919,8 +965,9 @@ export const SearchPage = () => {
             </div>
 
             {/* Sticky Action Footer with safe bottom padding */}
-            <div className="p-4 border-t border-slate-100 bg-white sticky bottom-0 bottom-bar-safe">
+            <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#0B0F19] sticky bottom-0 bottom-bar-safe">
               <button
+                type="button"
                 onClick={() => {
                   updateSearchFilters();
                   setIsMobileFilterOpen(false);

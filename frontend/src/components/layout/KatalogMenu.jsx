@@ -124,7 +124,7 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
     /* Dropdown Mega-Menu Panel attached directly below header - NO MODAL BACKDROP */
     <div
       ref={menuRef}
-      className="absolute top-full left-0 w-full z-40 bg-white border-b border-slate-200/90 shadow-2xl animate-in fade-in slide-in-from-top-1 duration-150"
+      className="absolute top-full left-0 w-full z-40 bg-white dark:bg-[#0B0F19] border-b border-slate-200/90 dark:border-slate-800 shadow-2xl animate-in fade-in slide-in-from-top-1 duration-150 transition-colors"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
@@ -132,20 +132,20 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
           {/* ========================================================================= */}
           {/* COLUMN 1: LEFT PREVIEW CARD (Matches "Bo'limlarni o'rganing" from screenshot) */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-3 bg-slate-50/90 border border-slate-200/70 rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full min-h-[260px] shadow-2xs">
+          <div className="lg:col-span-3 bg-slate-50/90 dark:bg-slate-900/90 border border-slate-200/70 dark:border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col justify-between h-full min-h-[260px] shadow-2xs">
             <div>
               {/* Soft Icon Badge */}
-              <div className="w-12 h-12 rounded-2xl bg-orange-100/80 text-orange-600 flex items-center justify-center mb-4 shadow-2xs transition-transform duration-200">
+              <div className="w-12 h-12 rounded-2xl bg-orange-100/80 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center mb-4 shadow-2xs transition-transform duration-200">
                 <SolarIcon name={hoveredItem ? hoveredItem.icon : "Sparkles"} size={24} />
               </div>
 
               {/* Card Title */}
-              <h4 className="text-base sm:text-lg font-bold text-slate-900 mb-2 transition-colors">
+              <h4 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-2 transition-colors">
                 {hoveredItem ? hoveredItem.title : "Bo'limlarni o'rganing"}
               </h4>
 
               {/* Card Subtitle / Description */}
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
                 {hoveredItem 
                   ? hoveredItem.desc 
                   : "Menyuda bo'limlarni bossangiz yoki ustiga kelsangiz, bu yerda batafsil tahliliy ma'lumot ko'rinadi."}
@@ -171,10 +171,10 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
             <div>
               {/* Column Header */}
               <div className="flex items-center gap-2 mb-3.5 px-1">
-                <div className="w-5 h-5 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center">
+                <div className="w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center">
                   <SolarIcon name="Grid" size={13} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                   KATEGORIYALAR
                 </span>
               </div>
@@ -183,13 +183,13 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
               {loading ? (
                 <div className="grid grid-cols-2 gap-2.5">
                   {[1, 2, 3, 4, 5, 6].map(n => (
-                    <div key={n} className="h-11 bg-slate-100 rounded-xl animate-pulse" />
+                    <div key={n} className="h-11 bg-slate-100 dark:bg-slate-800 rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : categories.length === 0 ? (
-                <div className="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                  <SolarIcon name="Box" size={24} className="mx-auto text-slate-300 mb-1" />
-                  <p className="text-xs font-medium text-slate-500">Kategoriyalar mavjud emas</p>
+                <div className="p-6 text-center bg-slate-50 dark:bg-slate-850 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                  <SolarIcon name="Box" size={24} className="mx-auto text-slate-300 dark:text-slate-600 mb-1" />
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Kategoriyalar mavjud emas</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-2">
@@ -210,19 +210,19 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
                         className={`
                           p-2.5 rounded-xl border text-left transition-all flex items-center gap-2.5 cursor-pointer group
                           ${isSelected
-                            ? 'bg-orange-50/90 border-orange-300 text-orange-700 font-bold shadow-2xs'
-                            : 'bg-slate-50/70 border-slate-200/80 hover:bg-orange-50/60 hover:border-orange-200 text-slate-700'}
+                            ? 'bg-orange-50/90 dark:bg-orange-950/60 border-orange-300 dark:border-orange-700 text-orange-700 dark:text-orange-300 font-bold shadow-2xs'
+                            : 'bg-slate-50/70 dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-700/60 hover:bg-orange-50/60 dark:hover:bg-slate-800 hover:border-orange-200 dark:hover:border-orange-800 text-slate-700 dark:text-slate-200'}
                         `}
                       >
                         <div className={`
                           w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-colors
                           ${isSelected 
                             ? 'bg-orange-600 text-white' 
-                            : 'bg-white text-orange-600 border border-slate-200/60 group-hover:bg-orange-600 group-hover:text-white'}
+                            : 'bg-white dark:bg-slate-700 text-orange-600 dark:text-orange-400 border border-slate-200/60 dark:border-slate-600 group-hover:bg-orange-600 group-hover:text-white'}
                         `}>
                           <SolarIcon name={cat.icon || 'Box'} size={14} />
                         </div>
-                        <span className="text-xs font-medium truncate group-hover:text-orange-700 transition-colors">
+                        <span className="text-xs font-medium truncate group-hover:text-orange-700 dark:group-hover:text-orange-400 transition-colors">
                           {cat.name}
                         </span>
                       </button>
@@ -237,7 +237,7 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
               <button
                 type="button"
                 onClick={() => handleNavigate('/search')}
-                className="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1 cursor-pointer group px-1"
+                className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 flex items-center gap-1 cursor-pointer group px-1"
               >
                 <span>Barcha kategoriyalar</span>
                 <SolarIcon name="ChevronRight" size={14} className="group-hover:translate-x-0.5 transition-transform" />
@@ -252,10 +252,10 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
             <div>
               {/* Column Header */}
               <div className="flex items-center gap-2 mb-3.5 px-1">
-                <div className="w-5 h-5 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center">
+                <div className="w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center">
                   <SolarIcon name="Chart" size={13} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                   BOZOR & TAHLIL
                 </span>
               </div>
@@ -274,23 +274,23 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
                       link: item.to
                     })}
                     onMouseLeave={() => setHoveredItem(null)}
-                    className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                    className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 text-left transition-colors cursor-pointer group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-orange-50 group-hover:text-orange-600 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                    <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-orange-50 dark:group-hover:bg-orange-950/50 group-hover:text-orange-600 dark:group-hover:text-orange-400 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
                       <SolarIcon name={item.icon} size={15} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-slate-900 group-hover:text-orange-600 transition-colors">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                           {item.title}
                         </span>
                         {item.badge && (
-                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 bg-orange-100 text-orange-700 rounded font-mono">
+                          <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.2 bg-orange-100 dark:bg-orange-950 text-orange-700 dark:text-orange-400 rounded font-mono">
                             {item.badge}
                           </span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
                         {item.sub}
                       </p>
                     </div>
@@ -307,10 +307,10 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
             <div>
               {/* Column Header */}
               <div className="flex items-center gap-2 mb-3.5 px-1">
-                <div className="w-5 h-5 rounded-md bg-orange-100 text-orange-600 flex items-center justify-center">
+                <div className="w-5 h-5 rounded-md bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center">
                   <SolarIcon name="Sparkles" size={13} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                   AI XIZMATLARI
                 </span>
               </div>
@@ -329,16 +329,16 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
                       link: item.to
                     })}
                     onMouseLeave={() => setHoveredItem(null)}
-                    className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 text-left transition-colors cursor-pointer group"
+                    className="w-full flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 text-left transition-colors cursor-pointer group"
                   >
-                    <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 group-hover:bg-amber-50 group-hover:text-amber-600 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
+                    <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 group-hover:bg-amber-50 dark:group-hover:bg-amber-950/50 group-hover:text-amber-600 dark:group-hover:text-amber-400 flex items-center justify-center shrink-0 mt-0.5 transition-colors">
                       <SolarIcon name={item.icon} size={15} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="text-xs font-bold text-slate-900 group-hover:text-amber-600 transition-colors block">
+                      <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors block">
                         {item.title}
                       </span>
-                      <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
                         {item.sub}
                       </p>
                     </div>
@@ -348,12 +348,12 @@ export const KatalogMenu = ({ isOpen, onClose, menuRef }) => {
             </div>
 
             {/* Bottom Card (Matches the Premium / Cheksiz card in screenshot) */}
-            <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/80 shadow-2xs">
+            <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-850 dark:to-slate-900 border border-amber-200/80 dark:border-slate-800 shadow-2xs">
               <div className="flex items-center gap-2 mb-1">
-                <SolarIcon name="Shield" size={16} className="text-amber-600" />
-                <span className="text-xs font-bold text-slate-800">Mustaqil Tahlilchi</span>
+                <SolarIcon name="Shield" size={16} className="text-amber-600 dark:text-amber-400" />
+                <span className="text-xs font-bold text-slate-800 dark:text-white">Mustaqil Tahlilchi</span>
               </div>
-              <p className="text-[11px] text-slate-600 leading-snug">
+              <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-snug">
                 100% real ma'lumotlar va bozor tahlili.
               </p>
             </div>

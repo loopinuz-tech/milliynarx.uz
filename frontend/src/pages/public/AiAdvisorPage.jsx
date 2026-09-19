@@ -264,52 +264,55 @@ export const AiAdvisorPage = () => {
   };
 
   return (
-    <div className="w-full px-2 sm:px-4 lg:px-6 py-2 sm:py-3 h-[calc(100dvh-57px-56px)] md:h-[calc(100vh-108px)] flex flex-col min-h-0">
-      {/* 1. Full-Width Top Header Strip */}
-      <div className="flex items-center justify-between gap-3 pb-2 sm:pb-2.5 shrink-0">
+    <div className="w-full px-2 sm:px-4 lg:px-6 py-1.5 sm:py-3 h-[calc(100dvh-57px-56px)] md:h-[calc(100vh-108px)] flex flex-col min-h-0 bg-slate-50/50 dark:bg-[#0B0F19]">
+      {/* 1. Mobile App Style Top Header Strip */}
+      <div className="flex items-center justify-between gap-2 sm:gap-3 pb-2 sm:pb-2.5 shrink-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           {/* History Sidebar Toggle Button */}
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className={`p-2 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-2xs ${
+            className={`min-h-[38px] px-2.5 py-1.5 rounded-xl border transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-2xs active:scale-95 ${
               sidebarOpen 
-                ? 'bg-orange-50 border-orange-200 text-orange-700' 
-                : 'bg-white border-slate-200 text-slate-700 hover:border-orange-300 hover:text-orange-600'
+                ? 'bg-orange-50 dark:bg-orange-950/40 border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300' 
+                : 'bg-white dark:bg-[#111827] border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:border-orange-300'
             }`}
             title={sidebarOpen ? "Suhbatlar tarixini yashirish" : "Suhbatlar tarixini ko'rsatish"}
           >
-            <SolarIcon name="Sidebar" size={17} />
-            <span className="hidden md:inline-block">{sidebarOpen ? "Tarixni yopish" : "Suhbatlar tarixi"}</span>
+            <SolarIcon name="Sidebar" size={17} className="text-orange-600 dark:text-orange-400 shrink-0" />
+            <span className="hidden sm:inline-block">{sidebarOpen ? "Yopish" : "Tarix"}</span>
+            {sessions.length > 0 && (
+              <span className="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full text-[10px] font-mono">
+                {sessions.length}
+              </span>
+            )}
           </button>
 
-          <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 p-1 flex items-center justify-center shadow-2xs shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 p-1 flex items-center justify-center shadow-2xs shrink-0">
             <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain drop-shadow-xs" />
           </div>
 
           <div className="min-w-0">
-            <h1 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight flex items-center gap-2 truncate">
-              <span>AI Bozor Tahlilchisi</span>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold text-orange-800 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full font-sans shrink-0">
-                Codexa jamoasi
-              </span>
-              <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-numeric shrink-0">
+            <h1 className="text-xs sm:text-base font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5 sm:gap-2 truncate">
+              <span className="truncate">AI Bozor Tahlilchisi</span>
+              <span className="flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-2 py-0.5 rounded-full font-numeric shrink-0">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Jonli Bozor Tahlili
+                <span className="hidden xs:inline">Jonli</span> Bozor
               </span>
             </h1>
           </div>
         </div>
 
         {/* Right action buttons */}
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             onClick={handleNewChat}
-            className="px-3.5 py-1.5 text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+            className="min-h-[38px] px-3 sm:px-3.5 py-1.5 text-xs font-bold text-white bg-orange-600 hover:bg-orange-700 active:scale-95 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
             title="Yangi suhbat boshlash"
           >
             <SolarIcon name="Plus" size={14} />
-            <span>Yangi suhbat</span>
+            <span className="hidden xs:inline">Yangi suhbat</span>
+            <span className="xs:hidden">Yangi</span>
           </button>
         </div>
       </div>
@@ -429,48 +432,48 @@ export const AiAdvisorPage = () => {
         {/* ========================================================================= */}
         {/* RIGHT FULL-WIDTH CHAT TERMINAL                                            */}
         {/* ========================================================================= */}
-        <div className="flex-1 min-w-0 bg-white border border-slate-200/90 rounded-2xl sm:rounded-3xl shadow-xs overflow-hidden flex flex-col h-full relative">
+        <div className="flex-1 min-w-0 bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl shadow-xs overflow-hidden flex flex-col h-full relative">
           {/* Messages Scroll Area */}
           <div 
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex-1 min-h-0 overflow-y-auto p-3.5 sm:p-6 space-y-4 bg-slate-50/40 scrollbar-thin relative"
+            className="flex-1 min-h-0 overflow-y-auto p-2.5 sm:p-5 space-y-3.5 bg-slate-50/40 dark:bg-[#0B0F19] scrollbar-thin relative"
           >
             {/* Empty State / Welcome Screen */}
             {messages.length === 0 && (
-              <div className="h-full flex flex-col items-center justify-center text-center p-4 sm:p-6 space-y-5">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-orange-50 border border-orange-200 p-2.5 flex items-center justify-center shadow-xs animate-in zoom-in-95 duration-200">
+              <div className="h-full flex flex-col items-center justify-center text-center p-3 sm:p-6 space-y-4 sm:space-y-5">
+                <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-2xl sm:rounded-3xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 p-2 sm:p-2.5 flex items-center justify-center shadow-xs animate-in zoom-in-95 duration-200">
                   <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain drop-shadow-sm" />
                 </div>
 
-                <div className="max-w-lg space-y-2">
-                  <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                <div className="max-w-lg space-y-1.5 sm:space-y-2">
+                  <h2 className="text-base sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                     Codexa AI Bozor Tahlilchisi xizmatingizda
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-500 leading-relaxed font-normal">
-                    <strong>Bozor-Analitika (B2B AI Platform):</strong> Bozorlardagi real narx-navo, talab-taklif va sotuvchilar spredini real vaqtda tahlil qiluvchi aqlli savdo-axborot tizimi. Biz onlayn do'kon emasmiz — mustaqil tahlil orqali eng arzon va maqbul takliflarni taqqoslab beramiz.
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-normal">
+                    <strong>Bozor-Analitika (B2B AI Platform):</strong> Bozorlardagi real narx-navo, talab-taklif va sotuvchilar spredini real vaqtda tahlil qiluvchi aqlli tizim. Biz eng arzon va maqbul takliflarni taqqoslab beramiz.
                   </p>
                 </div>
 
                 {/* 4 Interactive Quick Topic Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full max-w-xl pt-2 text-left">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-xl pt-1 sm:pt-2 text-left">
                   {quickTopics.map((t, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => handleSendMessage(t.query)}
-                      className="p-3.5 bg-white hover:bg-orange-50/70 border border-slate-200 hover:border-orange-300 rounded-2xl text-xs text-slate-700 hover:text-orange-700 transition-all shadow-2xs hover:shadow-xs cursor-pointer group active:scale-[0.99]"
+                      className="p-3 bg-white dark:bg-[#161F30] hover:bg-orange-50/70 dark:hover:bg-orange-950/30 border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700/60 rounded-2xl text-xs text-slate-700 dark:text-slate-200 hover:text-orange-700 dark:hover:text-orange-300 transition-all shadow-2xs hover:shadow-xs cursor-pointer group active:scale-[0.98]"
                     >
                       <div className="font-bold flex items-center justify-between mb-1">
                         <span className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-orange-100/80 text-orange-600 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-lg bg-orange-100/80 dark:bg-orange-900/40 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
                             <SolarIcon name={t.icon} size={14} />
                           </div>
                           <span className="truncate">{t.title}</span>
                         </span>
-                        <SolarIcon name="ArrowRight" size={13} className="text-slate-400 group-hover:text-orange-600 group-hover:translate-x-0.5 transition-transform" />
+                        <SolarIcon name="ArrowRight" size={13} className="text-slate-400 group-hover:text-orange-600 group-hover:translate-x-0.5 transition-transform shrink-0" />
                       </div>
-                      <div className="text-[11px] text-slate-500 line-clamp-1 pl-8">{t.desc}</div>
+                      <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 pl-8">{t.desc}</div>
                     </button>
                   ))}
                 </div>
@@ -483,20 +486,20 @@ export const AiAdvisorPage = () => {
                 key={idx}
                 className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'} space-y-1`}
               >
-                <div className={`flex items-start gap-2.5 max-w-[96%] sm:max-w-[88%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`flex items-start gap-2 max-w-[96%] sm:max-w-[88%] ${m.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* Assistant Avatar */}
                   {m.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-xl bg-orange-50 border border-orange-200 p-1 shrink-0 mt-0.5 shadow-2xs">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/60 p-1 shrink-0 mt-0.5 shadow-2xs">
                       <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain" />
                     </div>
                   )}
 
                   {/* Bubble Container */}
                   <div
-                    className={`rounded-2xl p-3.5 sm:p-4 text-xs sm:text-sm leading-relaxed transition-all min-w-0 overflow-hidden ${
+                    className={`rounded-2xl p-3 sm:p-4 text-xs sm:text-sm leading-relaxed transition-all min-w-0 overflow-hidden ${
                       m.role === 'user'
                         ? 'bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-br-xs shadow-sm font-medium whitespace-pre-wrap'
-                        : 'bg-white border border-slate-200/90 text-slate-800 rounded-tl-xs shadow-2xs w-full'
+                        : 'bg-white dark:bg-[#161F30] border border-slate-200/90 dark:border-slate-800 text-slate-800 dark:text-slate-100 rounded-tl-xs shadow-2xs w-full'
                     }`}
                   >
                     {m.role === 'user' ? (
@@ -510,11 +513,11 @@ export const AiAdvisorPage = () => {
 
                 {/* Action Strip under Assistant Message (Copy & Time) */}
                 {m.role === 'assistant' && (
-                  <div className="flex items-center gap-3 pl-10.5 text-[11px] text-slate-400">
+                  <div className="flex items-center gap-3 pl-9 sm:pl-10 text-[10px] sm:text-[11px] text-slate-400 dark:text-slate-500">
                     <button
                       type="button"
                       onClick={() => handleCopy(m.content, idx)}
-                      className="flex items-center gap-1 text-slate-500 hover:text-orange-700 transition-colors cursor-pointer px-1.5 py-0.5 rounded hover:bg-slate-200/60"
+                      className="flex items-center gap-1 text-slate-500 dark:text-slate-400 hover:text-orange-600 dark:hover:text-orange-400 transition-colors cursor-pointer px-1.5 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800"
                       title="Javobdan nusxa olish"
                     >
                       <SolarIcon 
@@ -530,38 +533,38 @@ export const AiAdvisorPage = () => {
 
                 {/* Suggested Product Cards */}
                 {m.suggested_products && m.suggested_products.length > 0 && (
-                  <div className="w-full max-w-[96%] sm:max-w-[88%] space-y-2 pt-1 sm:pl-10.5">
-                    <div className="text-[10px] font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1">
+                  <div className="w-full max-w-[96%] sm:max-w-[88%] space-y-2 pt-1 sm:pl-10">
+                    <div className="text-[10px] font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider flex items-center gap-1">
                       <SolarIcon name="Box" size={12} />
                       <span>Bozordagi tavsiya etilgan takliflar:</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-2.5">
                       {m.suggested_products.map((prod) => (
                         <div
                           key={prod.id}
                           onClick={() => setSelectedQuickProduct(prod)}
-                          className="p-3 bg-white border border-orange-200/90 rounded-2xl shadow-2xs hover:border-orange-500 hover:shadow-xs transition-all flex items-center justify-between gap-3 cursor-pointer group active:scale-98"
+                          className="p-2.5 sm:p-3 bg-white dark:bg-[#161F30] border border-orange-200/90 dark:border-slate-800 rounded-2xl shadow-2xs hover:border-orange-500 dark:hover:border-orange-500 hover:shadow-xs transition-all flex items-center justify-between gap-2.5 cursor-pointer group active:scale-[0.98]"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <div className="w-11 h-11 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
+                            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-50 dark:bg-[#0B0F19] border border-slate-100 dark:border-slate-800 flex items-center justify-center shrink-0 overflow-hidden">
                               {prod.image_url ? (
                                 <img src={prod.image_url} alt="" className="w-full h-full object-contain p-1" />
                               ) : (
-                                <SolarIcon name="Box" size={20} className="text-slate-400" />
+                                <SolarIcon name="Box" size={18} className="text-slate-400" />
                               )}
                             </div>
                             <div className="min-w-0">
-                              <h4 className="text-xs font-bold text-slate-800 truncate group-hover:text-orange-600 transition-colors">
+                              <h4 className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-orange-600 transition-colors">
                                 {prod.name}
                               </h4>
-                              <div className="text-[11px] text-slate-500 flex items-center gap-2 font-numeric">
-                                <span className="font-extrabold text-orange-600">{formatPrice(prod.price)}</span>
+                              <div className="text-[10px] sm:text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-2 font-numeric">
+                                <span className="font-extrabold text-orange-600 dark:text-orange-400">{formatPrice(prod.price)}</span>
                                 <span className="truncate">&bull; {prod.seller_name || "Do'kon"}</span>
                               </div>
                             </div>
                           </div>
-                          <div className="shrink-0 px-2.5 py-1 bg-orange-50 text-orange-700 rounded-lg text-[10px] font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                          <div className="shrink-0 px-2.5 py-1 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 rounded-lg text-[10px] font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
                             Ko'rish
                           </div>
                         </div>
@@ -574,11 +577,11 @@ export const AiAdvisorPage = () => {
 
             {/* Loading Indicator */}
             {loading && (
-              <div className="flex items-center gap-3 text-slate-600 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-xs w-fit shadow-2xs animate-pulse">
-                <div className="w-6 h-6 rounded-lg bg-orange-50 border border-orange-200 p-0.5 shrink-0">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-300 bg-white dark:bg-[#161F30] border border-slate-200 dark:border-slate-800 rounded-2xl px-3.5 py-2.5 text-xs w-fit shadow-2xs animate-pulse">
+                <div className="w-6 h-6 rounded-lg bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 p-0.5 shrink-0">
                   <img src="/aiimg.png" alt="AI" className="w-full h-full object-contain animate-bounce" />
                 </div>
-                <span>AI bozor ma'lumotlarini hisoblab, jadval va xulosalar tayyorlamoqda...</span>
+                <span className="text-[11px] sm:text-xs">AI bozor ma'lumotlarini hisoblab, tahlil tayyorlamoqda...</span>
               </div>
             )}
 
@@ -590,7 +593,7 @@ export const AiAdvisorPage = () => {
             <button
               type="button"
               onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="absolute bottom-28 right-5 px-3 py-1.5 bg-white border border-slate-200 text-slate-700 hover:text-orange-600 text-xs font-semibold rounded-full shadow-md flex items-center gap-1.5 transition-all animate-in fade-in cursor-pointer z-10 hover:border-orange-300"
+              className="absolute bottom-24 sm:bottom-28 right-4 sm:right-5 px-3 py-1.5 bg-white dark:bg-[#161F30] border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:text-orange-600 text-xs font-semibold rounded-full shadow-md flex items-center gap-1.5 transition-all animate-in fade-in cursor-pointer z-10 active:scale-95"
             >
               <SolarIcon name="Down" size={13} />
               <span>Pastga</span>
@@ -598,17 +601,17 @@ export const AiAdvisorPage = () => {
           )}
 
           {/* 3. Bottom Chat Input Area & Quick Chips */}
-          <div className="p-3 sm:p-4 bg-white border-t border-slate-200 shrink-0 space-y-2.5">
-            {/* Quick topic suggestion chips */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-none">
+          <div className="p-2 sm:p-3.5 bg-white dark:bg-[#111827] border-t border-slate-200 dark:border-slate-800 shrink-0 space-y-2">
+            {/* Quick topic suggestion chips with smooth swipe */}
+            <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-0.5 no-scrollbar scroll-smooth snap-x">
               {quickTopics.map((topic, idx) => (
                 <button
                   key={idx}
                   type="button"
                   onClick={() => handleSendMessage(topic.query)}
-                  className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-orange-50 border border-slate-200 hover:border-orange-200 text-xs font-semibold text-slate-600 hover:text-orange-700 whitespace-nowrap transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 shadow-2xs active:scale-95"
+                  className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-slate-50 dark:bg-[#161F30] hover:bg-orange-50 dark:hover:bg-orange-950/40 border border-slate-200 dark:border-slate-800 hover:border-orange-200 dark:hover:border-orange-800 text-[11px] sm:text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-orange-700 dark:hover:text-orange-300 whitespace-nowrap transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 shadow-2xs active:scale-95 snap-start"
                 >
-                  <SolarIcon name={topic.icon} size={13} className="text-orange-600" />
+                  <SolarIcon name={topic.icon} size={12} className="text-orange-600 dark:text-orange-400 shrink-0" />
                   <span>{topic.title}</span>
                 </button>
               ))}
@@ -620,7 +623,7 @@ export const AiAdvisorPage = () => {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="flex items-center gap-2"
+              className="flex items-center gap-1.5 sm:gap-2"
             >
               <div className="relative flex-1">
                 <input
@@ -634,9 +637,9 @@ export const AiAdvisorPage = () => {
                       handleSendMessage();
                     }
                   }}
-                  placeholder="Savolingizni yozing (masalan: Eng arzon iPhone 15 qayerda? Yoki: Barcha noutbuki jadval qilib bering)..."
+                  placeholder="Savolingizni yozing (masalan: Eng arzon iPhone 15 qayerda?)..."
                   disabled={loading}
-                  className="w-full pl-4 pr-9 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-orange-500 focus:bg-white transition-colors disabled:opacity-50 shadow-inner"
+                  className="w-full pl-3.5 pr-8 sm:pr-9 py-2.5 sm:py-3 bg-slate-50 dark:bg-[#0B0F19] border border-slate-200 dark:border-slate-800 rounded-2xl text-xs sm:text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-orange-500 focus:bg-white dark:focus:bg-[#161F30] transition-colors disabled:opacity-50 shadow-inner"
                 />
                 {inputMessage.length > 0 && !loading && (
                   <button
@@ -645,7 +648,7 @@ export const AiAdvisorPage = () => {
                       setInputMessage('');
                       inputRef.current?.focus();
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1 cursor-pointer"
                     title="Tozalash"
                   >
                     <SolarIcon name="Close" size={14} />
@@ -656,7 +659,7 @@ export const AiAdvisorPage = () => {
               <button
                 type="submit"
                 disabled={loading || !inputMessage.trim()}
-                className="px-4 sm:px-6 py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 text-white font-bold rounded-2xl transition-all cursor-pointer shrink-0 shadow-sm flex items-center gap-1.5 active:scale-95"
+                className="min-h-[42px] min-w-[42px] sm:px-5 sm:py-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-40 text-white font-bold rounded-2xl transition-all cursor-pointer shrink-0 shadow-sm flex items-center justify-center gap-1.5 active:scale-95"
                 title="Yuborish"
               >
                 <span className="hidden sm:inline-block text-xs font-semibold">Yuborish</span>
@@ -665,16 +668,16 @@ export const AiAdvisorPage = () => {
             </form>
 
             {/* Micro Helper Bar */}
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-slate-400 px-1 gap-2">
+            <div className="flex items-center justify-between text-[9px] sm:text-[11px] text-slate-400 dark:text-slate-500 px-1 gap-2">
               <span className="flex items-center gap-1.5 truncate">
                 <img src="/aiimg.png" alt="AI" className="w-3.5 h-3.5 object-contain shrink-0" />
                 <span className="truncate">Milliy Narx &bull; AI Maslahatchi</span>
               </span>
-              <span className="text-slate-400 hidden sm:inline-block shrink-0">
-                <span className="font-mono bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-[10px] text-slate-600 mr-1">Enter</span>
+              <span className="text-slate-400 dark:text-slate-500 hidden sm:inline-block shrink-0">
+                <span className="font-mono bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded text-[10px] text-slate-600 dark:text-slate-300 mr-1">Enter</span>
                 yuborish
               </span>
-              <span className="text-emerald-600 font-medium whitespace-nowrap shrink-0">100% Real bozor</span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap shrink-0">100% Real bozor</span>
             </div>
           </div>
         </div>
@@ -684,24 +687,27 @@ export const AiAdvisorPage = () => {
       {/* QUICK VIEW PRODUCT MODAL (OPENS DIRECTLY INSIDE AI ADVISOR)               */}
       {/* ========================================================================= */}
       {selectedQuickProduct && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-slate-200 animate-in zoom-in-95 duration-200 relative space-y-4 max-h-[90dvh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150">
+          <div className="bg-white dark:bg-[#111827] rounded-t-3xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 animate-in slide-in-from-bottom sm:zoom-in-95 duration-200 relative space-y-4 max-h-[88dvh] overflow-y-auto">
+            {/* Mobile Sheet Handle */}
+            <div className="w-10 h-1 rounded-full bg-slate-300 dark:bg-slate-700 mx-auto -mt-1 mb-2 sm:hidden" />
+
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">Tavsiya etilgan mahsulot</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Tavsiya etilgan mahsulot</span>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedQuickProduct(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors cursor-pointer"
               >
                 <SolarIcon name="Close" size={18} />
               </button>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-center">
-              <div className="w-28 h-28 sm:w-36 sm:h-36 bg-slate-50 border border-slate-100 rounded-2xl p-2.5 flex items-center justify-center shrink-0 overflow-hidden">
+              <div className="w-24 h-24 sm:w-36 sm:h-36 bg-slate-50 dark:bg-[#0B0F19] border border-slate-100 dark:border-slate-800 rounded-2xl p-2.5 flex items-center justify-center shrink-0 overflow-hidden">
                 {selectedQuickProduct.image_url ? (
                   <img 
                     src={selectedQuickProduct.image_url} 
@@ -713,20 +719,20 @@ export const AiAdvisorPage = () => {
                 )}
               </div>
               <div className="space-y-1.5 flex-1 min-w-0 text-left w-full sm:w-auto">
-                <h3 className="text-sm sm:text-base font-bold text-slate-900 leading-snug">
+                <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">
                   {selectedQuickProduct.name}
                 </h3>
-                <div className="text-xl font-extrabold text-orange-600 font-numeric">
+                <div className="text-lg sm:text-xl font-extrabold text-orange-600 dark:text-orange-400 font-numeric">
                   {formatPrice(selectedQuickProduct.price)}
                 </div>
-                <div className="text-xs text-slate-500 space-y-0.5">
+                <div className="text-xs text-slate-500 dark:text-slate-400 space-y-0.5">
                   <div>Sotuvchi: <strong>{selectedQuickProduct.seller_name || "Rasmiy do'kon"}</strong></div>
                   {selectedQuickProduct.brand && <div>Brend: <strong>{selectedQuickProduct.brand}</strong></div>}
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
               <button
                 type="button"
                 onClick={() => {
@@ -734,7 +740,7 @@ export const AiAdvisorPage = () => {
                   setSelectedQuickProduct(null);
                   handleSendMessage(`${prod.name} mahsulotining narxi ${prod.price?.toLocaleString()} so'm ekan. Ushbu mahsulot haqida xarid tahlili va bozor maslahati bering.`);
                 }}
-                className="w-full sm:flex-1 py-2.5 px-3 bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-95"
+                className="w-full sm:flex-1 py-2.5 px-3 bg-orange-50 dark:bg-orange-950/40 hover:bg-orange-100 dark:hover:bg-orange-900/60 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-95"
               >
                 <SolarIcon name="Sparkles" size={14} />
                 <span>AI bilan tahlil qilish</span>

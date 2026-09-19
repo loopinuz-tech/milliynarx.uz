@@ -248,79 +248,86 @@ export const BuyerDashboard = () => {
 
   return (
     // FULL WIDTH CONTAINER (occupies full screen width with comfortable padding)
-    <div className="w-full px-3 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-4 sm:py-8 space-y-6 sm:space-y-8 pb-24 md:pb-12 transition-colors duration-200">
+    <div className="w-full px-2.5 sm:px-6 md:px-8 lg:px-10 xl:px-12 py-3 sm:py-8 space-y-4 sm:space-y-8 pb-24 md:pb-12 transition-colors duration-200">
       
-      {/* 1. TOP HEADER & GREETING BAR */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 sm:p-7 shadow-xs relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-bl from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+      {/* 1. TOP HEADER & GREETING BAR (NATIVE APP FEEL ON MOBILE) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-2xl sm:rounded-3xl p-3.5 sm:p-7 shadow-xs relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-60 sm:w-80 h-60 sm:h-80 bg-gradient-to-bl from-orange-500/10 via-amber-500/5 to-transparent rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-            <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <span className="text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Bozorlar real-vaqtda faol</span>
             </span>
-            <span className="text-[11px] font-semibold text-slate-400">
+            <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400">
               {new Date().toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-            Xush kelibsiz, {user?.full_name || user?.email?.split('@')[0] || 'Tadbirkor'}! 👋
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Milliy bozor narxlari monitoringi, sun'iy intellekt tahlili va shaxsiy savdo terminalingiz
-          </p>
+          <div className="flex items-center gap-2.5">
+            <div className="md:hidden w-8 h-8 rounded-xl bg-orange-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
+              {(user?.full_name || user?.email || 'U')[0].toUpperCase()}
+            </div>
+            <div>
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
+                Xush kelibsiz, {user?.full_name || user?.email?.split('@')[0] || 'Tadbirkor'}! 👋
+              </h1>
+              <p className="text-[11px] sm:text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-1 sm:line-clamp-none">
+                Bozor narxlari monitoringi, sun'iy intellekt tahlili va shaxsiy terminalingiz
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Quick Toolbar */}
-        <div className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto">
+        {/* Quick Toolbar (Native Mobile App Action Grid) */}
+        <div className="relative z-10 grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-2.5 w-full md:w-auto pt-1 sm:pt-0">
           <Link
             to="/ai-advisor"
-            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-sm shadow-orange-600/20 transition active:scale-98 flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-3.5 sm:px-4 py-2 sm:py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5 sm:gap-2"
           >
-            <SolarIcon name="Sparkles" size={16} />
+            <SolarIcon name="Sparkles" size={15} />
             <span>AI Maslahatchi</span>
           </Link>
 
           <Link
             to="/compare"
-            className="w-full sm:w-auto justify-center px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+            className="w-full sm:w-auto justify-center px-3.5 sm:px-4 py-2 sm:py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs rounded-xl transition active:scale-95 flex items-center gap-1.5 sm:gap-2"
           >
-            <SolarIcon name="SortVertical" size={16} />
+            <SolarIcon name="SortVertical" size={15} />
             <span>Taqqoslash</span>
           </Link>
 
           {userRole === 'SELLER' ? (
             <Link
               to="/seller"
-              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-orange-200 dark:border-orange-800/60 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-3.5 sm:px-4 py-2 sm:py-2.5 border border-orange-200 dark:border-orange-800/60 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300 font-bold text-xs rounded-xl transition active:scale-95 flex items-center gap-1.5 sm:gap-2"
             >
-              <SolarIcon name="Store" size={16} />
+              <SolarIcon name="Store" size={15} />
               <span>Do'kon Paneli</span>
             </Link>
           ) : userRole === 'ADMIN' ? (
             <Link
               to="/admin"
-              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2 font-mono"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-3.5 sm:px-4 py-2 sm:py-2.5 border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 font-bold text-xs rounded-xl transition active:scale-95 flex items-center gap-1.5 sm:gap-2 font-mono"
             >
-              <SolarIcon name="Shield" size={16} />
+              <SolarIcon name="Shield" size={15} />
               <span>ROOT Terminal</span>
             </Link>
           ) : (
             <Link
               to="/onboarding"
-              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-4 py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition active:scale-98 flex items-center gap-2"
+              className="col-span-2 sm:col-span-1 w-full sm:w-auto justify-center px-3.5 sm:px-4 py-2 sm:py-2.5 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition active:scale-95 flex items-center gap-1.5 sm:gap-2"
             >
-              <SolarIcon name="Shop" size={16} />
+              <SolarIcon name="Shop" size={15} />
               <span>Do'kon ochish</span>
             </Link>
           )}
         </div>
       </div>
 
-      {/* 2. STATS & METRICS CARDS (4 COLUMNS FULL WIDTH) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* 2. STATS & METRICS CARDS (2-COLUMNS ON MOBILE, 4-COLUMNS ON DESKTOP) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
         {/* Card 1: Subscription & AI Quotas */}
         <div className="bg-white dark:bg-[#0B0F19] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 shadow-xs flex flex-col justify-between">
           <div>
@@ -588,21 +595,21 @@ export const BuyerDashboard = () => {
       </div>
 
       {/* 4. AI INTERACTIVE TERMINAL QUICK QUERY BAR */}
-      <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 rounded-3xl p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+      <div className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-white shadow-lg relative overflow-hidden">
         <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-white/10 rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-4xl space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold text-orange-100 uppercase tracking-wider">
-            <SolarIcon name="Sparkles" size={16} />
+        <div className="relative z-10 max-w-4xl space-y-3 sm:space-y-4">
+          <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-orange-100 uppercase tracking-wider">
+            <SolarIcon name="Sparkles" size={15} />
             <span>Sun'iy Intellekt Bozor Tahlili</span>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-black tracking-tight leading-snug">
+          <h2 className="text-base sm:text-xl md:text-2xl font-black tracking-tight leading-snug">
             Bugun qaysi tovar narxini bilmoqchisiz yoki qaysi bozorda arzonroq?
           </h2>
 
-          {/* Quick query chips */}
-          <div className="flex items-center gap-2 flex-wrap text-xs">
+          {/* Quick query chips (Swipeable Rail on Mobile) */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth pb-1 text-xs -mx-1 px-1">
             {[
               "iPhone 15 Pro Malikada qancha?",
               "Sement Abu Saxiyda eng arzon narx",
@@ -613,7 +620,7 @@ export const BuyerDashboard = () => {
                 key={idx}
                 type="button"
                 onClick={() => handleQuickAiAsk(chip)}
-                className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-xs border border-white/20 text-white text-[11px] font-semibold transition cursor-pointer active:scale-95"
+                className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 backdrop-blur-xs border border-white/20 text-white text-[11px] font-semibold transition cursor-pointer active:scale-95 shrink-0 whitespace-nowrap"
               >
                 {chip}
               </button>
