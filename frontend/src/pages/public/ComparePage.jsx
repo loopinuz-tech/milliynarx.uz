@@ -4,6 +4,7 @@ import { compareService, productService, aiService } from '../../api/services';
 import { formatPrice } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import Badge from '../../components/common/Badge';
+import ProductImg from '../../components/common/ProductImg';
 
 const SPEC_KEY_LABELS = {
   unit: "O'lchov birligi",
@@ -445,11 +446,7 @@ export const ComparePage = () => {
                       >
                         <div>
                           <div className="h-24 sm:h-28 bg-slate-50 dark:bg-[#0B0F19] rounded-xl flex items-center justify-center p-2 mb-2">
-                            {primaryImg ? (
-                              <img src={primaryImg} alt={p.name} className="h-full max-w-full object-contain group-hover:scale-105 transition-transform" />
-                            ) : (
-                              <SolarIcon name="Box" size={24} className="text-slate-300" />
-                            )}
+                            <ProductImg src={primaryImg} alt={p.name} categoryName={p.category_name} className="h-full max-w-full object-contain group-hover:scale-105 transition-transform" iconSize={24} iconContainerClass="w-12 h-12" />
                           </div>
                           <div className="text-[10px] sm:text-[11px] text-slate-400 font-mono mb-0.5">{p.brand_name || '-'}</div>
                           <h4 className="text-xs font-semibold text-slate-900 dark:text-white line-clamp-2 mb-1.5" title={p.name}>
@@ -520,11 +517,7 @@ export const ComparePage = () => {
                 </div>
 
                 <div className="h-36 sm:h-40 bg-slate-50 dark:bg-[#0B0F19] rounded-2xl flex items-center justify-center p-3 mb-3 sm:mb-4">
-                  {products[0].image ? (
-                    <img src={products[0].image} alt={products[0].name} className="h-full max-w-full object-contain" />
-                  ) : (
-                    <SolarIcon name="Box" size={40} className="text-slate-300" />
-                  )}
+                  <ProductImg src={products[0].image} alt={products[0].name} categoryName={products[0].category_name} className="h-full max-w-full object-contain" iconSize={40} iconContainerClass="w-16 h-16" />
                 </div>
 
                 <div className="text-xs text-slate-400 font-mono mb-1">
@@ -592,11 +585,7 @@ export const ComparePage = () => {
                         >
                           <div>
                             <div className="h-24 bg-slate-50 dark:bg-[#0B0F19] rounded-xl flex items-center justify-center p-2 mb-2">
-                              {primaryImg ? (
-                                <img src={primaryImg} alt={p.name} className="h-full max-w-full object-contain" />
-                              ) : (
-                                <SolarIcon name="Box" size={20} className="text-slate-300" />
-                              )}
+                              <ProductImg src={primaryImg} alt={p.name} categoryName={p.category_name} className="h-full max-w-full object-contain" iconSize={20} iconContainerClass="w-10 h-10" />
                             </div>
                             <h4 className="text-xs font-medium text-slate-900 dark:text-white line-clamp-1 mb-1" title={p.name}>
                               {p.name}
@@ -668,11 +657,7 @@ export const ComparePage = () => {
                           </div>
 
                           <div className="h-24 sm:h-32 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200/80 dark:border-slate-800 flex items-center justify-center p-1.5 sm:p-2 mb-2 sm:mb-3 shadow-2xs">
-                            {p.image ? (
-                              <img src={p.image} alt={p.name} className="h-full max-w-full object-contain" />
-                            ) : (
-                              <SolarIcon name="Box" size={32} className="text-slate-300 dark:text-slate-600" />
-                            )}
+                            <ProductImg src={p.image} alt={p.name} categoryName={p.category_name} className="h-full max-w-full object-contain" iconSize={32} iconContainerClass="w-14 h-14" />
                           </div>
 
                           <div className="text-[10px] sm:text-[11px] text-slate-400 font-mono mb-0.5">
@@ -1013,11 +998,7 @@ export const ComparePage = () => {
                     >
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div className="w-11 h-11 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center p-1 shrink-0">
-                          {primaryImg ? (
-                            <img src={primaryImg} alt={p.name} className="h-full max-w-full object-contain" />
-                          ) : (
-                            <SolarIcon name="Box" size={18} className="text-slate-300" />
-                          )}
+                          <ProductImg src={primaryImg} alt={p.name} categoryName={p.category_name} className="h-full max-w-full object-contain" iconSize={18} iconContainerClass="w-9 h-9" />
                         </div>
                         <div className="min-w-0">
                           <div className="text-[10px] text-slate-400 font-mono">

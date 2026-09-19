@@ -4,6 +4,7 @@ import { aiService } from '../../api/services';
 import { formatPrice } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import MarkdownRenderer from '../../components/common/MarkdownRenderer';
+import ProductImg from '../../components/common/ProductImg';
 
 const SESSIONS_STORAGE_KEY = 'milliynarx_ai_sessions_v1';
 
@@ -548,11 +549,7 @@ export const AiAdvisorPage = () => {
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
                             <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-slate-50 dark:bg-[#0B0F19] border border-slate-100 dark:border-slate-800 flex items-center justify-center shrink-0 overflow-hidden">
-                              {prod.image_url ? (
-                                <img src={prod.image_url} alt="" className="w-full h-full object-contain p-1" />
-                              ) : (
-                                <SolarIcon name="Box" size={18} className="text-slate-400" />
-                              )}
+                              <ProductImg src={prod.image_url} alt={prod.name} categoryName={prod.category_name} className="w-full h-full object-contain p-1" iconSize={18} iconContainerClass="w-10 h-10" />
                             </div>
                             <div className="min-w-0">
                               <h4 className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-orange-600 transition-colors">
@@ -708,15 +705,7 @@ export const AiAdvisorPage = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 items-center">
               <div className="w-24 h-24 sm:w-36 sm:h-36 bg-slate-50 dark:bg-[#0B0F19] border border-slate-100 dark:border-slate-800 rounded-2xl p-2.5 flex items-center justify-center shrink-0 overflow-hidden">
-                {selectedQuickProduct.image_url ? (
-                  <img 
-                    src={selectedQuickProduct.image_url} 
-                    alt={selectedQuickProduct.name} 
-                    className="w-full h-full object-contain" 
-                  />
-                ) : (
-                  <SolarIcon name="Box" size={40} className="text-slate-300" />
-                )}
+                <ProductImg src={selectedQuickProduct.image_url} alt={selectedQuickProduct.name} categoryName={selectedQuickProduct.category_name} className="w-full h-full object-contain" iconSize={40} iconContainerClass="w-16 h-16" />
               </div>
               <div className="space-y-1.5 flex-1 min-w-0 text-left w-full sm:w-auto">
                 <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-snug">

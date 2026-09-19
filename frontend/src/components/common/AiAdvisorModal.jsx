@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { aiService } from '../../api/services';
 import SolarIcon from './SolarIcon';
 import { formatPrice } from '../../utils/formatters';
+import ProductImg from './ProductImg';
 
 export const AiAdvisorModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -283,7 +284,7 @@ export const AiAdvisorModal = () => {
                           className="p-2.5 bg-white dark:bg-[#151D2C] border border-slate-200 dark:border-slate-700 hover:border-orange-500 rounded-xl transition cursor-pointer flex items-center gap-2.5 group shadow-2xs"
                         >
                           <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-800 p-1 shrink-0 flex items-center justify-center">
-                            <img src={p.image_url} alt={p.name} className="max-h-full max-w-full object-contain" />
+                            <ProductImg src={p.image_url} alt={p.name} categoryName={p.category_name} className="max-h-full max-w-full object-contain" iconSize={18} iconContainerClass="w-8 h-8" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <h5 className="text-xs font-bold text-slate-800 dark:text-white truncate group-hover:text-orange-600 transition">

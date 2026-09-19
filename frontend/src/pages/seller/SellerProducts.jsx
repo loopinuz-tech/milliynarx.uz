@@ -5,6 +5,7 @@ import { formatPrice, formatDate } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
+import ProductImg from '../../components/common/ProductImg';
 
 export const SellerProducts = () => {
   const [products, setProducts] = useState([]);
@@ -127,11 +128,7 @@ export const SellerProducts = () => {
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-14 h-14 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
-                      {primaryImg ? (
-                        <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                      ) : (
-                        <SolarIcon name="Box" size={20} className="text-slate-400" />
-                      )}
+                      <ProductImg src={primaryImg} alt={p.name} categoryName={p.category_name} className="w-full h-full object-contain" iconSize={20} iconContainerClass="w-14 h-14" />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-1 mb-1">
@@ -248,11 +245,7 @@ export const SellerProducts = () => {
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center shrink-0 overflow-hidden">
-                            {primaryImg ? (
-                              <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                            ) : (
-                              <SolarIcon name="Box" size={18} className="text-slate-400" />
-                            )}
+                            <ProductImg src={primaryImg} alt={p.name} categoryName={p.category_name} className="w-full h-full object-contain" iconSize={18} iconContainerClass="w-10 h-10" />
                           </div>
                           <div className="truncate max-w-xs">
                             <span className="font-semibold text-slate-900 dark:text-white block truncate">

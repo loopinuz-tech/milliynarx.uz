@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { sellerService, adminService, uploadService } from '../../api/services';
 import SolarIcon from '../../components/common/SolarIcon';
+import ProductImg from '../../components/common/ProductImg';
 
 export const EditProduct = () => {
   const { id } = useParams();
@@ -478,7 +479,7 @@ export const EditProduct = () => {
           <div className="flex flex-wrap gap-3 items-center">
             {images.map((url, i) => (
               <div key={i} className="relative w-20 h-20 rounded border border-slate-200 overflow-hidden group bg-slate-50">
-                <img src={url} alt="product" className="w-full h-full object-contain" />
+                <ProductImg src={url} alt="product" className="w-full h-full object-contain" iconSize={20} iconContainerClass="w-12 h-12" />
                 <button
                   type="button"
                   onClick={() => handleRemoveImage(i)}

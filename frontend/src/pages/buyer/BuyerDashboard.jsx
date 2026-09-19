@@ -8,6 +8,7 @@ import Badge from '../../components/common/Badge';
 import { CardSkeleton } from '../../components/common/Skeleton';
 import PlanBillingModal from '../../components/common/PlanBillingModal';
 import LineChart from '../../components/common/LineChart';
+import ProductImg from '../../components/common/ProductImg';
 
 export const BuyerDashboard = () => {
   const { user, isAuthenticated, refreshUser } = useAuth();
@@ -622,10 +623,13 @@ export const BuyerDashboard = () => {
                 >
                   {/* Image (Unobstructed & Clean) */}
                   <div className="relative aspect-square w-full rounded-xl sm:rounded-2xl bg-slate-50 dark:bg-slate-800/40 mb-2.5 overflow-hidden flex items-center justify-center p-2.5">
-                    <img
+                    <ProductImg
                       src={mainImg}
                       alt={product.name}
+                      categoryName={product.category_name}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
+                      iconSize={32}
+                      iconContainerClass="w-16 h-16"
                     />
                   </div>
 

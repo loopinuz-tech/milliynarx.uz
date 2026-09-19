@@ -6,6 +6,7 @@ import { formatPrice } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import EmptyState from '../../components/common/EmptyState';
 import Badge from '../../components/common/Badge';
+import ProductImg from '../../components/common/ProductImg';
 
 export const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -81,11 +82,14 @@ export const FavoritesPage = () => {
             >
               <div>
                 <div className="h-32 sm:h-40 w-full bg-slate-50 dark:bg-[#151D2C] rounded-xl mb-2 sm:mb-3 flex items-center justify-center overflow-hidden relative">
-                  {f.image ? (
-                    <img src={f.image} alt={f.name} className="h-full w-full object-contain p-2" />
-                  ) : (
-                    <SolarIcon name="Box" size={32} className="text-slate-300" />
-                  )}
+                  <ProductImg
+                    src={f.image}
+                    alt={f.name}
+                    categoryName={f.category_name}
+                    className="h-full w-full object-contain p-2"
+                    iconSize={32}
+                    iconContainerClass="w-16 h-16"
+                  />
                   <button
                     onClick={(e) => { e.stopPropagation(); handleRemove(f.product_id); }}
                     className="absolute top-2 right-2 p-1.5 rounded-full bg-white/90 dark:bg-slate-800 text-rose-600 hover:bg-rose-50 shadow-xs cursor-pointer"

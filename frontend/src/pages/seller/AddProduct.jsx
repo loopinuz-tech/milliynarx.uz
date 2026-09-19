@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { sellerService, adminService, uploadService } from '../../api/services';
 import { useAuth } from '../../contexts/AuthContext';
 import SolarIcon from '../../components/common/SolarIcon';
+import ProductImg from '../../components/common/ProductImg';
 
 export const AddProduct = () => {
   const navigate = useNavigate();
@@ -360,7 +361,7 @@ export const AddProduct = () => {
           <div className="flex flex-wrap gap-4 items-center mb-2">
             {images.map((img, i) => (
               <div key={i} className="w-20 h-20 rounded border border-slate-200 bg-slate-50 relative p-1 flex items-center justify-center">
-                <img src={img} alt="" className="max-h-full max-w-full object-contain" />
+                <ProductImg src={img} alt="" className="max-h-full max-w-full object-contain" iconSize={20} iconContainerClass="w-12 h-12" />
                 <button
                   type="button"
                   onClick={() => setImages(images.filter((_, idx) => idx !== i))}

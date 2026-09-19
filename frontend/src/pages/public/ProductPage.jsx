@@ -7,6 +7,7 @@ import SolarIcon from '../../components/common/SolarIcon';
 import Badge from '../../components/common/Badge';
 import PriceChart from '../../components/charts/PriceChart';
 import Skeleton from '../../components/common/Skeleton';
+import ProductImg from '../../components/common/ProductImg';
 
 function cleanAiSummary(text) {
   if (!text) return '';
@@ -47,65 +48,6 @@ const SPEC_KEY_LABELS = {
   frequency: "Chastota",
 };
 
-const CATEGORY_PLACEHOLDER_ICONS = {
-  "yoqilg'i": "GasStation",
-  "energiya": "GasStation",
-  "o'g'it": "Leaf",
-  "agrokimyo": "Leaf",
-  "oziq-ovqat": "Cup",
-  "qishloq": "Cup",
-  "qurilish": "Buildings",
-  "metall": "Widget",
-  "metallurgiya": "Widget",
-  "moy": "WaterDrop",
-  "surkov": "WaterDrop",
-  "kimyo": "TestTube",
-  "plastik": "Box",
-  "polimer": "Box",
-  "to'qimachilik": "Hanger",
-  "tekstil": "Hanger",
-  "paxta": "Leaf",
-  "smartfon": "Smartphone",
-  "telefon": "Smartphone",
-  "noutbuk": "Laptop",
-  "kompyuter": "Laptop",
-  "televizor": "Monitor",
-  "maishiy": "Fridge",
-  "texnika": "Fridge",
-  "mebel": "Armchair",
-  "kiyim": "Hanger",
-  "tibbiyot": "Heart",
-  "farmatsevtika": "Heart",
-};
-
-function getCategoryIcon(categoryName) {
-  if (!categoryName) return "Box";
-  const lower = categoryName.toLowerCase();
-  for (const [keyword, icon] of Object.entries(CATEGORY_PLACEHOLDER_ICONS)) {
-    if (lower.includes(keyword)) return icon;
-  }
-  return "Box";
-}
-
-function ProductImg({ src, alt, categoryName, className, iconSize = 24, iconContainerClass = "w-12 h-12" }) {
-  const [failed, setFailed] = useState(false);
-  if (!src || failed) {
-    return (
-      <div className={`${iconContainerClass} rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center`}>
-        <SolarIcon name={getCategoryIcon(categoryName)} size={iconSize} className="text-orange-400 dark:text-orange-500" />
-      </div>
-    );
-  }
-  return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      onError={() => setFailed(true)}
-      loading="lazy"
-    />
-  );
-}
 
 export const ProductPage = () => {
   const { id } = useParams();
@@ -448,7 +390,7 @@ export const ProductPage = () => {
                       : 'border-slate-200 dark:border-slate-800 opacity-70 hover:opacity-100 bg-white dark:bg-slate-900'
                   }`}
                 >
-                  <img src={img.image_url} alt="" className="w-full h-full object-contain" />
+                  <ProductImg src={img.image_url} alt="" categoryName={product.category_name} className="w-full h-full object-contain" iconSize={16} iconContainerClass="w-10 h-10" />
                 </button>
               ))}
             </div>
