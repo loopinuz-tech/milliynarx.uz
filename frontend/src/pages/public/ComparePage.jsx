@@ -5,6 +5,10 @@ import { formatPrice } from '../../utils/formatters';
 import SolarIcon from '../../components/common/SolarIcon';
 import Badge from '../../components/common/Badge';
 import ProductImg from '../../components/common/ProductImg';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 const SPEC_KEY_LABELS = {
   unit: "O'lchov birligi",
@@ -125,7 +129,7 @@ export const ComparePage = () => {
       const productList = prods.map((p, i) =>
         `${i + 1}. ${p.name} — Narxi: ${formatPrice(p.price)}, Sotuvchi: ${p.seller_name || "Do'kon"}, Kafolat: ${p.warranty || 'noaniq'}`
       ).join('\n');
-      const message = `Quyidagi ${prods.length} ta mahsulotni qisqacha taqqoslab, har birining afzalligi va kamchiligi, ishlatish sarfi, quvvati, narxi va sifat-narx nisbati bo'yicha tahlil qiling. Javobni o'zbek tilida, 3-5 ta qisqa punkt ko'rinishida bering:\n\n${productList}`;
+      const message = `Quyidagi ${prods.length} ta mahsulotni professional taqqoslab tahlil qiling. Javobni o'zbek tilida, Markdown formatida bering. Narx farqi yoki foizni $\\Delta$ yoki formula ko'rinishida KaTeX bilan yozing (masalan: $\\frac{narx_1}{narx_2}$, $\\Delta = 15\\%$). Markdown jadval, qalin matn, ro'yxat ishlating. Quyidagilarni yoritib bering:\n1. Har bir mahsulotning afzalligi va kamchiligi\n2. Narx va sifat nisbati\n3. Ishlatish sarfi va quvvati\n4. Yakuniy tavsiya — qaysi birini tanlash kerak va nima uchun\n\n${productList}`;
       const res = await aiService.chat(message);
       setAiCompareResult(res.reply || res.response || res.message || '');
     } catch (err) {
@@ -927,8 +931,15 @@ export const ComparePage = () => {
                 <span>AI mahsulotlarni taqqoslayapti...</span>
               </div>
             ) : aiCompareResult ? (
-              <div className="prose prose-sm max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
-                {aiCompareResult}
+              <div className="prose prose-sm dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed
+                prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:text-sm prose-headings:font-bold
+                prose-strong:text-slate-900 dark:prose-strong:text-white
+                prose-table:text-xs prose-th:bg-slate-100 dark:prose-th:bg-slate-800 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2 prose-table:border prose-table:border-slate-200 dark:prose-table:border-slate-700 prose-table:rounded-xl prose-table:overflow-hidden
+                prose-li:marker:text-orange-500
+                [&_.katex]:text-orange-700 dark:[&_.katex]:text-orange-400">
+                <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                  {aiCompareResult}
+                </ReactMarkdown>
               </div>
             ) : (
               <div className="text-xs text-slate-400 dark:text-slate-500 text-center py-4">
