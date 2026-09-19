@@ -126,10 +126,36 @@ export const ComparePage = () => {
     setAiCompareLoading(true);
     setAiCompareTriggered(true);
     try {
-      const productList = prods.map((p, i) =>
-        `${i + 1}. ${p.name} — Narxi: ${formatPrice(p.price)}, Sotuvchi: ${p.seller_name || "Do'kon"}, Kafolat: ${p.warranty || 'noaniq'}`
-      ).join('\n');
-      const message = `Quyidagi ${prods.length} ta mahsulotni professional taqqoslab tahlil qiling. Javobni o'zbek tilida, Markdown formatida bering. Narx farqi yoki foizni $\\Delta$ yoki formula ko'rinishida KaTeX bilan yozing (masalan: $\\frac{narx_1}{narx_2}$, $\\Delta = 15\\%$). Markdown jadval, qalin matn, ro'yxat ishlating. Quyidagilarni yoritib bering:\n1. Har bir mahsulotning afzalligi va kamchiligi\n2. Narx va sifat nisbati\n3. Ishlatish sarfi va quvvati\n4. Yakuniy tavsiya — qaysi birini tanlash kerak va nima uchun\n\n${productList}`;
+      const productList = prods.map((p, i) => {
+        const specs = p.specifications || {};
+        const specLines = Object.entries(specs).map(([k, v]) => {
+          const label = SPEC_KEY_LABELS[k] || k;
+          const val = k === 'direction' ? (SPEC_VALUE_LABELS[v] || v) : k === 'change_percent' ? `${v}%` : v;
+          return `  - ${label}: ${val}`;
+        }).join('\n');
+        return `${i + 1}. **${p.name}**
+  - Narxi: ${formatPrice(p.price)}${p.old_price ? ` (eski narx: ${formatPrice(p.old_price)})` : ''}
+  - Sotuvchi: ${p.seller_name || "Do'kon"}${p.seller_rating ? ` (reyting: ${p.seller_rating.toFixed(1)})` : ''}
+  - Kafolat: ${p.warranty || 'noaniq'}
+  - Holati: ${p.condition || 'Yangi'}
+  - Yetkazish: ${p.delivery || 'Kelishiladi'}
+  - Mavjudlik: ${p.availability || 'noaniq'}
+  - Brend/Model: ${p.brand || '-'} / ${p.model || '-'}${specLines ? '\n  Texnik xususiyatlar:\n' + specLines : ''}`;
+      }).join('\n\n');
+      const message = `Sen O'zbekiston bozor ekspertisan. Quyidagi ${prods.length} ta mahsulotni chuqur va har tomonlama taqqoslab, professional tahlil qil.
+
+Javobni o'zbek tilida, Markdown formatida ber. Narx farqi, foiz va nisbatlarni KaTeX formulalar bilan yoz (masalan: $\\Delta = 15\\%$, $\\frac{A}{B} = 1.2$).
+
+**Tahlilda quyidagilarni MAJBURIY yoritib ber:**
+
+1. **Solishtirma jadval** — barcha parametrlarni (narx, sifat, quvvat, kafolat, reyting, texnik xususiyatlar) Markdown jadvali ko'rinishida
+2. **Sifat va ishonchlilik** — qaysi mahsulot sifatli, qaysi brendga ko'proq ishonsa bo'ladi, reyting va sharhlar soni
+3. **Quvvat va unumdorlik** — texnik parametrlar bo'yicha qaysi kuchliroq/yaxshiroq
+4. **Ishlatish sarfi** — qaysi biri ko'proq sarf qiladi (energiya, yoqilg'i, resurs va h.k.), qaysi biri tejamkor
+5. **Narx-sifat nisbati** — KaTeX formula bilan hisob-kitob, qaysi biri pulga arziydi
+6. **Yakuniy ekspert xulosasi** — qaysi birini tanlash kerak va nima uchun, kimga qaysi biri mos
+
+Mahsulotlar:\n\n${productList}`;
       const res = await aiService.chat(message);
       setAiCompareResult(res.reply || res.response || res.message || '');
     } catch (err) {
