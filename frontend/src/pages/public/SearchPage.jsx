@@ -74,6 +74,26 @@ function getProductIcon(categoryName) {
   return "Box";
 }
 
+function ProductImg({ src, alt, categoryName, className, iconSize = 24, iconContainerClass = "w-12 h-12" }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div className={`${iconContainerClass} rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center`}>
+        <SolarIcon name={getProductIcon(categoryName)} size={iconSize} className="text-orange-400 dark:text-orange-500" />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setFailed(true)}
+      loading="lazy"
+    />
+  );
+}
+
 export const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -630,19 +650,14 @@ export const SearchPage = () => {
                     <div>
                       {/* Product Image Box */}
                       <div className="h-32 sm:h-44 w-full bg-slate-50/70 dark:bg-slate-800/40 rounded-xl sm:rounded-2xl mb-2.5 sm:mb-3 flex items-center justify-center overflow-hidden border border-slate-100 dark:border-slate-800 relative">
-                        {primaryImg ? (
-                          <img
-                            src={primaryImg}
-                            alt={p.name}
-                            className="h-full w-full object-contain p-2 sm:p-3 group-hover:scale-105 transition-transform duration-200"
-                          />
-                        ) : (
-                          <div className="flex flex-col items-center gap-1">
-                            <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
-                              <SolarIcon name={getProductIcon(p.category_name)} size={24} className="text-orange-400 dark:text-orange-500" />
-                            </div>
-                          </div>
-                        )}
+                        <ProductImg
+                          src={primaryImg}
+                          alt={p.name}
+                          categoryName={p.category_name}
+                          className="h-full w-full object-contain p-2 sm:p-3 group-hover:scale-105 transition-transform duration-200"
+                          iconSize={32}
+                          iconContainerClass="w-16 h-16"
+                        />
                       </div>
 
                       {/* Title & Brand */}
@@ -715,11 +730,14 @@ export const SearchPage = () => {
                           <td className="py-3 px-3 sm:px-4">
                             <div className="flex items-center gap-2.5 sm:gap-3">
                               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0 overflow-hidden">
-                                {primaryImg ? (
-                                  <img src={primaryImg} alt={p.name} className="w-full h-full object-contain" />
-                                ) : (
-                                  <SolarIcon name={getProductIcon(p.category_name)} size={20} className="text-orange-400" />
-                                )}
+                                <ProductImg
+                                  src={primaryImg}
+                                  alt={p.name}
+                                  categoryName={p.category_name}
+                                  className="w-full h-full object-contain"
+                                  iconSize={18}
+                                  iconContainerClass="w-9 h-9 sm:w-10 sm:h-10"
+                                />
                               </div>
                               <div className="truncate max-w-[140px] sm:max-w-xs md:max-w-sm">
                                 <span className="font-bold text-slate-900 group-hover:text-orange-600 transition-colors text-xs">

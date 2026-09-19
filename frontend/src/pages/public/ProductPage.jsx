@@ -87,6 +87,26 @@ function getCategoryIcon(categoryName) {
   return "Box";
 }
 
+function ProductImg({ src, alt, categoryName, className, iconSize = 24, iconContainerClass = "w-12 h-12" }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div className={`${iconContainerClass} rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center`}>
+        <SolarIcon name={getCategoryIcon(categoryName)} size={iconSize} className="text-orange-400 dark:text-orange-500" />
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setFailed(true)}
+      loading="lazy"
+    />
+  );
+}
+
 export const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -405,20 +425,14 @@ export const ProductPage = () => {
         {/* Left Column (5 cols): Product Visual Gallery */}
         <div className="lg:col-span-5 flex flex-col space-y-3">
           <div className="w-full h-72 sm:h-80 bg-slate-50/70 dark:bg-[#0E1524] rounded-2xl flex items-center justify-center overflow-hidden border border-slate-200/80 dark:border-slate-800 relative group">
-            {images.length > 0 ? (
-              <img
-                src={images[selectedImg]?.image_url || images[0]?.image_url}
-                alt={product.name}
-                className="max-h-full max-w-full object-contain p-6 group-hover:scale-105 transition-transform duration-200"
-              />
-            ) : (
-              <div className="flex flex-col items-center gap-2">
-                <div className="w-20 h-20 rounded-2xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
-                  <SolarIcon name={getCategoryIcon(product.category_name)} size={40} className="text-orange-400 dark:text-orange-500" />
-                </div>
-                <span className="text-xs text-slate-400 font-medium">{product.category_name || 'Mahsulot'}</span>
-              </div>
-            )}
+            <ProductImg
+              src={images?.[selectedImg]?.image_url || images?.[0]?.image_url}
+              alt={product.name}
+              categoryName={product.category_name}
+              className="max-h-full max-w-full object-contain p-6 group-hover:scale-105 transition-transform duration-200"
+              iconSize={48}
+              iconContainerClass="w-24 h-24"
+            />
           </div>
 
           {/* Image Selector Thumbnails */}
@@ -732,17 +746,14 @@ export const ProductPage = () => {
                 >
                   <div>
                     <div className="w-full aspect-square bg-white rounded-xl border border-slate-100 p-2.5 flex items-center justify-center overflow-hidden mb-3 relative group-hover:scale-[1.02] transition-transform">
-                      {itemImg ? (
-                        <img
-                          src={itemImg}
-                          alt={item.name}
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center">
-                          <SolarIcon name={getCategoryIcon(item.category_name)} size={24} className="text-orange-400" />
-                        </div>
-                      )}
+                      <ProductImg
+                        src={itemImg}
+                        alt={item.name}
+                        categoryName={item.category_name}
+                        className="w-full h-full object-contain"
+                        iconSize={28}
+                        iconContainerClass="w-14 h-14"
+                      />
                       {item.condition && (
                         <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-slate-900/70 text-white text-[9px] font-bold rounded uppercase">
                           {item.condition === 'NEW' ? 'Yangi' : item.condition}
